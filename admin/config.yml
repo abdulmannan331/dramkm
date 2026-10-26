@@ -2,7 +2,7 @@
 # After you create the GitHub repo, replace YOUR-GITHUB-USERNAME below.
 backend:
   name: abdulmannan331
-  repo: YOUR-GITHUB-USERNAME/dramkm
+  repo: abdulmannan331/dramkm
   branch: main
 
 # Lets you run the editor on your own computer too (npx decap-server)
