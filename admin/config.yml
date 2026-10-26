@@ -1,0 +1,119 @@
+# Decap CMS: the editor at dramkm.com/admin
+# After you create the GitHub repo, replace YOUR-GITHUB-USERNAME below.
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/dramkm
+  branch: main
+
+# Lets you run the editor on your own computer too (npx decap-server)
+local_backend: true
+
+media_folder: images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: site
+    label: "Site content"
+    files:
+      # ---------- SETTINGS ----------
+      - name: settings
+        label: "⚙️ Site settings & features"
+        file: data/settings.json
+        format: json
+        fields:
+          - { name: site_title, label: "Browser tab title", widget: string }
+          - { name: name, label: "Your name", widget: string }
+          - { name: credentials, label: "Credentials (e.g., MD, MPH)", widget: string, required: false }
+          - { name: position, label: "Position", widget: string }
+          - { name: institution, label: "Institution / location", widget: string }
+          - { name: tagline, label: "One-line tagline", widget: string, required: false }
+          - { name: email, label: "Public email", widget: string, required: false }
+          - { name: photo, label: "Profile photo", widget: image, required: false }
+          - { name: cv, label: "CV (PDF)", widget: file, required: false }
+          - { name: author_highlight, label: "Your name as it appears in author lists (bolded). Separate variants with ;", widget: string, required: false }
+          - { name: accent_color, label: "Accent color", widget: color, required: false }
+          - { name: show_research, label: "Show Research & Publications page", widget: boolean, default: true }
+          - { name: show_projects, label: "Show Projects page", widget: boolean, default: true }
+          - name: links
+            label: "Profile links (leave URL blank to hide)"
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: "Label", widget: string }
+              - { name: url, label: "URL", widget: string, required: false }
+          - { name: footer_text, label: "Footer text", widget: string, required: false }
+
+      # ---------- ABOUT ----------
+      - name: about
+        label: "👤 About page"
+        file: data/about.json
+        format: json
+        fields:
+          - { name: bio, label: "Bio (supports **bold**, *italic*, [links](url); blank line = new paragraph)", widget: text }
+          - { name: research_interests, label: "Research interests", widget: list, field: { name: item, label: Interest, widget: string } }
+          - name: appointments
+            label: "Appointments"
+            widget: list
+            summary: "{{fields.role}}"
+            fields:
+              - { name: role, label: "Role", widget: string }
+              - { name: place, label: "Institution", widget: string }
+              - { name: years, label: "Years", widget: string }
+          - name: education
+            label: "Education & training"
+            widget: list
+            summary: "{{fields.degree}}"
+            fields:
+              - { name: degree, label: "Degree / program", widget: string }
+              - { name: place, label: "Institution", widget: string }
+              - { name: years, label: "Years", widget: string }
+          - name: news
+            label: "News & updates"
+            widget: list
+            summary: "{{fields.date}}: {{fields.text}}"
+            fields:
+              - { name: date, label: "Date (e.g., 2026-10)", widget: string }
+              - { name: text, label: "Text", widget: string }
+
+      # ---------- PUBLICATIONS ----------
+      - name: publications
+        label: "📄 Publications"
+        file: data/publications.json
+        format: json
+        fields:
+          - name: items
+            label: "Publications"
+            label_singular: "publication"
+            widget: list
+            summary: "{{fields.year}}: {{fields.title}}"
+            fields:
+              - { name: title, label: "Title", widget: string }
+              - { name: authors, label: "Authors", widget: string }
+              - { name: venue, label: "Journal / conference", widget: string }
+              - { name: year, label: "Year", widget: number, value_type: int }
+              - { name: type, label: "Type", widget: select, options: ["Journal article", "Review", "Abstract", "Editorial", "Book chapter", "Preprint"], default: "Journal article" }
+              - { name: doi, label: "DOI (e.g., 10.1016/j.xxx)", widget: string, required: false }
+              - { name: url, label: "Article link", widget: string, required: false }
+              - { name: featured, label: "Show on home page", widget: boolean, default: false }
+              - { name: note, label: "Note (e.g., 'Editor's choice')", widget: string, required: false }
+
+      # ---------- PROJECTS ----------
+      - name: projects
+        label: "🔬 Projects"
+        file: data/projects.json
+        format: json
+        fields:
+          - name: items
+            label: "Projects"
+            label_singular: "project"
+            widget: list
+            summary: "{{fields.status}}: {{fields.title}}"
+            fields:
+              - { name: title, label: "Title", widget: string }
+              - { name: status, label: "Status", widget: select, options: ["Ongoing", "Under review", "Published", "Completed"], default: "Ongoing" }
+              - { name: summary, label: "Summary", widget: text }
+              - { name: data_sources, label: "Data sources", widget: list, field: { name: item, label: Source, widget: string }, required: false }
+              - { name: methods, label: "Methods", widget: string, required: false }
+              - { name: link, label: "Link (paper, poster, slides)", widget: string, required: false }
+              - { name: image, label: "Image / figure", widget: image, required: false }
+              - { name: featured, label: "Show on home page", widget: boolean, default: false }

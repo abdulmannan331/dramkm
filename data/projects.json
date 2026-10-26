@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "title": "Lipid-lowering therapy eligibility under the 2025 ESC/EAS dyslipidaemia guidelines",
+      "status": "Ongoing",
+      "summary": "A population-level estimate of how many adults would be eligible for lipid-lowering therapy under the 2025 ESC/EAS dyslipidaemia recommendations.",
+      "data_sources": [],
+      "methods": "Population estimates",
+      "link": "",
+      "image": "",
+      "featured": true
+    },
+    {
+      "title": "Health spending vs. heart failure outcomes across nations",
+      "status": "Ongoing",
+      "summary": "Do countries that spend more on health get better heart failure outcomes? This cross-national analysis pairs health expenditure with heart failure burden to identify over- and under-performing health systems.",
+      "data_sources": ["WHO GHED", "GBD 2021/2023"],
+      "methods": "Residual / outlier analysis adjusted for GDP (PPP) per capita",
+      "link": "",
+      "image": "",
+      "featured": true
+    },
+    {
+      "title": "Trends in heart failure mortality in the United States",
+      "status": "Ongoing",
+      "summary": "National trends in heart failure–related mortality across demographic groups and regions.",
+      "data_sources": ["CDC WONDER"],
+      "methods": "Joinpoint regression, AAPC",
+      "link": "",
+      "image": "",
+      "featured": true
+    },
+    {
+      "title": "Albuminuria and incident heart failure in the ARIC cohort",
+      "status": "Ongoing",
+      "summary": "Examining urine albumin-to-creatinine ratio as a predictor of heart failure outcomes, accounting for competing risks.",
+      "data_sources": ["ARIC"],
+      "methods": "Fine-Gray competing risks regression; C-statistic comparison",
+      "link": "",
+      "image": "",
+      "featured": false
+    },
+    {
+      "title": "Introduction to Registries: a teaching series",
+      "status": "Completed",
+      "summary": "A teaching deck for trainees covering 19 databases, including NIS, NHANES, CDC WONDER, GBD, ARIC, MESA, JHS, All of Us, Epic Cosmos/SlicerDicer, NCDR, and UK Biobank, and how to pick the right one for a research question.",
+      "data_sources": [],
+      "methods": "Education",
+      "link": "",
+      "image": "",
+      "featured": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "bio": "I am an interventional cardiology fellow at **Baylor College of Medicine** in Houston, Texas. My research sits at the intersection of **outcomes research, health economics, and cardiovascular disease epidemiology**, with a focus on how the burden of cardiovascular disease is distributed across populations, and what health systems spend to address it.\n\nI work with large population-level datasets, including the Global Burden of Disease (GBD) study, the WHO Global Health Expenditure Database, CDC WONDER, NHANES, and the ARIC, MESA, and Jackson Heart Study cohorts. My work is mentored by Drs. Salim Virani, Vijay Nambi, and Christie Ballantyne.\n\nAlongside clinical training in the cath lab, I enjoy teaching trainees how to use registries and public datasets to answer clinical questions.",
+  "research_interests": [
+    "Cardiovascular outcomes research",
+    "Health economics and spending–outcome analysis",
+    "Global burden of cardiovascular disease",
+    "Heart failure epidemiology and mortality trends",
+    "Lipid management and preventive cardiology",
+    "Large registries and population cohorts"
+  ],
+  "appointments": [
+    { "role": "Interventional Cardiology Fellow", "place": "Baylor College of Medicine, Houston, TX", "years": "Present" }
+  ],
+  "education": [
+    { "degree": "Add your degree (e.g., Cardiovascular Disease Fellowship)", "place": "Institution", "years": "Year" },
+    { "degree": "Add your degree (e.g., MD / MBBS)", "place": "Institution", "years": "Year" }
+  ],
+  "news": [
+    { "date": "2026-10", "text": "Launched this website." }
+  ]
+}

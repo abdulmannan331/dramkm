@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "title": "EXAMPLE ENTRY: replace with your first publication (edit or delete in /admin)",
+      "authors": "Minhas AMK, Coauthor B, Virani SS",
+      "venue": "Journal Name",
+      "year": 2026,
+      "type": "Journal article",
+      "doi": "",
+      "url": "",
+      "featured": true,
+      "note": ""
+    }
+  ]
+}
