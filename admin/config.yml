@@ -1,7 +1,7 @@
 # Decap CMS: the editor at dramkm.com/admin
 # After you create the GitHub repo, replace YOUR-GITHUB-USERNAME below.
 backend:
-  name: abdulmannan331
+  name: github
   repo: abdulmannan331/dramkm
   branch: main
 
