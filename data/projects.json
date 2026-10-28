@@ -1,16 +1,12 @@
 {
   "items": [
     {
-      "data_sources": [
-        "Interventional cardiology",
-        "Education",
-        "Claude"
-      ],
+      "data_sources": [],
       "summary": " ",
       "button_label": "Try IVUS",
       "featured": true,
       "methods": "",
-      "status": "Ongoing",
+      "status": null,
       "title": "IVUS",
       "link": "",
       "image": "",
