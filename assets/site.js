@@ -80,9 +80,8 @@
   const sortPubs = (arr) => [...arr].sort((a, b) => (b.year || 0) - (a.year || 0));
 
   async function home(s) {
-    const [about, pubs, projs] = await Promise.all([load("about"), load("publications"), load("projects")]);
+    const [about, projs] = await Promise.all([load("about"), load("projects")]);
     const photo = s.photo ? `<img class="photo" src="${esc(s.photo)}" alt="${esc(s.name)}">` : `<div class="photo">${initials(s.name)}</div>`;
-    const featPubs = sortPubs((pubs.items || []).filter((p) => p.featured)).slice(0, 5);
     const featProj = (projs.items || []).filter((p) => p.featured).slice(0, 3);
     const tl = (rows) => `<ul class="plain timeline">${rows.map((r) => `<li><span class="when">${esc(r.years)}</span><span><strong>${esc(r.role || r.degree)}</strong><br><span class="muted">${esc(r.place)}</span></span></li>`).join("")}</ul>`;
     document.getElementById("content").innerHTML = `
@@ -101,53 +100,35 @@
       ${(about.research_interests || []).length ? `<h2>Research interests</h2><div class="interests">${about.research_interests.map((i) => `<span class="chip">${esc(i)}</span>`).join("")}</div>` : ""}
       ${(about.news || []).length ? `<h2>News</h2><ul class="plain timeline">${about.news.map((n) => `<li><span class="when">${esc(n.date)}</span><span>${md(n.text).replace(/^<p>|<\/p>$/g, "")}</span></li>`).join("")}</ul>` : ""}
       ${s.show_projects !== false && featProj.length ? `<h2>Current projects</h2><div class="cards">${featProj.map(projectHTML).join("")}</div><p><a href="projects.html">All projects →</a></p>` : ""}
-      ${s.show_research !== false && featPubs.length ? `<h2>Selected publications</h2>${featPubs.map((p) => pubHTML(p, s)).join("")}<p><a href="research.html">All publications →</a></p>` : ""}
       ${(about.appointments || []).length ? `<h2>Appointments</h2>${tl(about.appointments)}` : ""}
       ${(about.education || []).length ? `<h2>Education &amp; training</h2>${tl(about.education)}` : ""}
     `;
   }
 
-  async function research(s) {
-    const [about, pubs] = await Promise.all([load("about"), load("publications")]);
-    const all = sortPubs(pubs.items || []);
-    const types = ["All", ...new Set(all.map((p) => p.type).filter(Boolean))];
-    let type = "All", q = "";
-    const el = document.getElementById("content");
-    el.innerHTML = `
-      <h1>Research &amp; Publications</h1>
-      <p class="muted">${all.length} item${all.length === 1 ? "" : "s"}</p>${linkRow({ links: s.links })}
-      ${(about.research_interests || []).length ? `<h2>Research areas</h2><div class="interests">${about.research_interests.map((i) => `<span class="chip">${esc(i)}</span>`).join("")}</div>` : ""}
-      <h2>Publications</h2>
-      <div class="toolbar">
-        <input id="q" type="search" placeholder="Search title, author, journal…">
-        ${types.length > 2 ? types.map((t) => `<button data-t="${esc(t)}" class="${t === "All" ? "on" : ""}">${esc(t)}</button>`).join("") : ""}
-      </div>
-      <div id="list"></div>`;
-    const draw = () => {
-      const f = all.filter((p) => (type === "All" || p.type === type) && (!q || [p.title, p.authors, p.venue].join(" ").toLowerCase().includes(q)));
-      if (!f.length) { document.getElementById("list").innerHTML = `<p class="empty">No publications to show yet.</p>`; return; }
-      let html = "", yr = null;
-      f.forEach((p) => { if (p.year !== yr) { yr = p.year; html += `<div class="year">${esc(yr || "Undated")}</div>`; } html += pubHTML(p, s); });
-      document.getElementById("list").innerHTML = html;
-    };
-    el.querySelector("#q").addEventListener("input", (e) => { q = e.target.value.trim().toLowerCase(); draw(); });
-    el.querySelectorAll(".toolbar button").forEach((b) => b.addEventListener("click", () => {
-      type = b.dataset.t; el.querySelectorAll(".toolbar button").forEach((x) => x.classList.toggle("on", x === b)); draw();
-    }));
-    draw();
+  async function research() {
+    const r = await load("research");
+    const links = (r.links || []).filter((l) => l.url);
+    document.getElementById("content").innerHTML = `
+      <h1>${esc(r.heading || "Research & Publications")}</h1>
+      ${r.intro ? `<div class="bio">${md(r.intro)}</div>` : ""}
+      <div class="cards profiles">${links.map((l) => `
+        <a class="card profile" href="${esc(l.url)}" target="_blank" rel="noopener">
+          <h3>${esc(l.label)} <span aria-hidden="true">↗</span></h3>
+          ${l.description ? `<p class="muted">${esc(l.description)}</p>` : ""}
+        </a>`).join("")}</div>`;
   }
 
   async function projects() {
     const projs = await load("projects");
     const items = projs.items || [];
-    const order = ["Ongoing", "Under review", "Published", "Completed"];
+    const order = ["Ongoing", "Under review", "Published", "Completed", "Coming soon"];
     const groups = {};
     items.forEach((p) => { (groups[p.status || "Other"] ||= []).push(p); });
     const keys = Object.keys(groups).sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
     document.getElementById("content").innerHTML = `
       <h1>Projects</h1>
-      <p class="muted">Ongoing and completed research and teaching work.</p>
-      ${items.length ? keys.map((k) => `<h2>${esc(k)}</h2><div class="cards">${groups[k].map(projectHTML).join("")}</div>`).join("") : `<p class="empty">Projects coming soon.</p>`}`;
+      <p class="muted">Current research and clinical education work, plus what\u2019s coming next.</p>
+      ${items.length ? keys.map((k) => `<h2>${esc(k)}</h2><div class="cards${k === "Coming soon" ? " soon" : ""}">${groups[k].map(projectHTML).join("")}</div>`).join("") : `<p class="empty">Projects coming soon.</p>`}`;
   }
 
   load("settings").then((s) => {

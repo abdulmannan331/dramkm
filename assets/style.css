@@ -97,3 +97,14 @@ footer.site .wrap { display: flex; justify-content: space-between; flex-wrap: wr
   .timeline li { grid-template-columns: 1fr; gap: 0; }
   nav.main { gap: 16px; }
 }
+
+/* Research profile links */
+.profiles { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 24px; }
+a.card.profile { color: var(--ink); transition: border-color .15s, transform .15s; }
+a.card.profile:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-2px); }
+a.card.profile h3 { color: var(--accent); }
+a.card.profile p { margin: 4px 0 0; font-size: .92rem; }
+/* Coming soon */
+.cards.soon { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.cards.soon .card { background: transparent; border-style: dashed; padding: 16px 18px; }
+.cards.soon .card .chip.status { border-color: var(--muted); color: var(--muted); }

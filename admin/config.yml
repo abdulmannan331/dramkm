@@ -1,5 +1,5 @@
 # Decap CMS: the editor at dramkm.com/admin
-# After you create the GitHub repo, replace YOUR-GITHUB-USERNAME below.
+# GitHub repo that stores the site content
 backend:
   name: github
   repo: abdulmannan331/dramkm
@@ -75,27 +75,22 @@ collections:
               - { name: date, label: "Date (e.g., 2026-10)", widget: string }
               - { name: text, label: "Text", widget: string }
 
-      # ---------- PUBLICATIONS ----------
-      - name: publications
-        label: "📄 Publications"
-        file: data/publications.json
+      # ---------- RESEARCH PAGE ----------
+      - name: research
+        label: "📄 Research & Publications page"
+        file: data/research.json
         format: json
         fields:
-          - name: items
-            label: "Publications"
-            label_singular: "publication"
+          - { name: heading, label: "Page heading", widget: string }
+          - { name: intro, label: "Intro text (blank line = new paragraph)", widget: text, required: false }
+          - name: links
+            label: "Profile links (e.g., PubMed, ResearchGate, Google Scholar)"
             widget: list
-            summary: "{{fields.year}}: {{fields.title}}"
+            summary: "{{fields.label}}"
             fields:
-              - { name: title, label: "Title", widget: string }
-              - { name: authors, label: "Authors", widget: string }
-              - { name: venue, label: "Journal / conference", widget: string }
-              - { name: year, label: "Year", widget: number, value_type: int }
-              - { name: type, label: "Type", widget: select, options: ["Journal article", "Review", "Abstract", "Editorial", "Book chapter", "Preprint"], default: "Journal article" }
-              - { name: doi, label: "DOI (e.g., 10.1016/j.xxx)", widget: string, required: false }
-              - { name: url, label: "Article link", widget: string, required: false }
-              - { name: featured, label: "Show on home page", widget: boolean, default: false }
-              - { name: note, label: "Note (e.g., 'Editor's choice')", widget: string, required: false }
+              - { name: label, label: "Name", widget: string }
+              - { name: url, label: "URL", widget: string }
+              - { name: description, label: "Short description", widget: string, required: false }
 
       # ---------- PROJECTS ----------
       - name: projects
@@ -110,7 +105,7 @@ collections:
             summary: "{{fields.status}}: {{fields.title}}"
             fields:
               - { name: title, label: "Title", widget: string }
-              - { name: status, label: "Status", widget: select, options: ["Ongoing", "Under review", "Published", "Completed"], default: "Ongoing" }
+              - { name: status, label: "Status", widget: select, options: ["Ongoing", "Under review", "Published", "Completed", "Coming soon"], default: "Ongoing" }
               - { name: summary, label: "Summary", widget: text }
               - { name: data_sources, label: "Data sources", widget: list, field: { name: item, label: Source, widget: string }, required: false }
               - { name: methods, label: "Methods", widget: string, required: false }

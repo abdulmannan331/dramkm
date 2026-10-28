@@ -1,0 +1,16 @@
+{
+  "heading": "Research & Publications",
+  "intro": "My research focuses on cardiovascular outcomes, health economics, and the global burden of cardiovascular disease. For a complete and up-to-date list of my publications, please see my profiles below.",
+  "links": [
+    {
+      "label": "PubMed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Abdul+Mannan+Khan+Minhas&sort=date",
+      "description": "Peer-reviewed publications, most recent first."
+    },
+    {
+      "label": "ResearchGate",
+      "url": "https://www.researchgate.net/profile/Abdul-Mannan-Khan-Minhas",
+      "description": "Publications, abstracts, and research profile."
+    }
+  ]
+}

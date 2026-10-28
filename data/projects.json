@@ -1,6 +1,32 @@
 {
   "items": [
     {
+      "title": "IVUS: a practical guide to intravascular ultrasound",
+      "status": "Ongoing",
+      "summary": "A step-by-step guide to using IVUS in the cath lab, from image acquisition and interpretation to lesion assessment and stent optimization.",
+      "data_sources": [
+        "Interventional cardiology",
+        "Education"
+      ],
+      "methods": "",
+      "link": "",
+      "image": "",
+      "featured": true
+    },
+    {
+      "title": "Vascular closure devices: a step-by-step guide",
+      "status": "Ongoing",
+      "summary": "A practical walkthrough of femoral access closure, covering device selection, deployment steps, and troubleshooting for Angio-Seal, Mynx, and ProGlide.",
+      "data_sources": [
+        "Interventional cardiology",
+        "Education"
+      ],
+      "methods": "",
+      "link": "",
+      "image": "",
+      "featured": true
+    },
+    {
       "title": "Lipid-lowering therapy eligibility under the 2025 ESC/EAS dyslipidaemia guidelines",
       "status": "Ongoing",
       "summary": "A population-level estimate of how many adults would be eligible for lipid-lowering therapy under the 2025 ESC/EAS dyslipidaemia recommendations.",
@@ -14,27 +40,34 @@
       "title": "Health spending vs. heart failure outcomes across nations",
       "status": "Ongoing",
       "summary": "Do countries that spend more on health get better heart failure outcomes? This cross-national analysis pairs health expenditure with heart failure burden to identify over- and under-performing health systems.",
-      "data_sources": ["WHO GHED", "GBD 2021/2023"],
+      "data_sources": [
+        "WHO GHED",
+        "GBD 2021/2023"
+      ],
       "methods": "Residual / outlier analysis adjusted for GDP (PPP) per capita",
       "link": "",
       "image": "",
-      "featured": true
+      "featured": false
     },
     {
       "title": "Trends in heart failure mortality in the United States",
       "status": "Ongoing",
       "summary": "National trends in heart failure–related mortality across demographic groups and regions.",
-      "data_sources": ["CDC WONDER"],
+      "data_sources": [
+        "CDC WONDER"
+      ],
       "methods": "Joinpoint regression, AAPC",
       "link": "",
       "image": "",
-      "featured": true
+      "featured": false
     },
     {
       "title": "Albuminuria and incident heart failure in the ARIC cohort",
       "status": "Ongoing",
       "summary": "Examining urine albumin-to-creatinine ratio as a predictor of heart failure outcomes, accounting for competing risks.",
-      "data_sources": ["ARIC"],
+      "data_sources": [
+        "ARIC"
+      ],
       "methods": "Fine-Gray competing risks regression; C-statistic comparison",
       "link": "",
       "image": "",
@@ -46,6 +79,36 @@
       "summary": "A teaching deck for trainees covering 19 databases, including NIS, NHANES, CDC WONDER, GBD, ARIC, MESA, JHS, All of Us, Epic Cosmos/SlicerDicer, NCDR, and UK Biobank, and how to pick the right one for a research question.",
       "data_sources": [],
       "methods": "Education",
+      "link": "",
+      "image": "",
+      "featured": false
+    },
+    {
+      "title": "Intra-aortic balloon pump (IABP)",
+      "status": "Coming soon",
+      "summary": "Step-by-step setup, timing, and troubleshooting.",
+      "data_sources": [],
+      "methods": "",
+      "link": "",
+      "image": "",
+      "featured": false
+    },
+    {
+      "title": "Impella",
+      "status": "Coming soon",
+      "summary": "Patient selection, insertion, and management.",
+      "data_sources": [],
+      "methods": "",
+      "link": "",
+      "image": "",
+      "featured": false
+    },
+    {
+      "title": "Central venous access",
+      "status": "Coming soon",
+      "summary": "A practical guide to central line placement.",
+      "data_sources": [],
+      "methods": "",
       "link": "",
       "image": "",
       "featured": false
