@@ -110,5 +110,7 @@ collections:
               - { name: data_sources, label: "Data sources", widget: list, field: { name: item, label: Source, widget: string }, required: false }
               - { name: methods, label: "Methods", widget: string, required: false }
               - { name: link, label: "Link (paper, poster, slides)", widget: string, required: false }
+              - { name: file, label: "Upload a file (HTML tool, PDF, slides): drag and drop here", widget: file, required: false }
+              - { name: button_label, label: "Button text (e.g., Try the IVUS tool)", widget: string, required: false }
               - { name: image, label: "Image / figure", widget: image, required: false }
               - { name: featured, label: "Show on home page", widget: boolean, default: false }

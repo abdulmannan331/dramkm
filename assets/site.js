@@ -67,13 +67,15 @@
   }
 
   function projectHTML(p) {
+    const url = p.file || p.link;
     const chips = (p.data_sources || []).filter(Boolean).map((d) => `<span class="chip">${esc(d)}</span>`).join("");
     return `<article class="card">
       ${p.image ? `<img src="${esc(p.image)}" alt="">` : ""}
       <div class="meta">${p.status ? `<span class="chip status">${esc(p.status)}</span>` : ""}${chips}</div>
-      <h3>${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">${esc(p.title)}</a>` : esc(p.title)}</h3>
+      <h3>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(p.title)}</a>` : esc(p.title)}</h3>
       <p>${esc(p.summary)}</p>
       ${p.methods ? `<div class="methods">Methods: ${esc(p.methods)}</div>` : ""}
+      ${url ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">${esc(p.button_label || "Open")} →</a>` : ""}
     </article>`;
   }
 

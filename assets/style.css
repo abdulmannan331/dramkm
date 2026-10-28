@@ -108,3 +108,7 @@ a.card.profile p { margin: 4px 0 0; font-size: .92rem; }
 .cards.soon { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .cards.soon .card { background: transparent; border-style: dashed; padding: 16px 18px; }
 .cards.soon .card .chip.status { border-color: var(--muted); color: var(--muted); }
+
+/* Project button */
+.card .btn { display: inline-block; margin-top: 12px; background: var(--accent); color: #fff; font-size: .9rem; font-weight: 500; padding: 7px 16px; border-radius: 999px; }
+.card .btn:hover { text-decoration: none; opacity: .9; }
