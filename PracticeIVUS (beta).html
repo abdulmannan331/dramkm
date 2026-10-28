@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PracticeIVUS (beta): IVUS-guided stent optimization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8edf0;--panel:#f7f9fa;--ink:#16232b;--muted:#566872;--line:#c6d0d6;--soft:#dfe6ea;--eem:#2f68c0;--stent:#0d8577;--bad:#b23b28;--good:#2a7a4b;--amber:#a87300;--btn:#16232b;--btnink:#f7f9fa;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e151a;--panel:#162028;--ink:#e1e8ec;--muted:#93a4ae;--line:#2b3b46;--soft:#1e2a33;--eem:#6c9ff0;--stent:#3cc6b2;--bad:#f17c64;--good:#5cc78a;--amber:#f2b630;--btn:#e1e8ec;--btnink:#0e151a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151a;--panel:#162028;--ink:#e1e8ec;--muted:#93a4ae;--line:#2b3b46;--soft:#1e2a33;--eem:#6c9ff0;--stent:#3cc6b2;--bad:#f17c64;--good:#5cc78a;--amber:#f2b630;--btn:#e1e8ec;--btnink:#0e151a;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.app{max-width:1240px;margin:0 auto;padding:20px 16px 40px}
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+h1{font-size:1.75rem;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.015em}
+.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+h2{font-size:.95rem;margin:0;font-weight:600}
+h3{font-size:1rem;margin:0 0 4px;font-weight:600}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.casesel{display:inline-flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem}
+.casesel select{width:auto}
+.quiz{margin-top:16px}
+.qgrid{display:grid;gap:14px;margin-top:6px}
+@media (min-width:640px){.qgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}}
+.qimg{padding:8px}
+#qz,#at{aspect-ratio:1;cursor:default;width:100%;max-width:360px;margin:0 auto}
+.pctl{display:inline-flex;gap:6px}
+.pctl button{font:inherit;font-size:.78rem;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:3px 9px;cursor:pointer}
+.panel.min .qgrid{display:none}
+.panel.max{position:fixed;inset:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);z-index:50;overflow:auto;margin:0;box-shadow:0 12px 48px rgba(0,0,0,.5)}
+.panel.max .qgrid{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}
+.panel.max #qz,.panel.max #at{max-width:min(80vh,100%)}
+@media (max-width:640px){.panel.max .qgrid{grid-template-columns:1fr}}
+.defgrid{grid-template-columns:1fr!important}
+.defs{display:grid;grid-template-columns:minmax(9rem,auto) 1fr;gap:7px 14px;margin:4px 0 0;font-size:.86rem}
+.defs dt{font-weight:600;color:var(--ink)}
+.defs dd{margin:0;color:var(--muted)}
+.defs .sub{grid-column:1/-1;font-weight:700;color:var(--ink);margin-top:8px;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.refs{font-size:.8rem;color:var(--muted);margin:12px 0 0}
+.refs li{margin-bottom:3px}
+@media (max-width:640px){.defs{grid-template-columns:1fr}.defs dd{margin-bottom:6px}}
+.trace{margin-top:12px;border-top:1px solid var(--line);padding-top:4px}
+.trace button.ghost{color:var(--ink);border-color:var(--line)}
+.trace button.ghost[aria-pressed="true"]{background:var(--btn);color:var(--btnink);border-color:var(--btn)}
+.trmsg{font-size:.8rem;color:var(--muted);margin:6px 0 0;min-height:0}
+.banner{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:8px;padding:10px 14px;margin:0 0 16px;font-size:.88rem;line-height:1.45}
+.banner .ver{color:var(--muted);margin-left:6px;white-space:nowrap}
+.banner a{color:inherit;font-weight:600;margin-left:0;word-break:break-all}
+.banner .fb{margin-left:6px;user-select:all}
+.modehead{display:flex;align-items:center;gap:8px;margin:0 0 2px}
+.modehead h2{font-size:1.05rem}
+.beta{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--amber);color:var(--amber);border-radius:999px;padding:1px 8px}
+.betanote{font-size:.82rem;color:var(--muted);margin:0 0 14px}
+#results ul.lessons{list-style:disc;padding-left:18px}
+#results ul.lessons li{display:list-item;padding:3px 0}
+.simtag{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-left:6px}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40}
+.qprompt{margin:0 0 8px;font-size:.88rem;color:var(--muted)}
+.qopts{display:grid;gap:6px}
+.qopts button{font:inherit;font-size:.9rem;text-align:left;padding:8px 12px;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.qopts button.right{border-color:var(--good);box-shadow:inset 3px 0 0 var(--good)}
+.qopts button.wrong{border-color:var(--bad);box-shadow:inset 3px 0 0 var(--bad)}
+.qfb{font-size:.88rem;min-height:1.5em;margin:10px 0}
+.qscore{font-size:.85rem;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-weight:600;padding:6px 18px;border-radius:999px;cursor:pointer}
+.seg button[aria-checked="true"]{background:var(--btn);color:var(--btnink)}
+.grid{display:grid;gap:16px}
+@media (min-width:980px){.grid{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:start}.work{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);max-height:calc(100vh - 32px);overflow:auto}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.img{background:#05080a;border-color:#05080a;color:#d9e2e7}
+.img h2{color:#d9e2e7}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:2px 2px 6px}
+.phead .hint{font-size:.8rem;color:#8b9aa3}
+canvas{display:block;width:100%;border-radius:4px;touch-action:none;cursor:ew-resize}
+#angio{aspect-ratio:800/360}
+#long{aspect-ratio:800/224;margin-bottom:4px}
+#xs{aspect-ratio:1;cursor:default;max-width:440px;margin:0 auto}
+.axis{display:flex;justify-content:space-between;font-size:.78rem;color:#8b9aa3;margin:6px 2px 0}
+#posLabel{color:#f2b630}
+input[type=range]{width:100%;accent-color:#f2b630}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+button.act,button.ghost{font:inherit;font-weight:600;font-size:.88rem;border-radius:7px;padding:7px 12px;cursor:pointer}
+button.act{background:var(--btn);color:var(--btnink);border:1px solid var(--btn)}
+button.ghost{background:transparent;color:inherit;border:1px solid currentColor}
+.img button.ghost{color:#d9e2e7;border-color:#46545d}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--eem);outline-offset:2px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:.88rem;margin-left:auto}
+.xsgrid{display:grid;gap:16px;margin-top:16px}
+@media (min-width:640px){.xsgrid{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
+dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:.88rem}
+dt{color:var(--muted)}
+dd{margin:0;font-weight:500}
+.legend{font-size:.8rem;color:var(--muted);margin:12px 0 0;display:flex;flex-wrap:wrap;gap:4px 14px}
+.sw{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
+.steps{list-style:none;counter-reset:s;margin:0;padding:0}
+.steps>li{counter-increment:s;position:relative;padding:0 0 16px 34px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.steps>li.off{opacity:.5}
+.steps p{margin:0 0 6px;color:var(--muted);font-size:.88rem}
+.field{display:grid;grid-template-columns:8.5rem 1fr;align-items:center;gap:6px 10px;margin-top:8px;font-size:.88rem}
+select{font:inherit;font-size:.88rem;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.info{font-size:.85rem;margin-top:8px}
+.info p{margin:0 0 4px;color:var(--ink)}
+.warn{color:var(--bad)}
+.radios{display:flex;flex-wrap:wrap;gap:4px 12px}
+.radios label{display:inline-flex;gap:5px;align-items:center}
+#results h3{margin-top:4px}
+#results ul{list-style:none;margin:6px 0 0;padding:0;font-size:.88rem}
+#results li{display:grid;grid-template-columns:1.4rem 1fr;padding:3px 0}
+.ok{color:var(--good);font-weight:700}.no{color:var(--bad);font-weight:700}
+.verdict{font-weight:600;margin:6px 0 0}
+.log{font-size:.82rem;color:var(--muted);margin:10px 0 0;padding-left:18px}
+details{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;font-size:.88rem}
+details.cscore{margin:0 0 6px;border-top:0;padding-top:0}
+details.cscore p{margin:4px 0 0}
+.crit{list-style:none;margin:6px 0 0;padding:0}
+.crit li{display:grid;grid-template-columns:1.4rem 1fr;padding:2px 0}
+.crit .ok{font-weight:700}
+.crit .pt0,#results .pt0{color:var(--muted);font-weight:700}
+summary{cursor:pointer;font-weight:600}
+details ol{padding-left:20px;margin:8px 0 0}
+details li{margin-bottom:5px}
+footer{margin-top:22px;font-size:.78rem;color:var(--muted);max-width:90ch}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div>
+    <h1>PracticeIVUS <span class="beta" style="vertical-align:middle;font-size:.6rem;position:relative;top:-3px">Beta</span></h1>
+    
+  </div>
+  <div class="ctrls">
+  <label class="casesel">Case <select id="case">
+    <option value="calc">Calcified lesion</option>
+    <option value="fib">Fibrous lesion</option>
+    <option value="lip">Lipid-rich lesion</option>
+  </select></label>
+  </div>
+</header>
+<div class="banner" role="note"><strong>Educational simulation.</strong> Images are synthetic, and outcome numbers are illustrative teaching values, not predictions. Errors are possible; please report any you find. Not for clinical decision-making. <span class="ver">Beta version 0.9, October 2026</span><span id="fbk"></span></div>
+
+<main class="grid">
+  <section aria-label="Imaging">
+    <div class="panel img">
+      <div class="phead"><h2>Angiogram</h2><span class="hint">Tap the LAD or drag either view to move the imaging position</span></div>
+      <canvas id="angio" aria-label="Synthetic angiogram with co-registered imaging position"></canvas>
+      <div class="phead" style="margin-top:10px"><h2>Longitudinal view</h2></div>
+      <canvas id="long" aria-label="Longitudinal pullback view"></canvas>
+      <div class="axis"><span>Proximal</span><span id="posLabel"></span><span>Distal</span></div>
+      <input type="range" id="scrub" min="0" max="250" step="1" aria-label="Pullback position">
+      <div class="row" style="margin-top:4px"><label class="chk" style="margin-left:0;gap:10px">Longitudinal cut <input type="range" id="lang" min="0" max="11.75" step="0.25" value="1" style="width:150px" aria-label="Longitudinal cut plane angle"> <span id="langv" style="color:#f2b630">1:00 to 7:00</span></label></div>
+      <div class="row">
+        <button id="play" class="ghost">Play pullback</button>
+        <button id="mla" class="ghost">Jump to MLA</button>
+        <label class="chk"><input type="checkbox" id="cont" checked> Contours</label>
+      </div>
+    </div>
+    <div class="xsgrid">
+      <div class="panel img"><canvas id="xs" aria-label="Cross-sectional image at the current frame"></canvas></div>
+      <div class="panel">
+        <h2>At this frame</h2>
+        <dl id="readout"></dl>
+        <div class="trace">
+          <div class="row"><button id="trL" class="ghost" aria-pressed="false">Trace lumen</button><button id="trE" class="ghost" aria-pressed="false">Trace EEM</button><button id="trF" class="ghost" disabled>Finish</button><button id="trC" class="ghost" disabled>Clear traces</button></div>
+          <p id="trMsg" class="trmsg"></p>
+          <dl id="trOut"></dl>
+        </div>
+        <p class="legend"><span><i class="sw" style="border-color:#f2b630"></i>Lumen</span><span><i class="sw" style="border-color:#6c9ff0;border-top-style:dashed"></i><span id="eemName">EEM</span></span><span><i class="sw" style="border-color:#3cd6c0"></i>Stent</span><span><i class="sw" style="border-color:#f2b630"></i>Min diameter</span><span><i class="sw" style="border-color:#f2b630;border-top-style:dashed"></i>Max diameter</span></p>
+      </div>
+    </div>
+    <div class="panel quiz" id="atp">
+      <div class="phead"><h2>Lesion and artifact atlas</h2><span class="qscore">IVUS, synthetic</span><span class="pctl"><button data-act="min" aria-expanded="true">Minimize</button><button data-act="max">Maximize</button></span></div>
+      <div class="qgrid">
+        <div class="img qimg"><canvas id="at" aria-label="Atlas frame"></canvas></div>
+        <div>
+          <label class="casesel" style="display:flex;margin-bottom:8px">Finding <select id="atsel" style="flex:1"></select></label>
+          <label class="chk" style="margin:0 0 10px"><input type="checkbox" id="atlab" checked> Labels</label>
+          <p id="atdesc" class="qfb" style="margin-top:0"></p>
+        </div>
+      </div>
+    </div>
+    <div class="panel quiz min" id="qzp">
+      <div class="phead"><h2>Name the finding</h2><span id="qscore" class="qscore"></span><span class="pctl"><button data-act="min" aria-expanded="false">Expand</button><button data-act="max">Maximize</button></span></div>
+      <div class="qgrid">
+        <div class="img qimg"><canvas id="qz" aria-label="Quiz frame"></canvas></div>
+        <div>
+          <p class="qprompt">What does this frame show? The frames are the atlas images, shown without labels.</p>
+          <div id="qopts" class="qopts"></div>
+          <p id="qfb" class="qfb" aria-live="polite"></p>
+          <button id="qnext" class="ghost">Next frame</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel work" aria-label="Procedure">
+    <div class="modehead"><h2>Practice a case</h2><span class="beta">Beta</span></div>
+    <p class="betanote">Decision practice with simulated outcomes. The scoring is a simplified teaching model and may contain errors; focus on the lessons and check decisions against current guidance and your own clinical judgment.</p>
+    <ol class="steps">
+      <li id="s1">
+        <h3>Assess the lesion</h3>
+        <p>Scroll through the pullback, find the minimal lumen area, then mark the most normal-looking frame on each side as a reference.</p>
+        <div class="row">
+          <button id="markD" class="act">Mark distal reference</button>
+          <button id="markP" class="act">Mark proximal reference</button>
+          <button id="clearRef" class="ghost">Clear references</button>
+        </div>
+        <div id="refInfo" class="info"></div>
+      </li>
+      <li id="s2">
+        <h3>Plan</h3>
+        <p>Size the stent, choose its length, and decide how to prepare the lesion.</p>
+        <div class="field">
+          <label for="sd">Stent diameter</label><select id="sd"></select>
+          <label for="sl">Stent length</label><select id="sl"></select>
+          <label for="prep">Lesion preparation</label>
+          <select id="prep">
+            <option value="none">None (direct stenting)</option>
+            <optgroup label="Balloons">
+            <option value="sc">Semi-compliant balloon predilation</option>
+            <option value="nc">NC balloon predilation</option>
+            <option value="opn">Super-high-pressure NC balloon</option>
+            <option value="cut">Cutting or scoring balloon</option>
+            </optgroup>
+            <optgroup label="Calcium modification">
+            <option value="ivl">Intravascular lithotripsy</option>
+            <option value="rota">Rotational atherectomy</option>
+            <option value="orb">Orbital atherectomy</option>
+            <option value="rotaivl">Rotational atherectomy + lithotripsy</option>
+            </optgroup>
+            <optgroup label="Other">
+            <option value="elca">Excimer laser atherectomy (ELCA)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div id="planInfo" class="info"></div>
+      </li>
+      <li id="s3">
+        <h3>Deploy</h3>
+        <div class="field">
+          <label for="pd">Pressure: <span id="pdv"></span> atm</label><input type="range" id="pd" min="8" max="20" step="1" value="14">
+        </div>
+        <p id="pdwarn" class="info warn" style="margin:6px 0 0"></p>
+        <div class="row"><button id="deploy" class="act">Deploy stent</button></div>
+        <div id="deployInfo" class="info"></div>
+      </li>
+      <li id="s4">
+        <h3>Optimize</h3>
+        <p>Review the result, then postdilate with a noncompliant balloon where needed. You can repeat this.</p>
+        <div class="field">
+          <label for="ncd">NC balloon</label><select id="ncd"></select>
+          <label for="ncp">Pressure: <span id="ncpv"></span> atm</label><input type="range" id="ncp" min="12" max="24" step="1" value="16">
+          <span>Segment</span>
+          <div class="radios" role="radiogroup" aria-label="Postdilation segment">
+            <label><input type="radio" name="reg" value="whole" checked> Whole stent</label>
+            <label><input type="radio" name="reg" value="prox"> Proximal half</label>
+            <label><input type="radio" name="reg" value="dist"> Distal half</label>
+          </div>
+        </div>
+        <p id="ncwarn" class="info warn" style="margin:6px 0 0"></p>
+        <div class="row"><button id="post" class="act">Postdilate</button></div>
+      </li>
+    </ol>
+    <div id="results" aria-live="polite"></div>
+    <div class="row"><button id="reset" class="ghost">Reset case</button></div>
+    <details>
+      <summary>See one approach</summary>
+      <ol id="expert"></ol>
+    </details>
+  </aside>
+</main>
+
+<section class="panel quiz min" id="defp" aria-label="Measurement definitions">
+  <div class="phead"><h2>Measurement definitions</h2><span class="pctl"><button data-act="min" aria-expanded="false">Expand</button><button data-act="max">Maximize</button></span></div>
+  <div class="qgrid defgrid"><div>
+  <dl class="defs">
+    <div class="sub">Frame readout</div>
+    <dt>Position</dt><dd>Distance of the current frame from the start of the pullback (the distal end), derived from the motorized pullback.</dd>
+    <dt>Plaque</dt><dd>The reader&rsquo;s qualitative call of the dominant plaque appearance, e.g. fibrous, calcific, lipid-rich. Grayscale IVUS does not measure tissue type.</dd>
+    <dt>Lumen area</dt><dd>Area inside the traced lumen&ndash;intima border. The minimal lumen area (MLA) is the smallest lumen area in the segment.</dd>
+    <dt>Manual tracing</dt><dd>Planimetry: the operator traces the lumen&ndash;intima border and the EEM by hand, and the system calculates the enclosed areas. Automatic borders should always be reviewed; behind calcium the EEM is traced by extrapolating between visible segments.</dd>
+    <dt>Lumen diameter</dt><dd>Minimum and maximum diameters, each measured through the center point of the lumen.</dd>
+    <dt>Area stenosis</dt><dd>(Reference lumen area &minus; lumen area) &divide; reference lumen area. The reference must be stated; here it is the mean of the proximal and distal reference lumen areas.</dd>
+    <dt>Length</dt><dd>Distance between two frames along the pullback, such as from the distal to the proximal reference.</dd>
+    <dt>EEM area</dt><dd>Area inside the external elastic membrane, traced at the media&ndash;adventitia border. Behind calcium the EEM is hidden by acoustic shadow. Standard practice extrapolates it from the nearest visible EEM when shadowing is limited (classically under 90&deg;). This simulator extrapolates up to 180&deg; and labels the value as extrapolated; beyond 180&deg; it reports &ldquo;not measurable&rdquo; and hides the EEM contour.</dd>
+    <dt>Plaque area (plaque + media area)</dt><dd>EEM area &minus; lumen area. It includes the media, because IVUS cannot reliably delineate the boundary between plaque and media.</dd>
+    <dt>Plaque burden</dt><dd>(Plaque + media area) &divide; EEM area, as a percentage. A reference or landing zone is usually expected to have a burden under 50%.</dd>
+    <dt>Plaque thickness</dt><dd>Minimum and maximum plaque + media thickness: the distance from the intimal leading edge to the EEM, along lines through the center of the lumen.</dd>
+    <dt>Plaque eccentricity index</dt><dd>(Maximum &minus; minimum plaque + media thickness) &divide; maximum plaque + media thickness. Values near 0 indicate concentric plaque, values near 1 eccentric plaque.</dd>
+    <dt>Calcium</dt><dd>Arc of calcium in degrees, measured from the lumen center. Calcium is superficial when the leading edge of the acoustic shadow lies in the inner (luminal) half of the plaque + media thickness, and deep when it lies in the outer half. IVUS usually cannot show calcium thickness because of the shadow behind it.</dd>
+    <div class="sub">Lesion preparation</div>
+    <dt>Semi-compliant balloon</dt><dd>Standard predilation balloon whose diameter increases with pressure. Generally effective for soft plaque; often less effective in resistant fibrous or calcified lesions.</dd>
+    <dt>NC / super-high-pressure balloon</dt><dd>Noncompliant balloons largely maintain their diameter at high pressure. Super-high-pressure designs may help fracture focal calcium.</dd>
+    <dt>Rated burst pressure</dt><dd>The pressure at or below which, in manufacturer testing, 99.9% of balloons are not expected to burst (with 95% confidence). Values vary by device. This simulator flags stent inflations above 18 atm and NC inflations above 20 atm.</dd>
+    <dt>Cutting or scoring balloon</dt><dd>Cutting balloons use microblades to create controlled incisions in fibrous or moderately calcified plaque. Scoring balloons use wires to concentrate force along the plaque and may reduce balloon slippage.</dd>
+    <dt>Intravascular lithotripsy</dt><dd>Acoustic shockwaves can modify both superficial and deep calcium, with relatively little effect on soft tissue.</dd>
+    <dt>Rotational / orbital atherectomy</dt><dd>A diamond-coated burr (rotational) or crown (orbital) modifies mainly superficial calcium to help device delivery and stent expansion. Rotational atherectomy is generally preferred for balloon-uncrossable lesions. Lithotripsy may be added depending on residual calcium.</dd>
+    <dt>Excimer laser atherectomy</dt><dd>Laser ablation, used mainly for balloon-uncrossable or undilatable lesions, in-stent restenosis, and underexpanded stents; its effect on heavy calcium is typically modest.</dd>
+    <div class="sub">Stent result</div>
+    <dt>Stent area / MSA</dt><dd>Area inside the stent struts; the minimum stent area (MSA) is the smallest in the stented segment. Absolute target used here: above 5 mm&sup2; for a non-left-main vessel on IVUS.</dd>
+    <dt>Stent expansion</dt><dd>MSA as a percentage of the reference lumen area. This simulator uses the following criterion: expansion is optimal when the MSA is &gt;5.0 mm&sup2; or &gt;90% of the distal reference lumen area.</dd>
+    <dt>Malapposition</dt><dd>Struts separated from the vessel wall with blood behind them. Flagged here when the separation exceeds 0.4 mm over more than 1 mm of length.</dd>
+    <dt>Edge dissection / landing zone</dt><dd>A tear at or near the stent edge. The simulator uses the following criteria for calling it major: it spans 60&deg; or more of the circumference, is 3 mm or longer, or extends into the media or adventitia. Preferred landing zones should have plaque burden under 50%, and attenuated plaque should be avoided where feasible.</dd>
+  </dl>
+  <ol class="refs">
+    <li>Mintz GS, Nissen SE, Anderson WD, et al. ACC Clinical Expert Consensus Document on Standards for Acquisition, Measurement and Reporting of Intravascular Ultrasound Studies (IVUS). J Am Coll Cardiol. 2001;37(5):1478&ndash;1492.</li>
+    <li>R&auml;ber L, Mintz GS, Koskinas KC, et al. Clinical use of intracoronary imaging. Part 1: guidance and optimization of coronary interventions. An expert consensus document of the European Association of Percutaneous Cardiovascular Interventions. Eur Heart J. 2018;39(35):3281&ndash;3300.</li>
+    <li>Zhang M, Matsumura M, Usui E, et al. Intravascular ultrasound-derived calcium score to predict stent expansion in severely calcified lesions. JACC Cardiovasc Interv. 2021.</li>
+  </ol>
+  <p class="refs">The thresholds used for scoring are teaching values adapted from these sources; check them against current guidance before clinical use.</p>
+  </div></div>
+</section>
+<footer>
+  Educational model only. The atlas findings follow the descriptions in published IVUS teaching material, including the Boston Scientific IVUS e-casebook (Nakamura et al.), rebuilt synthetically; no images from those sources are used. Plaque appearances follow published IVUS tissue definitions in simplified form. Images are generated procedurally and do not come from patients; expansion, dissection and perforation behaviour is a simplified teaching approximation. Optimization criteria are adapted from the EAPCI expert consensus on intravascular imaging (Räber et al., EuroIntervention 2018; Johnson et al., Eur Heart J 2019) and segmental expansion targets used in imaging-guided PCI trials. The IVUS calcium score follows Zhang et al. (JACC Cardiovasc Interv 2021).
+</footer>
+</div>
+
+<script>
+(()=>{
+const N=251,DZ=0.2,ZL=50,FOV=3.1,TAU=Math.PI*2;
+const $=s=>document.querySelector(s);
+const FEEDBACK_EMAIL='abdulmannan331@hotmail.com'; // shows the feedback link in the banner
+const ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t)};
+const ad=(a,b)=>{let d=(a-b)%TAU;if(d>Math.PI)d-=TAU;if(d<-Math.PI)d+=TAU;return d};
+const cl=v=>v<0?0:v>255?255:v;
+const hash=(a,b,c)=>{let h=Math.imul(a|0,374761393)^Math.imul(b|0,668265263)^Math.imul(c|0,1442695041);h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return (h>>>0)/4294967296};
+const idx=z=>Math.max(0,Math.min(N-1,Math.round(z/DZ)));
+const area=r=>Math.PI*r*r;
+
+/* ---------- synthetic cases ---------- */
+const ck=hh=>Math.PI/2-hh*Math.PI/6; // display clock position (12 at top, 3 to the right)
+const BRANCHES=[{n:'Septal',zo:6.5,a:ck(4),rb:0.75,s:1.6},{n:'D2',zo:9,a:ck(1),rb:0.9,s:1.0},{n:'Septal',zo:11,a:ck(4),rb:0.75,s:1.6},{n:'Septal',zo:31.5,a:ck(4),rb:0.75,s:1.6},{n:'D1',zo:35,a:ck(1),rb:1.1,s:1.0},{n:'Septal',zo:38.5,a:ck(4),rb:0.8,s:1.6},{n:'LCx',zo:44,a:ck(6),rb:1.8,s:2.7}];
+function buildCase(type){
+  const F=[];
+  for(let i=0;i<N;i++){
+    const z=i*DZ,D=z<=40?3.3+1.7*z/40:5.0+0.6*ss(40,45,z),R=D/2;
+    const pb=0.32+0.46*Math.exp(-Math.pow((z-19.5)/6,4))+0.2*Math.exp(-Math.pow((z-29.5)/1.5,2));
+    const rl=Math.sqrt(area(R)*(1-pb)/Math.PI);
+    const d=Math.max(0,0.55*(R-rl-0.12)),th0=0.6+0.05*z;
+    let arc=0,thk=0,cA=th0,lip=0,lipA=th0,cap=0.15,fib=0,cDeep=false,ff=0;
+    if(type==='calc'){
+      arc=290*ss(15,16.5,z)*(1-ss(22.5,24,z))+70*ss(18,18.6,z)*(1-ss(21.4,22,z));thk=0.65;
+      if(arc<1){arc=90*ss(24.3,24.8,z)*(1-ss(26.2,26.7,z));thk=0.35;cDeep=true;cA=th0+0.6}
+      lip=110*ss(26.5,27.2,z)*(1-ss(29.8,30.5,z));lipA=th0+1.15;
+    }else if(type==='fib'){
+      fib=ss(0.45,0.6,pb);ff=Math.max(ss(0.42,0.48,pb)*(1-ss(0.6,0.66,pb)),ss(27.5,28.3,z)*(1-ss(30.7,31.5,z)));cDeep=true;
+      arc=40*ss(22,22.4,z)*(1-ss(23,23.4,z));thk=0.2;cA=th0+1.0;
+    }else{
+      lip=220*ss(14,15.5,z)*(1-ss(23.5,25,z));
+      cap=0.13-0.08*ss(16.5,17.8,z)*(1-ss(20.2,21.5,z));
+      const sh=140*ss(27.5,28.3,z)*(1-ss(30.7,31.5,z));
+      if(sh>lip){lip=sh;cap=0.18;lipA=th0+0.3}
+      arc=35*ss(23.6,24,z)*(1-ss(24.6,25,z));thk=0.2;cA=th0+2.2;
+    }
+    let sb=null,sbc=0,sbr=0,sbName=null;const sbs=[];
+    // clock position: diagonals epicardial (th0+0.25), septals myocardial (~150° away), LCx posterior-lateral; s = lateral mm per axial mm (takeoff steepness)
+    for(const B of BRANCHES){
+      const dz=z-B.zo;let rb=B.rb,c;
+      if(dz>0&&dz<0.5*rb){rb=B.rb*(1-dz/(0.5*B.rb));c=rl-0.2*B.rb}
+      else if(dz<=0&&dz>-4.5){c=rl-0.2*B.rb+B.s*(-dz);if(c-B.rb>rl+2.6)continue}
+      else continue;
+      if(rb<0.15)continue;sbs.push({a:B.a,c,r:rb,n:B.n});if(sb==null){sb=B.a;sbc=c;sbr=rb;sbName=B.n}
+    }
+    F.push({z,D,R,pb,rl,d,th0,arc,thk,cA,cDeep,ff,lip,lipA,cap,fib,sb,sbc,sbr,sbName,sbs,gw:3.9+0.02*z,so:i*0.35});
+  }
+  let mla=0;F.forEach((f,i)=>{if(f.rl<F[mla].rl)mla=i});
+  let maxA=0,maxT=0,len180=0,l270=0,full=false,minD=9,lipMax=0,lipLen=0,minCap=1;
+  F.forEach(f=>{if(f.arc>maxA)maxA=f.arc;if(f.arc>0&&f.thk>maxT)maxT=f.thk;if(f.arc>180)len180+=DZ;if(f.arc>=270)l270+=DZ;if(f.arc>=359)full=true;if(f.arc>0&&f.D<minD)minD=f.D;
+    if(f.lip>lipMax)lipMax=f.lip;if(f.lip>=180)lipLen+=DZ;if(f.lip>=90&&f.cap<minCap)minCap=f.cap});
+  const st={maxA,maxT,len180,l270,full,minD,lipMax,lipLen,minCap,
+    oct:(maxA>180?2:0)+(maxT>0.5?1:0)+(len180>5?1:0),
+    ivus:(l270>=5?1:0)+(full?1:0)+(minD<3.5&&maxA>=90?1:0),
+    bigLipid:lipMax>=180&&lipLen>=4};
+  return{F,mla,st};
+}
+const CASES={
+  calc:{sub:'a synthetic calcified LAD lesion',expert:[
+    'The MLA is about 2.9 mm² near 18 mm, with roughly 78% plaque burden.',
+    'Good references sit near 8 mm distally (EEM about 3.6 mm) and near 33 mm proximally (EEM about 4.7 mm). The plaque shoulder at 29–30 mm is above 50% burden, so don\u2019t land there.',
+    'The calcium is a 360° ring, about 0.65 mm thick and over 5 mm long (IVUS calcium score 2). This is severe calcium: a 360° superficial ring with an IVUS calcium score of 2. Lithotripsy, rotational or orbital atherectomy, or atherectomy followed by lithotripsy modify it most reliably. Cutting, scoring and super-high-pressure balloons can crack calcium and are reasonable in many calcified lesions, but in a ring like this they may leave the stent underexpanded unless followed by well-sized, high-pressure postdilation. The deep calcium near 25 mm responds to lithotripsy but not to atherectomy, which only removes the surface.',
+    'Size to the distal EEM rounded down: a 3.5 mm stent, 26–28 mm long, deployed at 14–16 atm.',
+    'The vessel tapers, so postdilate the proximal half with a 4.0–4.5 mm NC balloon at high pressure. Keep anything larger than 3.5 mm away from the distal edge.']},
+  fib:{sub:'a synthetic fibrous LAD lesion',expert:[
+    'The MLA is about 2.9 mm² near 18 mm, in homogeneous fibrous plaque with about 78% burden and only a small spot of calcium.',
+    'Mark references near 8 mm and 33 mm, avoiding the shoulder at 29–30 mm.',
+    'Fibrous plaque yields to a noncompliant balloon. Calcium modification adds nothing here: lithotripsy has little effect on non-calcified plaque, and atherectomy or laser only adds perforation and slow-flow risk.',
+    'Predilate with an NC balloon, then deploy a 3.5 × 26–28 mm stent at 14–16 atm.',
+    'Postdilate the proximal half with a 4.0 mm NC balloon to match the tapering vessel.']},
+  lip:{sub:'a synthetic lipid-rich LAD lesion',expert:[
+    'The MLA is about 2.9 mm² near 18 mm, inside a lipid pool spanning about 220°. On IVUS it looks like attenuated plaque without calcium; the thin cap over it is below IVUS resolution.',
+    'A second lipid-rich shoulder sits at 28–31 mm. Land proximal to it, near 33 mm, because an edge on lipid invites dissection.',
+    'The plaque is soft. Direct stenting or gentle semi-compliant predilation is reasonable. Avoid atherectomy, laser, aggressive predilation and high deployment pressure, which raise the risk of distal embolization and no-reflow.',
+    'Deploy a 3.5 × 26–28 mm stent at 12–14 atm.',
+    'Postdilate the proximal half with a 4.0 mm NC balloon sized to the vessel, not larger. Expect some tissue protrusion between struts over the lipid pool.']}
+};
+const CS={};for(const k in CASES)CS[k]=buildCase(k);
+let F=CS.calc.F,mlaI=CS.calc.mla;
+
+const LENS=[8,12,15,18,22,26,28,30,33,38];
+// how much of the expansion penalty remains after each preparation (lower = more effective). Teaching approximations.
+// superficial calcium / deep calcium / fibrous plaque; atheroablation acts on the surface, lithotripsy also reaches deep calcium
+const PREPC={none:1,sc:0.92,nc:0.8,opn:0.28,cut:0.25,ivl:0.15,rota:0.2,orb:0.18,rotaivl:0.07,elca:0.75};
+const PREPCD={none:1,sc:0.97,nc:0.92,opn:0.8,cut:0.85,ivl:0.2,rota:0.95,orb:0.9,rotaivl:0.2,elca:0.9};
+const PREPF={none:1,sc:0.6,nc:0.45,opn:0.4,cut:0.35,ivl:0.95,rota:0.85,orb:0.85,rotaivl:0.8,elca:0.7};
+const PREPNR={none:0,sc:0,nc:1,opn:1,cut:1,ivl:1,rota:2,orb:2,rotaivl:2,elca:2}; // contribution to no-reflow risk over a large lipid pool
+const ATHERO=['rota','orb','rotaivl','elca'];
+const PREPNAME={none:'no lesion preparation',sc:'semi-compliant predilation',nc:'NC predilation',opn:'super-high-pressure NC balloon',cut:'cutting/scoring balloon',ivl:'lithotripsy',rota:'rotational atherectomy',orb:'orbital atherectomy',rotaivl:'rotational atherectomy plus lithotripsy',elca:'excimer laser atherectomy'};
+const pcFor=(f,p)=>f.cDeep?PREPCD[p]:PREPC[p];
+const resPB=f=>0.12*Math.min(1,Math.max(0,(f.pb-0.5)/0.3))*(f.lip>=90?0.6:1);
+const calcPen=f=>f.arc>0?0.30*Math.pow(f.arc/360,1.5)*(f.thk>0.5?1:0.6):0;
+const fibPen=f=>0.185*f.fib;
+
+const S={lAng:Math.PI/3,case:'calc',mod:'ivus',i:mlaI,refD:null,refP:null,stentD:3.0,len:26,prep:'none',pD:14,deployed:false,z0:0,z1:0,nom:0,sd:new Float32Array(N),ncD:3.5,ncP:16,region:'whole',diss:{d:false,p:false},perf:false,nr:0,capHit:false,log:[],cont:true,prepUsed:null};
+
+/* ---------- geometry ---------- */
+let G=[];
+function setCath(g){const off=Math.min(0.55,0.45*Math.max(0,g.rlP-0.55)),ph=1.3+0.08*g.z;g.vx=off*Math.cos(ph);g.vy=off*Math.sin(ph);g.gw=ph+0.5*Math.sin(g.z*0.3);return g}
+const preGeo=f=>setCath(Object.assign({},f,{rs:0,rlP:f.rl,Rp:f.R,dp:f.d,diss:false,frac:null,prot:false}));
+function geo(i){
+  const f=F[i],g=preGeo(f);
+  if(S.deployed){
+    const sd=S.sd[i];
+    if(sd>0){g.rs=sd/2;g.rlP=Math.max(f.rl,g.rs);g.Rp=Math.max(f.R,Math.sqrt(g.rlP*g.rlP+(f.R*f.R-f.rl*f.rl)*0.8));g.dp=Math.max(0,Math.min(f.d,g.Rp-g.rlP-0.08));g.prot=f.lip>=90&&g.rs>=f.rl*0.95}
+    if((S.diss.d&&f.z>=S.z0-2&&f.z<=S.z0+0.4)||(S.diss.p&&f.z>=S.z1-0.4&&f.z<=S.z1+2))g.diss=true;
+    if(f.arc>0&&['ivl','rotaivl','cut','opn'].includes(S.prepUsed))g.frac=(S.prepUsed==='ivl'||S.prepUsed==='rotaivl'?[-1.9,-0.4,1.0,2.4]:S.prepUsed==='opn'?[0.9]:[-0.8,1.3]).map(a=>f.cA+a);
+    if(f.arc>0&&!f.cDeep&&['rota','orb','rotaivl'].includes(S.prepUsed))g.thk=Math.max(0.2,f.thk-0.25);
+  }
+  return setCath(g);
+}
+/* ---------- texture, shape ---------- */
+function vnoise(x,y,s){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);
+  const a=hash(xi,yi,s),b=hash(xi+1,yi,s),c=hash(xi,yi+1,s),d=hash(xi+1,yi+1,s);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}
+function tex(r,t,z,s){const x=r*Math.cos(t),y=r*Math.sin(t);return 0.6*vnoise(x/0.16+z*1.7,y/0.16+z*0.9,s)+0.4*vnoise(x/0.05+z*3.1,y/0.05-z*2.3,s+11)}
+const preShape=(g,t)=>{const z=g.z,k=1+0.9*Math.min(1,Math.max(0,(g.pb-0.4)/0.35));return 1+k*(0.04*Math.cos(2*(t-0.8-0.11*z))+0.022*Math.cos(3*(t-2.1+0.07*z))+0.012*Math.cos(5*(t-0.3-0.19*z))+0.007*Math.cos(8*(t-1.7+0.23*z))+0.004*Math.cos(13*(t+0.4-0.31*z)))};
+const eemShape=(g,t)=>{const z=g.z;return 1+0.02*Math.cos(2*(t-1.2-0.11*z))+0.01*Math.cos(3*(t+1.1+0.07*z))};
+const inLip=(g,t)=>g.lip>0&&Math.abs(ad(t,g.lipA))<g.lip*Math.PI/360;
+const TA=720,ai=t=>((Math.round(t/TAU*TA)%TA)+TA)%TA;
+const eemR=(g,t)=>{if(g._E)return g._E[ai(t)];const p=ad(t,g.th0),s=g.dp*Math.sin(p);return (g.dp*Math.cos(p)+Math.sqrt(Math.max(0,g.Rp*g.Rp-s*s)))*eemShape(g,t)};
+function lumC(g,t){let pre=g.rl*preShape(g,t);if(g.bumps)for(const b of g.bumps){const x=Math.abs(ad(t,b.a))/b.w;if(x<1)pre+=b.amp*Math.pow(Math.cos(x*Math.PI/2),2)}const r=g.rs>0?Math.max(pre,g.rs*(1+0.012*Math.cos(9*(t-g.so)))):pre;return Math.min(r,eemR(g,t)-0.1)}
+function lumR(g,t){
+  if(g._L)return g._L[ai(t)];
+    const r=lumC(g,t);
+  if(g.prot&&inLip(g,t)){const st=TAU/9,k=Math.round((t-g.so)/st),fr=Math.abs(ad(t,g.so+k*st))/(st/2);return r-(g.protAmp||0.13)*Math.pow(Math.sin(Math.min(1,fr)*Math.PI/2),2)}
+  return r;
+}
+const calcAt=(g,t)=>{if(g.arc<1)return 0;if(g.arc<359.5&&Math.abs(ad(t,g.cA))>g.arc*Math.PI/360)return 0;if(g.frac)for(const a of g.frac)if(Math.abs(ad(t,a))<0.035)return 0;return g.thk};
+const strutAt=(g,t)=>{if(g.fs!==undefined)return g.fs;const st=TAU/9,k=Math.round((t-g.so)/st);return Math.abs(ad(t,g.so+k*st))*g.rs<0.045};
+const inDiss=(g,t)=>g.diss&&Math.abs(ad(t,g.dissA!==undefined?g.dissA:g.th0+Math.PI))<0.55;
+function eelVis(g){let k=0;for(let j=0;j<72;j++){const t=j*TAU/72;if(g.sb!=null&&Math.abs(ad(t,g.sb))<0.42)continue;if(eemR(g,t)-g.rlP<1.25)k++}return k*5}
+
+/* ---------- echo/backscatter models (mean intensity; speckle added later) ---------- */
+function ivus(g,rc,tc,r,t,n,m){
+  INLUM=false;
+  if(rc<0.42)return 2;
+  if(rc<0.47)return 210;
+  if(rc<0.55)return 12;
+  const ring=80*Math.exp(-(rc-0.55)/0.1)*(0.7+0.6*m);
+  let sh=1;const gwr=0.85,dg=Math.abs(ad(tc,g.gw));
+  if(dg*rc<0.045&&Math.abs(rc-gwr)<0.045)return 255;
+  if(rc>gwr&&dg*gwr<0.045)sh=0.1;
+  const rl=lumR(g,t);
+  if(g.rs>0&&strutAt(g,t)){const e=r-g.rs;if(Math.abs(e)<0.035)return 255*sh+ring;if(Math.abs(e-0.1)<0.02)return 100*sh+ring;if(r>g.rs)sh*=0.45}
+  if(g.sbs&&g.sbs.length&&r>=rl-0.02){
+    let wMin=9;
+    for(const B of g.sbs){const ba=g.slab&&Math.abs(ad(B.a,t))<g.slab?t:B.a,qx=r*Math.cos(t)-B.c*Math.cos(ba),qy=r*Math.sin(t)-B.c*Math.sin(ba),db=Math.hypot(qx,qy)/(1+0.05*Math.sin(3*Math.atan2(qy,qx)+g.z));
+      if(db<B.r){INLUM=true;return ring+(32+20*m+10*Math.exp(-(B.r-db)/0.3))*sh*(g.bloodGain||1)}
+      const w=(db-B.r)*(B.r<0.8?1.6:1);if(w<wMin)wMin=w}
+    if(wMin<0.55){const w=wMin;INLUM=false;let v=w<0.06?150+70*n:w<0.15?10+10*n:(175+75*n)*Math.exp(-(w-0.15)/0.9)*(m<0.38?0.4:1);return v*sh*Math.exp(-rc/12)+ring}
+  }
+  if(g.diss){const da=ad(t,g.dissA!==undefined?g.dissA:g.th0+Math.PI);if(da>0.12&&da<0.55&&r<rl){const rf=rl-0.42*(da-0.12)/0.43;if(Math.abs(r-rf)<0.035){INLUM=false;return 165*sh+ring}}}
+  if(r<rl){INLUM=true;const nw=Math.exp(-(rl-r)/0.3);return ring+(32+20*m+14*nw)*sh*(g.bloodGain||1)}
+  let dep=r-rl;
+  if(inDiss(g,t)){const da=ad(t,g.dissA!==undefined?g.dissA:g.th0+Math.PI),cd=Math.min(0.42,0.55*(eemR(g,t)-rl));if(dep<0.06&&da<=0.12)return 150*sh+ring;if(dep<cd){INLUM=true;return ring+(30+22*m)*sh}}
+  const rE=eemR(g,t),c=calcAt(g,t),lip=inLip(g,t);let v;
+  const cs=c?(g.cDeep?Math.max(0.03,rE-rl-c-0.12):0.03):0;
+  if(c&&dep>cs){
+    const ce=cs+0.12+0.12*n;
+    if(dep<ce)v=215+55*n;
+    else{const q=dep-ce;v=8+10*m;if(!g.cDeep){const rcc=g._B?g._B[ai(tc)]+cs:rc-(dep-cs);for(let k=2;k<=6;k++)if(Math.abs(rc-k*rcc)<0.035)v=Math.max(v,135*Math.pow(0.75,k-2));}}
+  }
+  else if(r<rE-0.1){
+    if(g.prot&&lip)v=88+60*n;
+    else if(lip&&dep>0.09){
+      if(g.cap<0.065)v=(30+28*n)*Math.exp(-(dep-0.09)*2.2);
+      else v=16+30*n;
+    }else{v=g.ff>0.5?44+40*n:(g.fib>0.5?92:75)+55*n;if(dep<0.06&&g.pb<0.45&&rE-rl<0.42&&!g.prot)v+=60}
+  }
+  else if(r<rE)v=8+10*n;
+  else{const fat=m<0.38?0.35:1;v=(150+75*n)*Math.exp(-(r-rE)/1.2)*fat;if(lip)v*=g.cap<0.065?0.25:0.6}
+  return v*sh*Math.exp(-rc/12)+ring;
+}
+function oct(g,rc,tc,r,t,n,m){
+  if(rc<0.36)return 0;
+  if(rc<0.47){if(rc>0.385&&rc<0.4)return 210;if(rc>0.445)return 160;return 5}
+  let sh=1;const gwr=0.62,dg=Math.abs(ad(tc,g.gw));
+  if(dg*rc<0.04&&Math.abs(rc-gwr)<0.04)return 255;
+  if(rc>gwr&&dg*gwr<0.04)sh=0.02;
+  const rl=lumR(g,t);
+  if(g.rs>0&&strutAt(g,t)){if(Math.abs(r-g.rs)<0.022)return sh<0.1?10:255;if(r>g.rs)sh*=0.03}
+  if(r<rl)return 1+3*m;
+  let dep=r-rl;
+  if(inDiss(g,t)){if(dep<0.04)return 220*sh;if(dep<0.3)return 2;dep-=0.3}
+  const rE=eemR(g,t),c=calcAt(g,t);let v;
+  const cs=c?(g.cDeep?Math.max(0.08,rE-rl-c-0.12):0.08):0,cEnd=c?Math.min(cs+c,rE-rl-0.12):0;
+  const lip=inLip(g,t),cap=g.prot?0.03:g.cap;
+  if(c&&cEnd-cs>0.04&&dep>=cs&&dep<=cEnd){const I=Math.exp(-dep*1.0),e=Math.min(dep-cs,cEnd-dep);v=e<0.022?215*I:(40+45*n)*I}
+  else if(lip&&dep>=cap)v=245*Math.exp(-dep*1.45)*Math.exp(-(dep-cap)*7)*(0.6+0.5*n);
+  else{
+    const I=Math.exp(-dep*1.15);
+    if(lip&&g.cap<0.065&&!g.prot&&hash(Math.floor(r/0.02),Math.floor(t*70),9)>0.86)v=255;
+    else if(r<rE-0.1)v=g.ff>0.5?205*Math.exp(-dep*1.7)*(0.6+0.5*n):235*I*(0.6+0.5*n);
+    else if(r<rE)v=35*I*(0.5+n);
+    else v=230*I*Math.exp(-(r-rE)*0.9)*(0.4+0.8*n)*(m<0.4?0.35:1);
+  }
+  return v*sh;
+}
+/* ---------- plaque labels ---------- */
+function plaqueType(f,ivus){
+  if(f.lip>=90){
+    if(ivus)return f.cap<0.065?'Attenuated plaque, likely lipid-rich':'Echolucent plaque, likely lipid-rich';
+    return f.cap<0.065?'Thin-cap fibroatheroma':'Lipid-rich fibroatheroma';
+  }
+  if(f.arc>=90)return f.cDeep?'Fibrous with deep calcium':'Fibrocalcific (superficial calcium)';
+  if(f.arc>0)return f.cDeep?'Fibrous with spotty deep calcium':'Fibrous with spotty calcium';
+  if(f.ff>0.5)return ivus?'Fibro-fatty':'Fibrous (looks fibro-fatty on IVUS)';
+  if(f.lip>0)return 'Fibrous with a small lipid pool';
+  if(f.pb>=0.45)return 'Fibrous';
+  return 'Minimal disease (intimal thickening)';
+}
+
+/* ---------- canvases ---------- */
+const cv={angio:$('#angio'),long:$('#long'),xs:$('#xs'),qz:$('#qz'),at:$('#at')};
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+const off={angio:mk(800,360),long:mk(800,224),xs:mk(360,360),qz:mk(360,360),at:mk(360,360)};
+const yc=x=>170*0.52+14*Math.sin(x/500*Math.PI*1.4+0.5);
+const zx=(z,w)=>(1-z/ZL)*w;
+function sizeC(c){const d=window.devicePixelRatio||1,w=Math.round(c.clientWidth*d),h=Math.round(c.clientHeight*d);if(w&&h&&(c.width!==w||c.height!==h)){c.width=w;c.height=h}return d}
+
+/* ---------- angiogram: left coronary tree (LM, LAD with diagonals/septals, proximal LCx with OM) ---------- */
+const AW=800,AH=360,APX=6.5,AST=0.5,AZ={x0:40,y0:46,w:AW/1.2,h:AH/1.2}; // px per mm, sample step (mm)
+function crSpline(P){const out=[];for(let i=0;i<P.length-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(P.length-1,i+2)];
+  for(let t=0;t<1;t+=0.02){const t2=t*t,t3=t2*t,f=k=>0.5*(2*p1[k]+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3);out.push([f(0),f(1)])}}
+  out.push(P[P.length-1].slice());return out}
+function resamp(pl,step){const r=[pl[0].slice()];let need=step;for(let i=1;i<pl.length;i++){let ax=pl[i-1][0],ay=pl[i-1][1];const bx=pl[i][0],by=pl[i][1];let seg=Math.hypot(bx-ax,by-ay);
+  while(seg>=need){const t=need/seg;ax+=(bx-ax)*t;ay+=(by-ay)*t;r.push([ax,ay]);seg-=need;need=step}need-=seg}return r}
+const heading=(pl,k)=>{const a=pl[Math.max(0,k-2)],b=pl[Math.min(pl.length-1,k+2)];return Math.atan2(b[1]-a[1],b[0]-a[0])};
+function grow(p,th,lenMM,bendDeg){const n=Math.round(lenMM/AST),out=[p.slice()];let x=p[0],y=p[1],a=th;const db=bendDeg*Math.PI/180/n;for(let i=0;i<n;i++){a+=db;x+=Math.cos(a)*AST*APX;y+=Math.sin(a)*AST*APX;out.push([x,y])}return out}
+const ANG=(()=>{
+  const step=AST*APX;
+  const lm=resamp(crSpline([[52,118],[88,136],[122,152]]),step);
+  const lad=resamp(crSpline([[122,152],[180,160],[260,170],[340,183],[420,197],[500,213],[580,232],[650,256],[715,287],[772,326]]),step);
+  const trunk=lm.concat(lad.slice(1)),uLM=(lm.length-1)*AST;
+  const lcx=resamp(crSpline([[122,152],[110,198],[114,248],[134,298],[160,348],[176,384]]),step);
+  const guide=resamp(crSpline([[-12,62],[18,82],[38,100],[52,118]]),step);
+  const kAt=u=>Math.max(0,Math.min(trunk.length-1,Math.round(u/AST)));
+  const br=[];
+  const add=(name,host,k,rel,len,d0,d1,bend,lab)=>{const th=heading(host,k)+rel*Math.PI/180;br.push({name,pts:grow(host[k],th,len,bend),d0,d1,lab})};
+  add('D1',trunk,kAt(uLM+9),-36,40,2.2,1.1,20,true);
+  add('D2',trunk,kAt(uLM+35),-34,38,1.8,0.9,16,true);
+  add('D3',trunk,kAt(uLM+64),-32,28,1.8,1.0,12,true);
+  add('S',trunk,kAt(uLM+5.5),68,16,1.6,0.6,-8,false);
+  add('S',trunk,kAt(uLM+12.5),72,18,1.5,0.6,-8,false);
+  add('S',trunk,kAt(uLM+33),76,16,1.5,0.5,-8,false);
+  add('S',trunk,kAt(uLM+37.5),76,15,1.5,0.5,-8,false);
+  add('S',trunk,kAt(uLM+47),78,20,1.4,0.6,-8,false);
+  for(const [u,l] of [[57,15],[68,13],[80,11]])add('S',trunk,kAt(uLM+u),78,l,1.0,0.5,-8,false);
+  add('OM1',lcx,Math.round(16/AST),-38,40,2.5,1.2,12,true);
+  return{trunk,uLM,lcx,guide,br,kAt};
+})();
+const zU=z=>ANG.uLM+44-z;
+function trunkD(u){
+  const {uLM}=ANG,z=uLM+44-u,u1=uLM+44,uEnd=(ANG.trunk.length-1)*AST;
+  if(z>ZL)return 2*G[N-1].rlP;
+  if(z>=0)return 2*G[idx(z)].rlP;
+  const t=(u-u1)/(uEnd-u1);return 2*G[0].rlP*(1-t)+1.4*t;
+}
+function renderAngio(){
+  const W=AW,H=AH,o=off.angio.getContext('2d'),im=o.createImageData(W,H),D=im.data,den=new Float32Array(W*H);
+  const stamp=(p,dmm,gain)=>{const r=dmm/2*APX,x0=Math.max(0,Math.floor(p[0]-r)),x1=Math.min(W-1,Math.ceil(p[0]+r)),y0=Math.max(0,Math.floor(p[1]-r)),y1=Math.min(H-1,Math.ceil(p[1]+r));
+    for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dd=Math.hypot(x+0.5-p[0],y+0.5-p[1]);if(dd>=r)continue;const v=Math.min(0.95,2*Math.sqrt(r*r-dd*dd)/APX*gain),q=y*W+x;if(v>den[q])den[q]=v}};
+  ANG.trunk.forEach((p,k)=>stamp(p,trunkD(k*AST),0.205));
+  ANG.lcx.forEach((p,k)=>stamp(p,3.6-1.0*k/(ANG.lcx.length-1),0.205));
+  for(const b of ANG.br)b.pts.forEach((p,k)=>stamp(p,b.d0+(b.d1-b.d0)*k/(b.pts.length-1),0.205));
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const vx=(x-W/2)/(W/2),vy=(y-H/2)/(H/2);
+    const heart=Math.exp(-(((x-600)/430)**2+((y-330)/230)**2));
+    let rib=0;for(let k=-1;k<4;k++){const yy=y-(40+115*k+0.28*x);rib+=Math.exp(-(yy*yy)/(2*11*11))}
+    const bg=(176+22*(hash(x>>2,y>>2,5)-0.5)+10*(hash(x,y,9)-0.5))*(1-0.16*(vx*vx+vy*vy))*(1-0.1*heart)*(1-0.05*Math.min(1,rib));
+    const k=(y*W+x)*4;D[k]=cl(bg*(1-0.8*den[y*W+x]));D[k+3]=255;
+  }
+  for(let pass=0;pass<2;pass++){const T=new Float32Array(W*H);for(let y=0;y<H;y++)for(let x=0;x<W;x++){let s=0,n=0;for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const xx=x+i,yy=y+j;if(xx<0||yy<0||xx>=W||yy>=H)continue;s+=D[(yy*W+xx)*4];n++}T[y*W+x]=s/n}for(let q=0;q<W*H;q++)D[q*4]=T[q]}
+  for(let q=0;q<W*H;q++){const v=cl(D[q*4]+14*(hash(q,7,31)-0.5)+6*(hash(q>>3,9,37)-0.5));D[q*4]=D[q*4+1]=D[q*4+2]=v}
+  o.putImageData(im,0,0);
+}
+function angPt(z){const k=ANG.kAt(zU(z)),p=ANG.trunk[k],th=heading(ANG.trunk,k);return{x:p[0],y:p[1],nx:-Math.sin(th),ny:Math.cos(th),k}}
+function drawAngio(){
+  const c=cv.angio,d=sizeC(c),x=c.getContext('2d'),w=c.width,h=c.height,sx=w/AW,sy=h/AH;
+  x.drawImage(off.angio,AZ.x0,AZ.y0,AZ.w,AZ.h,0,0,w,h);
+  const P=(px,py)=>[(px-AZ.x0)*w/AZ.w,(py-AZ.y0)*h/AZ.h];
+  // vessel labels
+  x.font=`600 ${11*d}px "Public Sans",system-ui,sans-serif`;x.fillStyle='rgba(20,30,38,.75)';
+  const lab=(t,p,dx,dy)=>{const q=P(p[0],p[1]);x.fillText(t,q[0]+dx*d,q[1]+dy*d)};
+  lab('LM',ANG.trunk[Math.round(ANG.uLM/2/AST)],-6,-14);
+  lab('LAD',ANG.trunk[ANG.kAt(ANG.uLM+72)],6,-14);
+  lab('LCx',ANG.lcx[Math.round(ANG.lcx.length*0.55)],-34,0);
+  for(const b of ANG.br)if(b.lab)lab(b.name,b.pts[b.pts.length-1],4,b.name[0]==='S'?12:-4);
+  // pullback extent
+  const a0=angPt(ZL),a1=angPt(0);x.strokeStyle='rgba(242,182,48,.75)';x.lineWidth=1.2*d;x.setLineDash([4*d,4*d]);x.beginPath();
+  for(let k=a0.k;k<=a1.k;k++){const p=ANG.trunk[k],th=heading(ANG.trunk,k),o=-26,q=P(p[0]-Math.sin(th)*o,p[1]+Math.cos(th)*o);k===a0.k?x.moveTo(q[0],q[1]):x.lineTo(q[0],q[1])}x.stroke();x.setLineDash([]);
+  {const m=ANG.trunk[Math.round((a0.k+a1.k)/2)],q=P(m[0],m[1]-34);x.fillStyle='rgba(168,115,0,.95)';x.fillText('IVUS pullback',q[0]-30*d,q[1])}
+  // stent
+  if(S.deployed){x.strokeStyle='#0d8577';x.lineWidth=1.6*d;for(const sg of[-1,1]){x.beginPath();let first=true;for(let z=S.z0;z<=S.z1+1e-6;z+=DZ){const a=angPt(z),r=S.sd[idx(z)]/2*APX+2,q=P(a.x+sg*a.nx*r,a.y+sg*a.ny*r);first?x.moveTo(q[0],q[1]):x.lineTo(q[0],q[1]);first=false}x.stroke()}}
+  // references and cursor
+  const tick=(z,col,len,lw,txt)=>{const a=angPt(z),q0=P(a.x-a.nx*len,a.y-a.ny*len),q1=P(a.x+a.nx*len,a.y+a.ny*len);x.strokeStyle=col;x.lineWidth=lw*d;x.beginPath();x.moveTo(q0[0],q0[1]);x.lineTo(q1[0],q1[1]);x.stroke();if(txt){x.fillStyle=col;x.fillText(txt,q1[0]+3*d,q1[1]+11*d)}};
+  if(S.refD!=null)tick(S.refD,'#2f68c0',20,2,'D ref');
+  if(S.refP!=null)tick(S.refP,'#2f68c0',20,2,'P ref');
+  tick(F[S.i].z,'#e0a100',22,2.5,null);
+}
+
+/* ---------- acquisition-style rendering: polar A-lines, speckle, PSF, scan conversion ---------- */
+const NA=448,NS=320,RMAX=FOV*1.42,DR=RMAX/NS;let INLUM=false;
+function samp(fn,g,rc,tc){const cx=Math.cos(tc),sy=Math.sin(tc),px=rc*cx-g.vx,py=rc*sy-g.vy,r=Math.hypot(px,py),t=Math.atan2(py,px),z=g.z;
+  const n=0.6*vnoise(px/0.16+z*1.7,py/0.16+z*0.9,5)+0.4*vnoise(px/0.05+z*3.1,py/0.05-z*2.3,16),m=vnoise(px/0.12-z*1.3,py/0.12+z*2.1,23);
+  return fn(g,rc,tc,r,t,n,m)}
+const gn=(i,s)=>(hash(i,s,1)+hash(i,s,2)+hash(i,s,3)+hash(i,s,4)-2)*1.73;
+function gk(s){const R=Math.ceil(s*2.5),k=[];let sum=0;for(let i=-R;i<=R;i++){const v=Math.exp(-i*i/(2*s*s));k.push(v);sum+=v}return k.map(v=>v/sum)}
+function blurP(src,sr,sl){
+  const tmp=new Float32Array(src.length),out=new Float32Array(src.length);
+  const kr=gk(sr),hr=(kr.length-1)/2,kl=gk(sl),hl=(kl.length-1)/2;
+  for(let a=0;a<NA;a++){const o=a*NS;for(let s=0;s<NS;s++){let v=0;for(let j=-hr;j<=hr;j++){let q=s+j;if(q<0)q=0;else if(q>=NS)q=NS-1;v+=kr[j+hr]*src[o+q]}tmp[o+s]=v}}
+  for(let a=0;a<NA;a++){for(let s=0;s<NS;s++){let v=0;for(let j=-hl;j<=hl;j++){const q=((a+j)%NA+NA)%NA;v+=kl[j+hl]*tmp[q*NS+s]}out[a*NS+s]=v}}
+  return out;
+}
+const SPK={ivus:[],oct:[],blood:[]};
+function speckle(mod,k){
+  if(SPK[mod][k])return SPK[mod][k];
+  const L=NA*NS,w1=new Float32Array(L),w2=new Float32Array(L),sd=(mod==='ivus'?100:mod==='oct'?200:300)+k*7;
+  for(let i=0;i<L;i++){w1[i]=gn(i,sd);w2[i]=gn(i,sd+3)}
+  const [sr,sl,ga]=mod==='ivus'?[1.3,5.0,1.0]:mod==='blood'?[1.0,1.6,1.0]:[0.8,1.6,0.8];
+  const b1=blurP(w1,sr,sl),b2=blurP(w2,sr,sl),env=new Float32Array(L);let mean=0;
+  for(let i=0;i<L;i++){env[i]=Math.hypot(b1[i],b2[i]);mean+=env[i]}
+  mean/=L;for(let i=0;i<L;i++)env[i]=Math.pow(env[i]/mean,ga);
+  return SPK[mod][k]=env;
+}
+const LUTS=(()=>{const iv=[],oc=[];for(let i=0;i<256;i++){const t=i/255;iv.push([255*Math.pow(t,1.0),255*Math.pow(t,1.0),255*Math.pow(t,0.98)]);oc.push([255*Math.pow(t,0.72),232*Math.pow(t,1.0),190*Math.pow(t,1.55)])}return{ivus:iv,oct:oc}})();
+const soft=v=>v<0?0:v<200?v:Math.min(255,200+55*(1-Math.exp(-(v-200)/55)));
+let SCAN=null;
+function scanLUT(X){
+  if(SCAN&&SCAN.X===X)return SCAN;
+  const sc=X/(2*FOV),a0=new Int32Array(X*X),s0=new Int32Array(X*X),fa=new Float32Array(X*X),fs=new Float32Array(X*X),ok=new Uint8Array(X*X);
+  for(let y=0;y<X;y++)for(let x=0;x<X;x++){const k=y*X+x,dx=(x+0.5-X/2)/sc,dy=(X/2-y-0.5)/sc,r=Math.hypot(dx,dy);if(r>=RMAX-DR)continue;
+    let t=Math.atan2(dy,dx);if(t<0)t+=TAU;const a=t/TAU*NA-0.5,s=Math.max(0,r/DR-0.5);const af=Math.floor(a);a0[k]=(af+NA)%NA;fa[k]=a-af;s0[k]=Math.min(NS-2,Math.floor(s));fs[k]=Math.min(1,s-s0[k]);ok[k]=1}
+  return SCAN={X,a0,s0,fa,fs,ok};
+}
+function beamHit(g,a){const u=Math.cos(a),v=Math.sin(a);let lo=0.5,hi=4.5;for(let k=0;k<20;k++){const m=(lo+hi)/2,px=m*u-g.vx,py=m*v-g.vy;if(Math.hypot(px,py)<lumC(g,Math.atan2(py,px)))lo=m;else hi=m}return(lo+hi)/2}
+function buildTab(g){if(g._L)return;const E=new Float32Array(TA),L=new Float32Array(TA);for(let k=0;k<TA;k++)E[k]=eemR(g,k/TA*TAU);g._E=E;for(let k=0;k<TA;k++)L[k]=lumR(g,k/TA*TAU);g._L=L;
+  if(g.arc>0&&!g.cDeep){const B=new Float32Array(TA);for(let k=0;k<TA;k++)B[k]=beamHit(g,k/TA*TAU);g._B=B}}
+function renderFrame(canvas,g,seed,mod){buildTab(g);
+  const X=canvas.width,o=canvas.getContext('2d'),im=o.createImageData(X,X),D=im.data;
+  const fn=g.fn&&mod==='ivus'?g.fn:(mod==='ivus'?ivus:oct),env=speckle(mod,seed%6),envB=mod==='ivus'?speckle('blood',seed%4):env,rot=(seed*37)%NA,P=new Float32Array(NA*NS);
+  let NM=null;
+  if(g.nurd){NM=new Float32Array(NA);const sp=new Float32Array(NA);let tot=0,acc=0;
+    for(let a=0;a<NA;a++){const t=(a+0.5)/NA*TAU,inS=ss(2.04,2.16,t)*(1-ss(3.08,3.2,t));sp[a]=1-0.9*inS;tot+=sp[a]}
+    for(let a=0;a<NA;a++){NM[a]=(acc+sp[a]/2)/tot*TAU;acc+=sp[a]}}
+  for(let a=0;a<NA;a++){const t=(a+0.5)/NA*TAU,ph=NM?NM[a]:t,ea=(((NM?Math.floor(ph/TAU*NA)%NA:a)+rot)%NA)*NS;
+    let tt=ph-(g.rot||0);
+    for(let s=0;s<NS;s++){const r=(s+0.5)*DR;{const v=samp(fn,g,r,tt);P[a*NS+s]=v*(INLUM?envB:env)[ea+s]}}}
+  const B=blurP(P,mod==='ivus'?0.9:0.55,0.7),L=scanLUT(X),lut=LUTS[mod];
+  for(let k=0;k<X*X;k++){const p=k*4;D[p+3]=255;if(!L.ok[k]){D[p]=D[p+1]=D[p+2]=0;continue}
+    const a0=L.a0[k],a1=(a0+1)%NA,s0=L.s0[k],fa=L.fa[k],fs=L.fs[k];
+    const v=(1-fa)*((1-fs)*B[a0*NS+s0]+fs*B[a0*NS+s0+1])+fa*((1-fs)*B[a1*NS+s0]+fs*B[a1*NS+s0+1]);
+    const c=lut[soft(v)|0];D[p]=c[0];D[p+1]=c[1];D[p+2]=c[2]}
+  o.putImageData(im,0,0);
+}
+const LW=800,LH=224,LSPK={};let LONGC=null;
+function longSpeckle(mod){
+  if(LSPK[mod])return LSPK[mod];
+  const W=LW,H=LH,L=W*H;
+  const field=(s0,sx,sy,ga)=>{
+    const mk2=s=>{const w=new Float32Array(L);for(let i=0;i<L;i++)w[i]=gn(i,s);return w};
+    const bl=w=>{const kx=gk(sx),hx=(kx.length-1)/2,ky=gk(sy),hy=(ky.length-1)/2,t=new Float32Array(L),o=new Float32Array(L);
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++){let v=0;for(let j=-hx;j<=hx;j++){const q=Math.min(W-1,Math.max(0,x+j));v+=kx[j+hx]*w[y*W+q]}t[y*W+x]=v}
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++){let v=0;for(let j=-hy;j<=hy;j++){const q=Math.min(H-1,Math.max(0,y+j));v+=ky[j+hy]*t[q*W+x]}o[y*W+x]=v}return o};
+    const b1=bl(mk2(s0)),b2=bl(mk2(s0+1)),env=new Float32Array(L);let mean=0;
+    for(let i=0;i<L;i++){env[i]=Math.hypot(b1[i],b2[i]);mean+=env[i]}mean/=L;
+    for(let i=0;i<L;i++)env[i]=Math.pow(env[i]/mean,ga);return env};
+  return LSPK[mod]=mod==='ivus'?{t:field(301,3.6,1.3,1.0),b:field(311,1.6,1.0,1.0)}:{t:field(321,2.6,0.8,0.8),b:field(331,1.2,0.8,0.8)};
+}
+// one A-line sample for the longitudinal cut, with cardiac motion (catheter shift + vessel pulsation)
+function sampL(fn,g,rc,tc,zc,mo,strut){
+  g.fs=strut;const gw0=g.gw;g.gw=NaN;g.slab=0;
+  const dx=0.035*mo*Math.cos(g.th0),dy=0.035*mo*Math.sin(g.th0),s=1+0.015*mo;
+  const px=rc*Math.cos(tc)-(g.vx+dx),py=rc*Math.sin(tc)-(g.vy+dy),r=Math.hypot(px,py)/s,t=Math.atan2(py,px);
+  const n=0.6*vnoise(px/0.16+zc*1.7,py/0.16+zc*0.9,5)+0.4*vnoise(px/0.05+zc*3.1,py/0.05-zc*2.3,16),m=vnoise(px/0.12-zc*1.3,py/0.12+zc*2.1,23);
+  const v=fn(g,rc,tc,r,t,n,m);g.fs=undefined;g.gw=gw0;g.slab=0;return v;
+}
+function renderLong(){
+  const W=LW,H=LH,LY=4.2,o=off.long.getContext('2d'),im=o.createImageData(W,H),D=im.data;
+  const fn=S.mod==='ivus'?ivus:oct,SP=longSpeckle(S.mod),lut=LUTS[S.mod],P=new Float32Array(W*H);
+  G.forEach(buildTab);
+  // single cut plane through the catheter: top half at S.lAng, bottom half opposite
+  const topA=S.lAng,botA=new Float32Array(W).fill(S.lAng+Math.PI);
+  // contour traces: distance from the catheter along the cut to lumen, EEM and stent borders (same cardiac motion as the image)
+  const CT={lt:new Float32Array(W),lb:new Float32Array(W),et:new Float32Array(W),eb:new Float32Array(W),st:new Float32Array(W),sb:new Float32Array(W),LY};
+  const reach=(g,tc,mo,f)=>{const dx=0.035*mo*Math.cos(g.th0),dy=0.035*mo*Math.sin(g.th0),s=1+0.015*mo,cx=Math.cos(tc),sy=Math.sin(tc);let lo=0.45,hi=LY*1.6;
+    for(let k=0;k<16;k++){const m=(lo+hi)/2,px=m*cx-(g.vx+dx),py=m*sy-(g.vy+dy);if(Math.hypot(px,py)/s<f(g,Math.atan2(py,px)))lo=m;else hi=m}return (lo+hi)/2};
+  const fL=(g,t)=>lumC(g,t),fE=(g,t)=>eemR(g,t),fS=g=>g.rs;
+  for(let c=0;c<W;c++){
+    const z=ZL*(1-(c+0.5)/W),fz=z/DZ,i0=Math.min(N-2,Math.floor(fz)),w1=fz-i0,g0=G[i0],g1=G[i0+1];
+    const ph=z/0.43*TAU,mo=0.7*Math.sin(ph)+0.25*Math.sin(2*ph+0.6);
+    const gain=1+0.06*(hash(c,3,77)-0.5);
+    for(const [tc,kL,kE,kS] of [[topA,'lt','et','st'],[botA[c],'lb','eb','sb']]){
+      CT[kL][c]=reach(g0,tc,mo,fL)*(1-w1)+reach(g1,tc,mo,fL)*w1;
+      CT[kE][c]=g0.arc>180||g1.arc>180?0:reach(g0,tc,mo,fE)*(1-w1)+reach(g1,tc,mo,fE)*w1;
+      CT[kS][c]=g0.rs>0&&g1.rs>0?reach(g0,tc,mo,fS)*(1-w1)+reach(g1,tc,mo,fS)*w1:0;
+    }
+    for(let row=0;row<H;row++){
+      const y=LY-(row+0.5)/H*2*LY,top=y>=0,rc=Math.abs(y),tc=top?topA:botA[c];
+      const zs=z+(top?0:0.45),si=Math.floor(zs/0.9),st=(g0.rs>0||g1.rs>0)&&Math.abs(zs-(si*0.9+0.45+0.3*(hash(si,top?1:2,57)-0.5)))<0.035;
+      const va=sampL(fn,g0,rc,tc,z,mo,st),la=INLUM,vb=sampL(fn,g1,rc,tc,z,mo,st),lb=INLUM;
+      const k=row*W+c;P[k]=(va*(1-w1)+vb*w1)*((la&&lb)?SP.b[k]*0.6:SP.t[k]*1.22)*gain;
+    }
+  }
+  const kx=gk(1.2),hx=(kx.length-1)/2,ky=gk(S.mod==='ivus'?1.1:0.7),hy=(ky.length-1)/2,T2=new Float32Array(W*H);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){let v=0;for(let j=-hx;j<=hx;j++){const q=Math.min(W-1,Math.max(0,x+j));v+=kx[j+hx]*P[y*W+q]}T2[y*W+x]=v}
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){let v=0;for(let j=-hy;j<=hy;j++){const q=Math.min(H-1,Math.max(0,y+j));v+=ky[j+hy]*T2[q*W+x]}const col=lut[soft(v)|0],p=(y*W+x)*4;D[p]=col[0];D[p+1]=col[1];D[p+2]=col[2];D[p+3]=255}
+  o.putImageData(im,0,0);LONGC=CT;
+}
+
+function markers(x,w,h,d){
+  const mark=(z,lab)=>{if(z==null)return;const px=zx(z,w);x.strokeStyle='#6c9ff0';x.lineWidth=1.5*d;x.setLineDash([4*d,3*d]);x.beginPath();x.moveTo(px,0);x.lineTo(px,h);x.stroke();x.setLineDash([]);x.fillStyle='#6c9ff0';x.font=`600 ${11*d}px "Public Sans",system-ui,sans-serif`;x.fillText(lab,px+3*d,12*d)};
+  mark(S.refD,'D ref');mark(S.refP,'P ref');
+  const cx=zx(F[S.i].z,w);x.strokeStyle='#f2b630';x.lineWidth=2*d;x.beginPath();x.moveTo(cx,0);x.lineTo(cx,h);x.stroke();
+}
+function drawLong(){
+  const c=cv.long,d=sizeC(c),x=c.getContext('2d'),w=c.width,h=c.height;
+  x.drawImage(off.long,0,0,w,h);
+  if(S.cont&&LONGC){const L=LONGC,yOf=v=>(L.LY-v)/(2*L.LY)*h;
+    const line=(arr,sign,col,dash,lw)=>{x.strokeStyle=col;x.lineWidth=lw*d;x.setLineDash(dash);x.beginPath();let on=false;
+      for(let cc=0;cc<LW;cc++){if(arr[cc]<=0){on=false;continue}const X=(cc+0.5)/LW*w,Y=yOf(sign*arr[cc]);on?x.lineTo(X,Y):x.moveTo(X,Y);on=true}x.stroke();x.setLineDash([])};
+    line(L.et,1,'#6c9ff0',[5*d,4*d],1.3);line(L.eb,-1,'#6c9ff0',[5*d,4*d],1.3);
+    line(L.lt,1,'#f2b630',[],1.4);line(L.lb,-1,'#f2b630',[],1.4);
+    line(L.st,1,'#3cd6c0',[2*d,3*d],1.4);line(L.sb,-1,'#3cd6c0',[2*d,3*d],1.4)}
+  x.font=`600 ${10*d}px "Public Sans",system-ui,sans-serif`;
+  for(const B of BRANCHES){const px=zx(B.zo,w),dt=Math.abs(ad(B.a,S.lAng)),db=Math.abs(ad(B.a,S.lAng+Math.PI)),top=dt<=db,inP=Math.min(dt,db)<0.3,y=top?1:h-1;
+    x.fillStyle=inP?'rgba(242,182,48,1)':'rgba(242,182,48,.4)';x.beginPath();x.moveTo(px-5*d,y);x.lineTo(px+5*d,y);x.lineTo(px,top?y+7*d:y-7*d);x.fill();
+    x.fillText(B.n==='Septal'?'S':B.n,px+6*d,top?y+10*d:y-4*d)}
+  if(S.deployed){x.strokeStyle='#3cd6c0';x.lineWidth=1.5*d;for(const z of[S.z0,S.z1]){const px=zx(z,w);x.beginPath();x.moveTo(px,0);x.lineTo(px,h*0.07);x.moveTo(px,h*0.93);x.lineTo(px,h);x.stroke()}}
+  markers(x,w,h,d);
+  if(S.refD!=null&&S.refP!=null){
+    const x0=zx(S.refP,w),x1=zx(S.refD,w),y=h/2,txt=`${(S.refP-S.refD).toFixed(1)} mm`;
+    x.strokeStyle='#6c9ff0';x.lineWidth=1.5*d;x.beginPath();x.moveTo(x0,y);x.lineTo(x1,y);x.moveTo(x0,y-5*d);x.lineTo(x0,y+5*d);x.moveTo(x1,y-5*d);x.lineTo(x1,y+5*d);x.stroke();
+    x.font=`600 ${11*d}px "Public Sans",system-ui,sans-serif`;const tw=x.measureText(txt).width,cx=(x0+x1)/2;
+    x.fillStyle='rgba(0,0,0,.85)';x.fillRect(cx-tw/2-4*d,y-8*d,tw+8*d,16*d);x.fillStyle='#9fc0ff';x.fillText(txt,cx-tw/2,y+4*d);
+  }
+}
+function frameDecor(x,w,d,label,extra){
+  const sc=w/(2*FOV);
+  x.fillStyle='rgba(255,255,255,.85)';x.font=`600 ${12*d}px "Public Sans",system-ui,sans-serif`;x.fillText(label,10*d,20*d);
+  x.font=`${11*d}px "Public Sans",system-ui,sans-serif`;if(extra)x.fillText(extra,w-60*d,20*d);
+  x.fillRect(12*d,w-16*d,sc,2*d);x.fillText('1 mm',12*d,w-22*d);
+  x.fillStyle='rgba(255,255,255,.55)';for(let k=-3;k<=3;k++){if(!k)continue;for(const [px,py] of [[w/2+k*sc,w/2],[w/2,w/2+k*sc]]){x.beginPath();x.arc(px,py,1.3*d,0,TAU);x.fill()}}
+}
+let GV=0,XSKEY='';
+function drawXS(){
+  const g=G[S.i],key=S.i+'|'+S.mod+'|'+GV+'|'+off.xs.width;if(key!==XSKEY){renderFrame(off.xs,g,S.i*13+1,S.mod);XSKEY=key}
+  const c=cv.xs,d=sizeC(c),x=c.getContext('2d'),w=c.width;
+  x.fillStyle='#000';x.fillRect(0,0,w,w);x.drawImage(off.xs,0,0,w,w);
+  const sc=w/(2*FOV),cx=w/2,cy=w/2;
+  if(S.cont){
+    x.lineWidth=1.6*d;
+    const ox=cx+g.vx*sc,oy=cy-g.vy*sc,trace=f=>{x.beginPath();for(let j=0;j<=144;j++){const t=j/144*TAU,r=f(t);j?x.lineTo(ox+r*Math.cos(t)*sc,oy-r*Math.sin(t)*sc):x.moveTo(ox+r*Math.cos(t)*sc,oy-r*Math.sin(t)*sc)}x.stroke()};
+    if(g.arc<=180){x.setLineDash([5*d,4*d]);x.strokeStyle='#6c9ff0';trace(t=>eemR(g,t))}
+    x.setLineDash([]);x.strokeStyle='#f2b630';trace(t=>lumC(g,t));
+    const M=meas(g),cX=ox+M.cx*sc,cY=oy-M.cy*sc,dl=(p,dash)=>{const a=rayHit(g,M.cx,M.cy,p,fLum),b=rayHit(g,M.cx,M.cy,p+Math.PI,fLum),u=Math.cos(p),v=Math.sin(p);x.setLineDash(dash);x.lineWidth=1.1*d;x.beginPath();x.moveTo(cX+a*u*sc,cY-a*v*sc);x.lineTo(cX-b*u*sc,cY+b*v*sc);x.stroke()};
+    x.strokeStyle='rgba(242,182,48,.85)';dl(M.aMax,[3*d,3*d]);dl(M.aMin,[]);x.setLineDash([]);x.lineWidth=1.6*d;
+    if(g.rs>0){x.setLineDash([2*d,3*d]);x.strokeStyle='#3cd6c0';x.beginPath();x.arc(ox,oy,g.rs*sc,0,TAU);x.stroke();x.setLineDash([])}
+  }
+  {const toPx=q=>[cx+q[0]*sc,cy-q[1]*sc],fr=TR.byFrame[S.i]||{};
+    const poly=(P,col,closed)=>{x.strokeStyle=col;x.lineWidth=2*d;x.setLineDash([]);x.beginPath();P.forEach((q,k)=>{const [a,b]=toPx(q);k?x.lineTo(a,b):x.moveTo(a,b)});if(closed)x.closePath();x.stroke();
+      x.fillStyle=col;for(const q of P){const [a,b]=toPx(q);x.beginPath();x.arc(a,b,1.8*d,0,TAU);x.fill()}};
+    if(fr.eem)poly(fr.eem,TRC.eem,true);if(fr.lum)poly(fr.lum,TRC.lum,true);
+    if(TR.mode&&TR.pts.length){poly(TR.pts,TRC[TR.mode],false);const [a,b]=toPx(TR.pts[0]);x.strokeStyle='#fff';x.lineWidth=1.5*d;x.beginPath();x.arc(a,b,6*d,0,TAU);x.stroke()}}
+  frameDecor(x,w,d,S.mod==='ivus'?'IVUS':'OCT',F[S.i].z.toFixed(1)+' mm');
+}
+
+/* ---------- manual tracing (planimetry) ---------- */
+const TR={mode:null,pts:[],byFrame:{},i:-1},TRC={lum:'#7dffb0',eem:'#ff8ad8'};
+const polyArea=P=>{let a=0;for(let k=0;k<P.length;k++){const [x0,y0]=P[k],[x1,y1]=P[(k+1)%P.length];a+=x0*y1-x1*y0}return Math.abs(a)/2};
+function xsMM(e){const r=cv.xs.getBoundingClientRect(),s=r.width/(2*FOV);return[(e.clientX-r.left-r.width/2)/s,(r.height/2-(e.clientY-r.top))/s]}
+function trUI(){
+  $('#trL').setAttribute('aria-pressed',TR.mode==='lum');$('#trE').setAttribute('aria-pressed',TR.mode==='eem');
+  $('#trF').disabled=!(TR.mode&&TR.pts.length>=3);cv.xs.style.cursor=TR.mode?'crosshair':'default';
+  $('#trMsg').textContent=TR.mode?`Tracing ${TR.mode==='lum'?'lumen':'EEM'}: tap points around the border, or press and drag to draw. Tap the first point or press Finish to close.`:'';
+  const fr=TR.byFrame[S.i]||{},M=meas(G[S.i]),g=G[S.i],rows=[];
+  if(fr.lum){const a=polyArea(fr.lum);rows.push(['Manual lumen area',`${a.toFixed(2)} mm² (automatic ${M.A.toFixed(2)} mm², ${a>=M.A?'+':''}${Math.round((a/M.A-1)*100)}%)`])}
+  if(fr.eem){const a=polyArea(fr.eem);rows.push(['Manual EEM area',`${a.toFixed(2)} mm² (automatic ${g.arc>180?'not measurable':M.E.toFixed(2)+' mm²'})`])}
+  if(fr.lum&&fr.eem){const l=polyArea(fr.lum),e=polyArea(fr.eem);if(e>l)rows.push(['Manual plaque + media area',`${(e-l).toFixed(2)} mm² (burden ${Math.round((1-l/e)*100)}%)`])}
+  $('#trOut').innerHTML=rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('');
+  $('#trC').disabled=!(fr.lum||fr.eem||TR.pts.length);
+}
+function trMode(m){TR.mode=TR.mode===m?null:m;TR.pts=[];trUI();drawXS()}
+function trFinish(){if(TR.mode&&TR.pts.length>=3){const fr=TR.byFrame[S.i]||(TR.byFrame[S.i]={});fr[TR.mode]=TR.pts.slice()}TR.pts=[];TR.mode=null;trUI();drawXS()}
+
+/* ---------- procedure ---------- */
+const CST=()=>CS[S.case].st;
+function deploy(){
+  if(S.refD==null||S.refP==null)return;
+  const mid=(S.refD+S.refP)/2;
+  S.z0=Math.max(0,mid-S.len/2);S.z1=Math.min(ZL,mid+S.len/2);
+  S.nom=S.stentD;S.prepUsed=S.prep;
+  const pf=PREPF[S.prep],db=S.stentD+0.045*(S.pD-11);
+  S.sd.fill(0);
+  for(let i=idx(S.z0);i<=idx(S.z1);i++){const f=F[i];let d=db*(0.97-resPB(f)-calcPen(f)*pcFor(f,S.prep)*crackD(S.pD)-fibPen(f)*pf);d=Math.min(d,f.D*1.03);S.sd[i]=Math.max(d,1.4);if(db/f.D>1.1)S.perf=true}
+  const de=db*0.97;
+  const edge=f=>de/f.D>1.0||(f.pb>0.5&&de/(2*f.rl)>1.15)||(f.lip>30&&de/(2*f.rl)>1.05);
+  S.diss.d=edge(F[idx(S.z0)]);S.diss.p=edge(F[idx(S.z1)]);
+  if(CST().bigLipid){S.nr+=PREPNR[S.prep];if(S.pD>=18)S.nr+=1}
+  if(S.pD>RBP_STENT)S.rup=true;
+  S.deployed=true;
+  S.log.push(`Deployed ${S.stentD.toFixed(2)} × ${S.len} mm at ${S.pD} atm after ${PREPNAME[S.prep]}.`);
+  refresh(true);
+}
+function postdil(){
+  const dn=S.ncD+0.015*(S.ncP-12),mid=(S.z0+S.z1)/2;
+  let a=S.z0,b=S.z1;if(S.region==='prox')a=mid;if(S.region==='dist')b=mid;
+  const pf=PREPF[S.prepUsed];let lipOver=false;
+  for(let i=idx(a);i<=idx(b);i++){
+    const f=F[i];let d=dn*(0.99-0.35*resPB(f)-0.85*calcPen(f)*pcFor(f,S.prepUsed)*crackN(S.ncP)-0.6*fibPen(f)*pf);
+    const cap=S.nom+1.0;if(d>cap){d=cap;S.capHit=true}
+    d=Math.min(d,f.D*1.05);if(d>S.sd[i])S.sd[i]=d;
+    if(dn/f.D>1.1)S.perf=true;
+    if(f.arc>=270&&['none','sc','nc','elca'].includes(S.prepUsed)&&dn/f.D>0.95)S.perf=true;
+    if(f.lip>=180&&dn/f.D>1.0)lipOver=true;
+  }
+  {const i0=idx(S.z0),i1=idx(S.z1),src=S.sd.slice();for(let i=i0;i<=i1;i++){let mx=src[i];for(let j=-12;j<=12;j++){const q=i+j;if(q<i0||q>i1)continue;mx=Math.max(mx,src[q]-0.3*Math.abs(j)*DZ)}S.sd[i]=mx}}
+  if(lipOver&&CST().bigLipid)S.nr+=2;
+  const edge=f=>dn/f.D>1.0||(f.lip>30&&dn/(2*f.rl)>1.1);
+  if(S.region!=='prox'&&edge(F[idx(S.z0)]))S.diss.d=true;
+  if(S.region!=='dist'&&edge(F[idx(S.z1)]))S.diss.p=true;
+  if(S.ncP>RBP_NC)S.rup=true;
+  const rn={whole:'whole stent',prox:'proximal half',dist:'distal half'}[S.region];
+  S.log.push(`Postdilated ${rn} with ${S.ncD.toFixed(2)} mm NC at ${S.ncP} atm.`);
+  refresh(true);
+}
+// higher inflation pressure delivers more force to calcium (factor <1 = more of the calcium resistance overcome)
+const crackD=P=>Math.min(1.1,Math.max(0.85,1-0.02*(P-14)));
+const crackN=P=>Math.min(1.15,Math.max(0.7,1-0.03*(P-16)));
+const RBP_STENT=18,RBP_NC=20;
+function reset(){S.rup=false;S.deployed=false;S.sd.fill(0);S.diss={d:false,p:false};S.perf=false;S.nr=0;S.capHit=false;S.log=[];S.prepUsed=null;refresh(true)}
+
+function evalData(){
+  const mid=(S.z0+S.z1)/2;let msa=99,msaZ=0,mD=99,mP=99,malLen=0,maxGap=0;
+  for(let i=idx(S.z0);i<=idx(S.z1);i++){const a=area(S.sd[i]/2),z=F[i].z;if(a<msa){msa=a;msaZ=z}if(z<mid)mD=Math.min(mD,a);else mP=Math.min(mP,a);const gap=F[i].rl-S.sd[i]/2;if(gap>maxGap)maxGap=gap;if(gap>0.4)malLen+=DZ}
+  const e0=F[idx(S.z0)],e1=F[idx(S.z1)];
+  return{msa,msaZ,malLen,maxGap,eD:mD/area(F[idx(S.refD)].rl),eP:mP/area(F[idx(S.refP)].rl),e0,e1,lip0:e0.lip>30,lip1:e1.lip>30,eMSA:msa/area(F[idx(S.refD)].rl),opt:msa>5.0||msa/area(F[idx(S.refD)].rl)>0.9};
+}
+const band=x=>x>=0.9?'well expanded':x>=0.8?'borderline':'underexpanded';
+function evaluate(){
+  const E=evalData(),{msa,msaZ,eP,malLen,maxGap,e0,e1,eMSA,opt}=E;
+  const lipEdge=[E.lip0&&'distal',E.lip1&&'proximal'].filter(Boolean);
+  const ch=[
+    [opt,`Stent expansion ${opt?'optimal':'not optimal'}: MSA ${msa.toFixed(1)} mm² at ${msaZ.toFixed(1)} mm, ${Math.round(eMSA*100)}% of the distal reference lumen (optimal when MSA &gt;5.0 mm² or &gt;90% of the distal reference)`],
+    [malLen<=1,malLen>1?`Malapposition up to ${maxGap.toFixed(2)} mm over ${malLen.toFixed(1)} mm`:'No major malapposition'],
+    [!S.diss.d&&!S.diss.p,(S.diss.d||S.diss.p)?`Edge dissection at the ${[S.diss.d&&'distal',S.diss.p&&'proximal'].filter(Boolean).join(' and ')} edge`:'No edge dissection'],
+    [e0.pb<0.5&&e1.pb<0.5&&!lipEdge.length,`Landing zones: distal plaque burden ${Math.round(e0.pb*100)}%, proximal ${Math.round(e1.pb*100)}%${lipEdge.length?`, ${lipEdge.join(' and ')} edge on attenuated plaque`:''} (target below 50%, no attenuated plaque)`],
+    [!S.perf,S.perf?'Perforation risk flagged':'No perforation risk flagged'],
+    [!S.rup,S.rup?'Balloon inflated above its rated burst pressure':'All inflations within rated burst pressure']
+  ];
+  if(CST().bigLipid)ch.push([S.nr<2,S.nr>=2?'Distal embolization and no-reflow risk flagged':'No distal embolization or no-reflow risk flagged']);
+  return ch;
+}
+function lessons(){
+  const E=evalData(),cs=CST(),L=[],P=S.prepUsed,nm=PREPNAME[P].charAt(0).toUpperCase()+PREPNAME[P].slice(1);
+  const unmod=['none','sc','nc','elca'].includes(P);
+  if(cs.maxA>=270&&unmod)L.push('The circumferential superficial calcium was not modified before stenting. This lesion needs lithotripsy or atherectomy.');
+  else if(cs.maxA>=270&&['opn','cut'].includes(P)&&(!E.opt||E.eP<0.8))L.push('The balloon only partly modified this circumferential calcium. Postdilate further with a well-sized, high-pressure NC balloon, or consider lithotripsy or atherectomy, which modify a ring like this more reliably.');
+  if(cs.maxA<90&&P==='ivl')L.push('Lithotripsy needs calcium to act on. For non-calcified plaque, a noncompliant or cutting balloon is the better choice.');
+  if(ATHERO.includes(P)&&cs.maxA<180)L.push(`${nm} was used without significant calcium: it adds perforation and slow-flow risk without an expansion benefit.`);
+  if(E.e0.pb>=0.5||E.lip0)L.push(`The distal edge lands on ${E.lip0?'attenuated (lipid-rich) plaque':'plaque burden of 50% or more'}. Move it to a more normal-looking segment.`);
+  if(E.e1.pb>=0.5||E.lip1)L.push(`The proximal edge lands on ${E.lip1?'attenuated (lipid-rich) plaque':'plaque burden of 50% or more'}. Move it to a more normal-looking segment.`);
+  if(S.diss.d||S.diss.p)L.push('Edge dissection: the stent or balloon was too large for the vessel at the edge, or the edge landed in plaque.');
+  if(S.perf)L.push('Perforation risk: a large high-pressure balloon was used against unmodified calcium, or beyond the vessel size.');
+  if(S.rup)L.push(`A balloon was inflated above its rated burst pressure (about ${RBP_STENT} atm for the stent balloon, ${RBP_NC} atm for NC balloons). That risks balloon rupture, with dissection or perforation. Stay within rated pressure, or use a super-high-pressure balloon designed for it.`);
+  if(cs.bigLipid&&S.nr>=2)L.push('No-reflow risk: over a large lipid pool, avoid atherectomy, laser, aggressive predilation, high pressures and oversized postdilation.');
+  if(E.malLen>1)L.push('Struts are malapposed. Postdilate with an NC balloon sized to the local vessel.');
+  if(!E.opt)L.push('The stent is not optimally expanded: the MSA is 5.0 mm² or less and under 90% of the distal reference lumen. Check that the lesion was adequately prepared, then postdilate with appropriately sized NC balloons.');
+  else if(E.eP<0.8)L.push(`Expansion meets the criterion, but the proximal half reaches only ${Math.round(E.eP*100)}% of the larger proximal reference. In a tapering vessel, proximal postdilation with a larger NC balloon improves expansion and apposition.`);
+  if(!L.length)L.push('Good decisions: the stent is well expanded and apposed, with both edges on healthy segments.');
+  return L;
+}
+
+/* ---------- UI ---------- */
+function refLine(z,lab){
+  const f=F[idx(z)],ivus=S.mod==='ivus',vis=ivus?360:eelVis(preGeo(f));
+  const ext=vis>=180?`${ivus?'EEM':'EEL'} diameter ${f.D.toFixed(2)} mm, plaque burden ${Math.round(f.pb*100)}%`:'EEL not visible here';
+  let w='';
+  if(f.pb>0.5)w+=' <span class="warn">Plaque burden is above 50% here, so this is a poor landing zone.</span>';
+  if(f.lip>30)w+=` <span class="warn">${ivus?'Attenuated plaque':'Lipid'} at this frame makes it a poor landing zone.</span>`;
+  return `<p><strong>${lab} reference at ${f.z.toFixed(1)} mm:</strong> lumen ${area(f.rl).toFixed(2)} mm² (${(2*f.rl).toFixed(2)} mm), ${ext}.${w}</p>`;
+}
+function rayHit(g,cx,cy,phi,f){const u=Math.cos(phi),v=Math.sin(phi);let lo=0,hi=6;for(let k=0;k<20;k++){const m=(lo+hi)/2,px=cx+m*u,py=cy+m*v;if(Math.hypot(px,py)<f(g,Math.atan2(py,px)))lo=m;else hi=m}return(lo+hi)/2}
+const fLum=(g,t)=>lumC(g,t),fEEM=(g,t)=>eemR(g,t);
+function meas(g){
+  const K=180;let A=0,E=0,sx=0,sy=0,sa=0;const P=[];
+  for(let k=0;k<K;k++){const t=k/K*TAU,l=lumC(g,t),e=eemR(g,t);A+=l*l;E+=e*e;P.push([l*Math.cos(t),l*Math.sin(t)])}
+  for(let k=0;k<K;k++){const [x0,y0]=P[k],[x1,y1]=P[(k+1)%K],cr=x0*y1-x1*y0;sa+=cr;sx+=(x0+x1)*cr;sy+=(y0+y1)*cr}
+  const cx=sx/(3*sa),cy=sy/(3*sa);
+  let maxD=0,minD=99,aMax=0,aMin=0,maxT=0,minT=99;
+  for(let k=0;k<90;k++){const ph=k/90*Math.PI,dd=rayHit(g,cx,cy,ph,fLum)+rayHit(g,cx,cy,ph+Math.PI,fLum);if(dd>maxD){maxD=dd;aMax=ph}if(dd<minD){minD=dd;aMin=ph}}
+  for(let k=0;k<120;k++){const ph=k/120*TAU,th=rayHit(g,cx,cy,ph,fEEM)-rayHit(g,cx,cy,ph,fLum);if(th>maxT)maxT=th;if(th<minT)minT=th}
+  return{A:A*Math.PI/K,E:E*Math.PI/K,maxT,minT,maxD,minD,aMax,aMin,cx,cy};
+}
+function readout(){
+  const g=G[S.i],f=F[S.i],ivus=S.mod==='ivus',M=meas(g),la=M.A,ea=M.E,rows=[];
+  rows.push(['Position',`${f.z.toFixed(1)} mm from pullback start`]);
+  rows.push(['Plaque',plaqueType(f,ivus)]);
+  rows.push(['Lumen area',`${la.toFixed(2)} mm²${S.i===mlaI&&!S.deployed?' (MLA)':''}`]);
+  rows.push(['Lumen diameter',`min ${M.minD.toFixed(2)} mm, max ${M.maxD.toFixed(2)} mm`]);
+  if(S.refD!=null&&S.refP!=null){const ref=(area(F[idx(S.refD)].rl)+area(F[idx(S.refP)].rl))/2;rows.push(['Area stenosis',`${Math.max(0,Math.round((1-la/ref)*100))}% vs mean reference lumen`])}
+  const shd=g.arc>180?2:g.arc>=1?1:0,note=shd===1?` (extrapolated across ${Math.round(g.arc)}° of shadow)`:'';
+  if(shd===2){rows.push(['EEM area',`Not measurable (calcium shadow over ${Math.round(g.arc)}°)`]);rows.push(['Plaque area (plaque + media area)','Not measurable']);rows.push(['Plaque burden','Not measurable']);rows.push(['Plaque thickness','Not measurable'])}
+  else{rows.push(['EEM area',`${ea.toFixed(2)} mm²${note}`]);rows.push(['Plaque area (plaque + media area)',`${(ea-la).toFixed(2)} mm²${note}`]);rows.push(['Plaque burden',`${Math.round((1-la/ea)*100)}%${note}`]);
+    rows.push(['Plaque thickness',`min ${M.minT.toFixed(2)} mm, max ${M.maxT.toFixed(2)} mm`]);rows.push(['Plaque eccentricity index',((M.maxT-M.minT)/M.maxT).toFixed(2)])}
+  if(g.arc>=1)rows.push(['Calcium',(g.cDeep?'Deep, ':'Superficial, ')+(ivus?`${Math.round(g.arc)}° arc, thickness hidden by acoustic shadow`:`${Math.round(g.arc)}° arc, ${g.thk.toFixed(2)} mm thick`)]);
+  if(g.lip>1){
+    if(ivus)rows.push([g.cap<0.065?'Attenuation':'Echolucent zone',`${Math.round(g.lip)}° arc, no calcium; cap not resolvable`]);
+    else{rows.push(['Lipid arc',`${Math.round(g.lip)}°`]);if(!g.prot)rows.push(['Fibrous cap',`${Math.round(g.cap*1000)} µm${g.cap<0.065?' (thin cap)':''}`])}
+  }
+  if(g.sbs&&g.sbs.length)rows.push(['Side branch',g.sbs.map(B=>{const os=B.c-B.r<g.rl+0.1;return B.n==='LCx'&&os?'LCx ostium (LM bifurcation)':B.n+(os?' ostium':'')}).join(', ')]);
+  if(f.z>44.5)rows.push(['Segment','Left main']);
+  if(g.rs>0){const mid=(S.z0+S.z1)/2,dist=f.z<mid,rla=area(F[idx(dist?S.refD:S.refP)].rl),sa=area(g.rs);rows.push(['Stent area',`${sa.toFixed(2)} mm² (${Math.round(sa/rla*100)}% of ${dist?'distal':'proximal'} reference)`]);const gap=f.rl-g.rs;if(gap>0.05)rows.push(['Malapposition',`${gap.toFixed(2)} mm`])}
+  if(g.prot)rows.push(['Tissue protrusion','Present between struts']);
+  if(g.diss)rows.push(['Edge dissection','Flap visible']);
+  $('#readout').innerHTML=rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('');
+  if(TR.i!==S.i){TR.i=S.i;if(TR.pts.length){TR.pts=[]}}trUI();
+  $('#posLabel').textContent=f.z.toFixed(1)+' mm';
+  $('#scrub').value=N-1-S.i;
+}
+function plaqueSummary(){
+  const st=CST(),ivus=S.mod==='ivus';let s='';
+  if(st.maxA>=180)s+=ivus?`<details class="cscore"><summary>IVUS calcium score: ${st.ivus} of 4</summary><ul class="crit">${[[st.l270>=5,`Superficial calcium >270° in ≥5 mm (here ${st.l270.toFixed(1)} mm)`],[st.full,'360° superficial calcium'],[false,'Calcified nodule'],[st.minD<3.5,`Vessel diameter &lt;3.5 mm (here ${st.minD.toFixed(1)} mm at the calcium)`]].map(([y,t])=>`<li><span class="${y?'ok':'pt0'}">${y?'1':'0'}</span><span>${t}</span></li>`).join('')}</ul><p>One point for each criterion; a score of 2 or more predicts stent underexpansion (Zhang et al., JACC Cardiovasc Interv 2021).</p></details>`
+    :`<p>OCT calcium score ${st.oct} of 4: maximum arc ${Math.round(st.maxA)}°, thickness ${st.maxT.toFixed(2)} mm, length over 180° ${st.len180.toFixed(1)} mm. A score of 4 predicts underexpansion.</p>`;
+  else if(st.maxA>0)s+=`<p>Only spotty calcium (up to ${Math.round(st.maxA)}°), which won\u2019t limit expansion.</p>`;
+  if(st.bigLipid)s+=ivus?`<p>Attenuated plaque without calcium spans up to ${Math.round(st.lipMax)}°, with 180° or more over ${st.lipLen.toFixed(1)} mm. Attenuation of this extent is associated with distal embolization and no-reflow.</p>`
+    :`<p>A lipid pool reaches ${Math.round(st.lipMax)}°, with 180° or more over ${st.lipLen.toFixed(1)} mm. The thinnest cap is ${Math.round(st.minCap*1000)} µm, which meets the thin-cap fibroatheroma threshold of 65 µm.</p>`;
+  if(S.case==='fib')s+='<p>The lesion is homogeneous fibrous plaque. It resists expansion more than lipid but responds to a noncompliant balloon.</p>';
+  return s;
+}
+function ui(){
+  const ivus=S.mod==='ivus';
+  $('#eemName').textContent=ivus?'EEM':'EEL';
+  
+  $('#expert').innerHTML=CASES[S.case].expert.map(t=>`<li>${t}</li>`).join('');
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-checked',b.dataset.mod===S.mod));
+  let ri='';
+  if(S.refD!=null)ri+=refLine(S.refD,'Distal');
+  if(S.refP!=null)ri+=refLine(S.refP,'Proximal');
+  if(S.refD!=null&&S.refP!=null)ri+=`<p><strong>Reference-to-reference length:</strong> ${(S.refP-S.refD).toFixed(1)} mm, measured along the pullback.</p>`;
+  if(!ri)ri='<p style="color:var(--muted)">No references marked yet.</p>';
+  $('#refInfo').innerHTML=ri;
+  let pi=plaqueSummary();
+  if(S.refD!=null&&S.refP!=null){const span=S.refP-S.refD,mid=(S.refD+S.refP)/2;pi+=`<p>References are ${span.toFixed(1)} mm apart. A ${S.len} mm stent centred between them spans ${Math.max(0,mid-S.len/2).toFixed(1)}–${Math.min(ZL,mid+S.len/2).toFixed(1)} mm.${S.len<span?' <span class="warn">This is shorter than the reference-to-reference distance.</span>':''}</p>`}
+  $('#planInfo').innerHTML=pi;
+  const ready=S.refD!=null&&S.refP!=null;
+  ['#sd','#sl','#prep','#pd'].forEach(s=>$(s).disabled=S.deployed);
+  ['#markD','#markP'].forEach(s=>$(s).disabled=S.deployed);
+  $('#clearRef').disabled=S.deployed||(S.refD==null&&S.refP==null);
+  $('#clearRef').title=S.deployed?'Reset the case to re-plan the references':'';
+  $('#deploy').disabled=S.deployed||!ready;
+  $('#deployInfo').innerHTML=!ready&&!S.deployed?'<p style="color:var(--muted)">Mark both references first.</p>':'';
+  ['#ncd','#ncp','#post'].forEach(s=>$(s).disabled=!S.deployed);
+  document.querySelectorAll('input[name=reg]').forEach(r=>r.disabled=!S.deployed);
+  $('#s2').classList.toggle('off',S.deployed);$('#s3').classList.toggle('off',S.deployed);$('#s4').classList.toggle('off',!S.deployed);
+  $('#pdv').textContent=S.pD;$('#ncpv').textContent=S.ncP;
+  $('#pdwarn').textContent=S.pD>RBP_STENT?`Above the stent balloon’s rated burst pressure (about ${RBP_STENT} atm): rupture risk.`:'';
+  $('#ncwarn').textContent=S.ncP>RBP_NC?`Above the NC balloon’s rated burst pressure (about ${RBP_NC} atm): rupture risk.`:'';
+  let res='';
+  if(S.deployed){
+    const ch=evaluate(),fails=ch.filter(c=>c[0]===false).length;
+    res=`<h3>Additional notes</h3><ul class="lessons">${lessons().map(l=>`<li>${l}</li>`).join('')}</ul><h3>Criteria <span class="simtag">simulated values</span></h3><ul>${ch.map(c=>c[0]===null?`<li><span class="pt0" aria-label="information">&bull;</span><span>${c[1]}</span></li>`:`<li><span class="${c[0]?'ok':'no'}" aria-label="${c[0]?'met':'not met'}">${c[0]?'✓':'✗'}</span><span>${c[1]}</span></li>`).join('')}</ul>`;
+    res+=`<p class="verdict">${fails?`${fails} criterion${fails>1?'s':''} not met.`:'All optimization criteria met.'}</p>`;
+    if(S.case==='lip')res+=`<p class="info" style="color:var(--muted)">Scroll the stented lipid segment to see tissue protrusion between struts. Small protrusion is expected and usually benign.</p>`;
+    if(S.capHit)res+=`<p class="info warn">The balloon asked for more than this stent platform can safely expand to; expansion was capped.</p>`;
+    res+=`<ol class="log">${S.log.map(l=>`<li>${l}</li>`).join('')}</ol>`;
+  }
+  $('#results').innerHTML=res;
+  readout();
+}
+function refresh(full){G=F.map((_,i)=>geo(i));GV++;if(full){renderAngio();renderLong()}drawAngio();drawLong();drawXS();ui()}
+let raf=0;function frameOnly(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;drawAngio();drawLong();drawXS();readout()})}
+
+/* ---------- lesion & artifact atlas (IVUS) ---------- */
+const clock=h=>Math.PI/2-h*Math.PI/6;
+function ivA(g,rc,tc,r,t,n,m){
+  const X=g.feat||{};
+  if(rc<0.55)return ivus(g,rc,tc,r,t,n,m);
+  if(X.air){const v=ivus(g,rc,tc,r,t,n,m);INLUM=false;return v*(0.16+0.1*Math.sin(tc*3+n*4))+(rc<0.9?55*m*Math.exp(-(rc-0.55)/0.12):0)}
+  const rl=lumR(g,t),rE=eemR(g,t);
+  if(X.nodule){const x=Math.abs(ad(t,X.nodule.a))/X.nodule.w;if(x<1){const b=X.nodule.h*Math.cos(x*Math.PI/2)*(0.7+0.6*vnoise(t*9,1,3)),s=rl-b;if(r>s){INLUM=false;const crest=0.16+0.12*vnoise(t*14,r*4,8);return r<s+crest?225+50*n:4+8*m}}}
+  if(X.thr){const T=X.thr,x=Math.abs(ad(t,T.a))/T.w;if(x<1){const b=T.h*Math.pow(Math.cos(x*Math.PI/2),0.6)*(0.65+0.7*vnoise(t*5,2,4)),s=rl-b;
+    if(r>s&&r<rl){if(T.honey){for(const [o,df,cr] of [[-0.75,0.5,0.14],[-0.35,0.32,0.12],[0.05,0.55,0.16],[0.42,0.36,0.13],[0.8,0.5,0.12]]){const ca=T.a+o,xc=Math.abs(o)/T.w,bc=T.h*Math.pow(Math.cos(xc*Math.PI/2),0.6)*(0.65+0.7*vnoise(ca*5,2,4)),rr=lumR(g,ca)-bc*df;if(Math.hypot(r*Math.cos(t)-rr*Math.cos(ca),r*Math.sin(t)-rr*Math.sin(ca))<cr){INLUM=true;return 34+22*m}}}INLUM=false;return (T.honey?12+12*n:66+55*n)*(1-0.4*(r-s)/Math.max(b,0.1))}
+    if(r>=rl)return ivus(g,rc,tc,r,t,n,m)*0.55}}
+  if(X.med&&r>rl){const da=Math.abs(ad(t,X.med.a));if(da<0.15&&r<rE){INLUM=true;return 26+18*m}if(da<X.med.w&&r>rE-0.28&&r<rE+0.06){INLUM=true;return 30+20*m}}
+  if(X.ulcer&&r>rl){const da=Math.abs(ad(t,X.ulcer.a));if(da<X.ulcer.w){const dpt=X.ulcer.d*Math.cos(da/X.ulcer.w*Math.PI/2)*(0.8+0.4*vnoise(r*6,t*6,9));if(r<rl+dpt){INLUM=true;return 32+22*m}}}
+  if(X.perf&&r>rl){const da=Math.abs(ad(t,X.perf.a));if(da<X.perf.w){const ext=(rE-rl)+X.perf.d*Math.cos(da/X.perf.w*Math.PI/2);if(r<rl+ext){INLUM=false;return 12+18*n}}}
+  if(X.scad&&r>=rl){const c=Math.pow(Math.max(0,Math.cos(ad(t,X.scad.a))),0.9),rin=rl+0.17,fl=X.scad.d*c;
+    if(r<rl+0.06){INLUM=false;return 140+60*n}
+    if(r<rin){INLUM=false;return 10+12*n}
+    if(r<rin+fl){INLUM=true;return X.scad.hema?82+30*m:50+22*m}
+    INLUM=false;const q=r-rin-fl;return (q<0.05?165:(160+75*n)*Math.exp(-q/1.2)*(m<0.38?0.35:1))*Math.exp(-rc/12)}
+  let v=ivus(g,rc,tc,r,t,n,m);
+  if(g.rs2>0){const st=TAU/10,k=Math.round((t-g.so2)/st);if(Math.abs(ad(t,g.so2+k*st))*g.rs2<0.045){if(Math.abs(r-g.rs2)<0.035){INLUM=false;return 250}if(r>g.rs2)v*=0.45}}
+  return v;
+}
+function aMake(o){
+  const R=o.R||1.95,rl=o.rl||1.3;
+  const f=Object.assign({z:10,D:2*R,R,pb:1-(rl*rl)/(R*R),rl,d:0.25,th0:clock(12),arc:0,thk:0,cA:0,cDeep:false,ff:0,lip:0,lipA:0,cap:0.15,fib:0,sb:null,so:0.3,gw:0},o.f||{},{R,rl,D:2*R});
+  f.pb=1-(rl*rl)/(R*R);
+  const g=preGeo(f);
+  if(o.rs){g.rs=o.rs;g.rlP=Math.max(g.rl,g.rs)}
+  Object.assign(g,o.g||{});setCath(g);if(o.gw!==undefined)g.gw=o.gw;
+  g.fn=ivA;return g;
+}
+const ATLAS=[
+ {id:'normal',grp:'Plaque',name:'Normal three-layer wall',make:()=>aMake({R:1.75,rl:1.52,f:{d:0.04}}),
+  lab:[['Lumen',clock(8),'lum'],['Intima',clock(1),'int'],['Media',clock(2.5),'med'],['Adventitia',clock(4),'adv']],
+  desc:'Thin bright intima at the lumen edge, a dark media band about 0.1 mm wide, then bright adventitia blending into perivascular tissue.'},
+ {id:'fib',grp:'Plaque',name:'Fibrous plaque',make:()=>aMake({rl:1.15,f:{d:0.35,fib:1}}),lab:[['Fibrous plaque',clock(12),'plq'],['Media',clock(3),'med']],
+  desc:'Plaque about as echogenic as the adventitia, with no shadow behind it, so the EEM can be traced all the way round.'},
+ {id:'lipid',grp:'Plaque',name:'Lipid pool',make:()=>aMake({rl:1.2,f:{d:0.4,lip:100,lipA:clock(10.5),th0:clock(10.5),cap:0.12}}),lab:[['Lipid pool',clock(10.5),'plq'],['Fibrous plaque',clock(2),'plq']],
+  desc:'A dark, echolucent zone within the plaque. It can be hard to tell from thrombus; clinical context helps.'},
+ {id:'atten',grp:'Plaque',name:'Attenuated plaque',make:()=>aMake({rl:1.2,f:{d:0.45,lip:170,lipA:clock(12),th0:clock(12),cap:0.05}}),lab:[['Attenuated plaque',clock(12),'int',0.15],['Signal loss behind',clock(1),'adv']],
+  desc:'The far field fades out behind plaque that has no bright leading edge. This suggests a large necrotic core, which raises the risk of slow flow, no-reflow and distal embolization after dilation.'},
+ {id:'supcal',grp:'Calcium',name:'Superficial calcium',make:()=>aMake({rl:1.05,R:1.8,f:{d:0.2,arc:270,cA:clock(11.5),thk:0.6}}),lab:[['Superficial calcium',clock(11.5),'int',0.06],['Acoustic shadow',clock(9.5),'shadow'],['Reverberations',clock(1),'rev']],excl:['reverb'],
+  desc:'A bright arc right at the lumen surface (here about 270°) with an acoustic shadow behind it. Repeated reverberation arcs sit behind it at equal intervals, each one transducer-to-calcium distance further out.'},
+ {id:'deepcal',grp:'Calcium',name:'Deep calcium',make:()=>aMake({rl:1.2,f:{d:0.4,th0:clock(3),arc:60,cA:clock(3),thk:0.35,cDeep:true,fib:1}}),lab:[['Deep calcium',clock(3),'deepcal'],['Fibrous plaque in front',clock(2.3),'plq',-0.15]],
+  desc:'A bright arc near the media with fibrous plaque in front of it and a shadow behind. Deep calcium affects stent expansion less than superficial calcium.'},
+ {id:'reverb',grp:'Calcium',name:'Reverberation',make:()=>aMake({rl:0.9,R:1.7,f:{d:0.3,th0:clock(3),arc:70,cA:clock(3),thk:0.5}}),lab:[['Superficial calcium',clock(2.4),'int',0.06],['Reverberations',clock(3.2),'rev']],excl:['supcal'],
+  desc:'Equally spaced bright arcs behind superficial calcium, from echoes bouncing between transducer and calcium. Their spacing equals the transducer-to-calcium distance.'},
+ {id:'nodule',grp:'Calcium',name:'Calcified nodule',make:()=>aMake({rl:1.75,R:2.35,f:{d:0.15},gw:clock(7),g:{feat:{nodule:{a:clock(12),w:0.5,h:0.7}}}}),lab:[['Calcified nodule',clock(12),'nod'],['Acoustic shadow',clock(12.3),'adv',-0.6]],
+  desc:'An irregular bright mass protruding into the lumen, sometimes coral-like, with a shadow behind it. Usually found in heavily calcified vessels.'},
+ {id:'thr',grp:'Thrombus',name:'Thrombus',make:()=>aMake({rl:1.55,f:{d:0.15},gw:clock(2),g:{feat:{thr:{a:clock(8),w:1.0,h:0.8}}}}),lab:[['Thrombus',clock(8),'thr'],['Lumen',clock(2),'lum']],excl:['honey'],
+  desc:'A low-echogenic, lobulated intraluminal mass with mild attenuation behind it. In acute coronary syndrome, echolucent intraluminal material is presumed thrombus; organized thrombus becomes brighter.'},
+ {id:'honey',grp:'Thrombus',name:'Honeycomb-like thrombus',make:()=>aMake({rl:1.65,R:2.15,f:{d:0.1},gw:clock(10),g:{feat:{thr:{a:clock(4),w:1.5,h:1.0,honey:true}}}}),lab:[['Thrombus with cavities',clock(4),'thr'],['Lumen',clock(10),'lum']],excl:['thr'],
+  desc:'Hypoechoic thrombus containing multiple small, echolucent cavities filled with blood; usually invisible on angiography.'},
+ {id:'flap',grp:'Dissection',name:'Plaque dissection with flap',make:()=>aMake({rl:1.25,f:{d:0.3,fib:1},g:{diss:true,dissA:clock(4)}}),lab:[['Flap',clock(3.3),'int',-0.2],['Blood in the cleft',clock(4.3),'int',0.25]],
+  desc:'Both the intima and the plaque are torn. When the torn end protrudes into the lumen and becomes thin and mobile, it is called a flap; blood fills the cleft behind it.'},
+ {id:'medial',grp:'Dissection',name:'Medial dissection',make:()=>aMake({rl:1.2,f:{d:0.3,fib:1},g:{feat:{med:{a:clock(6),w:0.9}}}}),lab:[['Intima interrupted',clock(6),'int'],['Blood tracking in media',clock(7),'med']],
+  desc:'The intima is interrupted and the dark media band disappears where blood tracks along the media, showing the tear has reached it.'},
+ {id:'scad',grp:'Dissection',name:'SCAD with false lumen',make:()=>aMake({rl:0.85,R:1.2,f:{d:0},g:{feat:{scad:{a:clock(3),d:1.05}}}}),lab:[['True lumen',clock(9),'lum'],['Intima',clock(12.5),'int',0.0],['Media',clock(1.8),'int',0.085],['False lumen',clock(3),'int',0.7],['Adventitia',clock(4),'int',1.3]],excl:['hema'],
+  desc:'A crescent-shaped false lumen between media and adventitia compresses a small true lumen around the catheter. Usually little atherosclerosis; most often seen in younger women.'},
+ {id:'hema',grp:'Dissection',name:'Intramural hematoma',make:()=>aMake({rl:0.9,R:1.25,f:{d:0},g:{feat:{scad:{a:clock(9),d:1.15,hema:true}}}}),lab:[['True lumen',clock(3),'lum'],['Hematoma',clock(9),'int',0.75]],excl:['scad'],
+  desc:'A large, homogeneous, relatively bright crescent of stagnant blood within the wall, compressing the true lumen.'},
+ {id:'ulcer',grp:'Dissection',name:'Ulcer / plaque rupture',make:()=>aMake({rl:1.25,f:{d:0.35,arc:80,cA:clock(7),thk:0.4},g:{feat:{ulcer:{a:clock(12.5),w:0.35,d:0.75}}}}),lab:[['Ulcer cavity',clock(12.5),'int',0.35],['Calcified plaque',clock(7),'int',0.06]],
+  desc:'The intimal surface is broken and a cavity opens into the plaque where its contents have emptied, typical of plaque rupture.'},
+ {id:'perf',grp:'Dissection',name:'Perforation',make:()=>aMake({rl:1.4,f:{d:0.2},g:{feat:{perf:{a:clock(6),w:0.55,d:0.8}}}}),lab:[['Wall disrupted',clock(6),'int'],['Extravascular hematoma',clock(5.6),'adv']],
+  desc:'The wall layers are lost over an arc and a dark, crescent-shaped space extends through the adventitia into surrounding tissue.'},
+ {id:'appose',grp:'Stent',name:'Well-apposed stent',make:()=>aMake({rl:1.45,rs:1.45,f:{d:0.05}}),lab:[['Stent strut',clock(1.5),'strut'],['Media',clock(8),'med']],
+  desc:'Every strut is in contact with the vessel wall (the plaque or intimal surface) all the way round, with no blood speckle behind any strut. Each strut is bright with a small shadow.'},
+ {id:'malap',grp:'Stent',name:'Stent malapposition',make:()=>aMake({rl:1.3,rs:1.3,R:2.1,f:{d:0.05},g:{bumps:[{a:clock(2.5),w:1.6,amp:0.45}]}}),lab:[['Unapposed struts',clock(2.5),'strut'],['Blood behind struts',clock(3),'behind'],['Apposed struts',clock(8.5),'strut']],
+  desc:'Struts float off the wall over an arc, with blood speckle behind them. Flushing contrast or saline can sharpen the lumen-strut boundary.'},
+ {id:'overlap',grp:'Stent',name:'Stent overlap',make:()=>aMake({rl:1.45,rs:1.45,f:{d:0.05},g:{rs2:1.37,so2:0.17}}),lab:[['Outer strut layer',clock(10),'strut'],['Inner strut layer',clock(4),'strut2']],
+  desc:'Two concentric layers of struts. The extra metal casts more shadows and can hide parts of the vessel wall.'},
+ {id:'prot',grp:'Stent',name:'Tissue protrusion',make:()=>aMake({rl:1.4,rs:1.4,f:{d:0.1,lip:80,lipA:clock(5.5),cap:0.1},g:{prot:true,protAmp:0.45}}),lab:[['Tissue protrusion',clock(5.5),'between'],['Stent strut',clock(9),'strut']],
+  desc:'Tissue bulges into the lumen between struts, from thrombus or soft plaque. More common in acute coronary syndrome.'},
+ {id:'pss',grp:'Stent',name:'Peri-stent contrast staining',make:()=>aMake({rl:1.6,rs:1.6,R:2.95,f:{d:0},g:{bumps:[{a:clock(4),w:1.8,amp:1.0}]}}),lab:[['Struts off the wall',clock(4),'strut'],['Blood behind struts',clock(2.3),'behind'],['Apposed struts',clock(9),'strut']],
+  desc:'Late after stenting the vessel has enlarged around the stent, leaving struts separated from the wall with blood behind them; angiography shows contrast outside the stent.'},
+ {id:'nurd',grp:'Artifact',name:'NURD',make:()=>aMake({rl:1.25,f:{d:0.3,arc:100,cA:clock(4),thk:0.5},g:{nurd:true}}),lab:[['Smeared wedge',clock(9.8),'plq']],
+  desc:'The image is distorted between about 9 and 11 o\u2019clock. NURD comes from uneven rotation of the transducer, which can be caused by a highly tortuous vessel or a calcified lesion, or by a bent proximal catheter shaft outside the valve or an overtightened valve. When you see it, check the catheter shaft and the valve; it sometimes disappears after the lesion is dilated.'},
+ {id:'air',grp:'Artifact',name:'Air in the catheter',make:()=>aMake({rl:1.3,f:{d:0.25},g:{feat:{air:true}}}),lab:[],
+  desc:'Residual microbubbles around the transducer give a dim, unstable image. Withdraw and flush the catheter outside the patient; flushing in the vessel risks air embolism.'}
+];
+function atlasLabels(it,g,w){
+  const sc=w/(2*FOV),ox=w/2+g.vx*sc,oy=w/2-g.vy*sc,X=g.feat||{},out=[];
+  for(const spec of it.lab){
+    let [txt,a,an,ex]=spec;ex=ex||0;
+    if(an==='strut'){const st=TAU/9,k=Math.round((a-g.so)/st);a=g.so+k*st}
+    if(an==='between'){const st=TAU/9,k=Math.round((a-g.so-st/2)/st);a=g.so+k*st+st/2}
+    if(an==='strut2'){const st=TAU/10,k=Math.round((a-g.so2)/st);a=g.so2+k*st}
+    const L=lumC(g,a),E=eemR(g,a);let r;
+    if(an==='rev'||an==='shadow'){const u=Math.cos(a),v=Math.sin(a),rcc=beamHit(g,a)+0.03,f=an==='rev'?2:1.55;out.push([txt,w/2+f*rcc*u*sc,w/2-f*rcc*v*sc]);continue}
+    if(an==='lum')r=Math.max(L*0.55,L-0.15);
+    else if(an==='int')r=L+0.03;
+    else if(an==='plq')r=(L+E)/2;
+    else if(an==='med')r=E-0.05;
+    else if(an==='adv')r=E+0.35;
+    else if(an==='deepcal')r=E-g.thk-0.04;
+    else if(an==='strut')r=g.rs;
+    else if(an==='strut2')r=g.rs2;
+    else if(an==='behind')r=(g.rs+L)/2;
+    else if(an==='between')r=L-0.12;
+    else if(an==='nod'){const N=X.nodule,x=Math.abs(ad(a,N.a))/N.w;r=L-N.h*Math.cos(x*Math.PI/2)*(0.7+0.6*vnoise(a*9,1,3))+0.06}
+    else if(an==='thr'){const T=X.thr,x=Math.abs(ad(a,T.a))/T.w;r=L-T.h*Math.pow(Math.cos(x*Math.PI/2),0.6)*(0.65+0.7*vnoise(a*5,2,4))/2}
+    else r=L;
+    r+=ex;out.push([txt,ox+r*Math.cos(a)*sc,oy-r*Math.sin(a)*sc]);
+  }
+  if(!['air','scad','hema'].includes(it.id))out.push(['Guidewire artifact',w/2+0.85*Math.cos(g.gw)*sc,w/2-0.85*Math.sin(g.gw)*sc]);
+  return out;
+}
+function renderAtlas(){
+  const it=ATLAS.find(a=>a.id===$('#atsel').value)||ATLAS[0],g=it.make();
+  {const R=Math.min(720,Math.max(360,Math.round(cv.at.clientWidth*(window.devicePixelRatio||1)/40)*40));if(off.at.width!==R){off.at.width=off.at.height=R}}
+  renderFrame(off.at,g,7,'ivus');
+  const c=cv.at,d=sizeC(c),x=c.getContext('2d'),w=c.width,sc=w/(2*FOV);
+  x.fillStyle='#000';x.fillRect(0,0,w,w);x.drawImage(off.at,0,0,w,w);frameDecor(x,w,d,'IVUS');
+  if($('#atlab').checked){
+    const items=atlasLabels(it,g,w);
+    x.font=`600 ${11*d}px "Public Sans",system-ui,sans-serif`;x.lineJoin='round';
+    for(const [txt,px,py] of items){
+      const vx=px-w/2,vy=py-w/2,L=Math.hypot(vx,vy)||1,tx=px+vx/L*26*d,ty=py+vy/L*26*d;
+      x.strokeStyle='#f2b630';x.lineWidth=1.2*d;x.beginPath();x.moveTo(px,py);x.lineTo(tx,ty);x.stroke();
+      x.fillStyle='#f2b630';x.beginPath();x.arc(px,py,2.2*d,0,TAU);x.fill();
+      const tw=x.measureText(txt).width,lx=Math.min(w-tw-4*d,Math.max(4*d,vx<0?tx-tw-3*d:tx+3*d)),ly=Math.min(w-6*d,Math.max(14*d,ty+4*d));
+      x.lineWidth=3*d;x.strokeStyle='rgba(0,0,0,.85)';x.strokeText(txt,lx,ly);x.fillStyle='#fff';x.fillText(txt,lx,ly);
+    }
+  }
+  $('#atdesc').textContent=it.desc;
+}
+
+/* ---------- quiz ---------- */
+const QLAB={
+  ivus:{fib:'Fibrous',ff:'Fibro-fatty',calc:'Fibrocalcific',lipid:'Lipid-rich (echolucent or attenuated)',min:'Minimal disease'},
+  oct:{fib:'Fibrous',calc:'Fibrocalcific',lipid:'Lipid-rich fibroatheroma',tcfa:'Thin-cap fibroatheroma'}
+};
+const QEXP={
+  ivus:{
+    fib:'Homogeneous plaque about as bright as the adventitia, with no shadow behind it, so the EEM is visible all the way round.',
+    ff:'Plaque that is clearly less echogenic than the adventitia but not dark and echolucent like lipid: fibro-fatty.',
+    calc:'A very bright leading edge with a dark acoustic shadow behind it. The calcium\u2019s thickness is hidden by the shadow.',
+    lipid:'Dark, echolucent plaque, or signal fading behind it without a bright leading edge (attenuation, not shadowing). Both point to lipid or necrotic core; attenuation carries a no-reflow risk.',
+    min:'A thin bright intima, a dark media ring and a bright adventitia: the three-layer appearance, with plaque burden under 40%.'},
+  oct:{
+    fib:'Homogeneous high-signal tissue with low attenuation. You can often see the EEL behind it.',
+    calc:'A signal-poor region with sharp borders whose full thickness is visible, unlike on IVUS.',
+    lipid:'A signal-poor region with diffuse borders under a fibrous cap, with rapid signal loss behind it. The cap here is 65 µm or thicker.',
+    tcfa:'A lipid pool over 90° under a cap thinner than 65 µm: a thin-cap fibroatheroma. Bright punctate spots in the cap suggest macrophages.'}
+};
+function qLabel(f,mod){
+  if(f.sb!=null)return null;
+  if(f.lip>=100&&f.arc<1)return mod==='ivus'?'lipid':(f.cap<0.065?'tcfa':(f.cap>0.1?'lipid':null));
+  if(f.arc>=120&&f.lip<1)return 'calc';
+  if(f.arc<1&&f.lip<1&&f.ff>0.7)return mod==='ivus'?'ff':null;
+  if(f.arc<1&&f.lip<1&&f.pb>0.55&&f.fib>0.5&&f.ff<0.3)return 'fib';
+  if(f.arc<1&&f.lip<1&&f.pb<0.36)return mod==='ivus'?'min':null;
+  return null;
+}
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const Q={key:null,done:false,right:0,total:0,opts:[],label:'',exp:''};
+function newQ(){
+  const mod=S.mod;Q.done=false;Q.mod=mod;
+  if(mod==='ivus'){
+    let it=ATLAS[Math.floor(Math.random()*ATLAS.length)];if(Q.key&&ATLAS.length>1)while(it.id===Q.key)it=ATLAS[Math.floor(Math.random()*ATLAS.length)];const g=it.make();
+    Q.key=it.id;Q.label=it.name;Q.exp=it.desc;
+    const others=shuffle(ATLAS.filter(a=>a.id!==it.id&&!(it.excl||[]).includes(a.id))).slice(0,3);
+    Q.opts=shuffle([it,...others].map(a=>[a.id,a.name]));
+    Q.g=g;Q.seed=7;renderQ(false);
+  }else{
+    const pool={};
+    for(const k in CS)CS[k].F.forEach(f=>{const l=qLabel(f,mod);if(l)(pool[l]=pool[l]||[]).push(f)});
+    const keys=Object.keys(QLAB[mod]).filter(k=>pool[k]);
+    const key=keys[Math.floor(Math.random()*keys.length)],arr=pool[key],f=arr[Math.floor(Math.random()*arr.length)];
+    const g=preGeo(f);g.rot=Math.random()*TAU;
+    Q.key=key;Q.label=QLAB[mod][key];Q.exp=QEXP[mod][key];Q.opts=Object.entries(QLAB[mod]);
+    Q.g=g;Q.seed=Math.floor(Math.random()*1e6);renderQ(false);
+  }
+  drawQ();
+  $('#qopts').innerHTML=Q.opts.map(([k,v])=>`<button data-k="${k}">${v}</button>`).join('');
+  $('#qopts').querySelectorAll('button').forEach(b=>b.onclick=()=>answer(b));
+  $('#qfb').textContent='';
+  $('#qscore').textContent=Q.total?`${Q.right} of ${Q.total} correct`:'';
+}
+const resFor=c=>Math.min(720,Math.max(360,Math.round(c.clientWidth*(window.devicePixelRatio||1)/40)*40));
+function renderQ(draw=true){if(!Q.g)return;const R=resFor(cv.qz);if(off.qz.width!==R){off.qz.width=off.qz.height=R}renderFrame(off.qz,Q.g,Q.seed,Q.mod||'ivus');if(draw)drawQ()}
+function drawQ(){const c=cv.qz,d=sizeC(c),x=c.getContext('2d'),w=c.width;x.fillStyle='#000';x.fillRect(0,0,w,w);x.drawImage(off.qz,0,0,w,w);frameDecor(x,w,d,Q.mod==='ivus'?'IVUS':'OCT')}
+function answer(b){
+  if(Q.done)return;Q.done=true;Q.total++;
+  const ok=b.dataset.k===Q.key;if(ok)Q.right++;
+  $('#qopts').querySelectorAll('button').forEach(x=>{if(x.dataset.k===Q.key)x.classList.add('right');else if(x===b)x.classList.add('wrong');x.disabled=x!==b&&x.dataset.k!==Q.key});
+  $('#qfb').textContent=(ok?'Correct. ':`Not quite: this is ${Q.label.charAt(0).toLowerCase()+Q.label.slice(1)}. `)+Q.exp;
+  $('#qscore').textContent=`${Q.right} of ${Q.total} correct`;
+}
+$('#qnext').onclick=newQ;
+let bdrop=null;
+const redrawPanels=()=>requestAnimationFrame(()=>{renderQ();renderAtlas()});
+function unmax(p){p.classList.remove('max');if(bdrop){bdrop.remove();bdrop=null}p.querySelector('[data-act=max]').textContent='Maximize';document.body.style.overflow='';redrawPanels()}
+function domax(p){const o=document.querySelector('.panel.max');if(o)unmax(o);p.classList.remove('min');const mn=p.querySelector('[data-act=min]');mn.textContent='Minimize';mn.setAttribute('aria-expanded','true');
+  p.classList.add('max');bdrop=document.createElement('div');bdrop.className='backdrop';bdrop.onclick=()=>unmax(p);document.body.appendChild(bdrop);p.querySelector('[data-act=max]').textContent='Restore';document.body.style.overflow='hidden';redrawPanels()}
+document.querySelectorAll('.pctl button').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');
+  if(b.dataset.act==='min'){if(p.classList.contains('max'))unmax(p);const m=p.classList.toggle('min');b.textContent=m?'Expand':'Minimize';b.setAttribute('aria-expanded',String(!m));if(!m)redrawPanels()}
+  else p.classList.contains('max')?unmax(p):domax(p)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const p=document.querySelector('.panel.max');if(p)unmax(p)}});
+
+function ATLAS_INIT(){const s=$('#atsel'),grps=[...new Set(ATLAS.map(a=>a.grp))];s.innerHTML=grps.map(gp=>`<optgroup label="${gp}">${ATLAS.filter(a=>a.grp===gp).map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</optgroup>`).join('');s.onchange=renderAtlas;$('#atlab').onchange=renderAtlas}
+ATLAS_INIT();
+
+/* ---------- controls ---------- */
+const fillSel=(sel,vals,fmt,v)=>{sel.innerHTML=vals.map(x=>`<option value="${x}">${fmt(x)}</option>`).join('');sel.value=v};
+const diam=[];for(let d=2.5;d<=4.001;d+=0.25)diam.push(d.toFixed(2));
+fillSel($('#sd'),diam,x=>x+' mm','3.00');
+fillSel($('#sl'),LENS,x=>x+' mm',26);
+const ncs=[];for(let d=2.5;d<=5.001;d+=0.25)ncs.push(d.toFixed(2));
+fillSel($('#ncd'),ncs,x=>x+' mm','3.50');
+
+$('#sd').onchange=e=>{S.stentD=+e.target.value;ui()};
+$('#sl').onchange=e=>{S.len=+e.target.value;ui()};
+$('#prep').onchange=e=>{S.prep=e.target.value;ui()};
+$('#pd').oninput=e=>{S.pD=+e.target.value;ui()};
+$('#ncd').onchange=e=>{S.ncD=+e.target.value};
+$('#ncp').oninput=e=>{S.ncP=+e.target.value;$('#ncpv').textContent=S.ncP;$('#ncwarn').textContent=S.ncP>RBP_NC?`Above the NC balloon’s rated burst pressure (about ${RBP_NC} atm): rupture risk.`:''};
+document.querySelectorAll('input[name=reg]').forEach(r=>r.onchange=e=>{S.region=e.target.value});
+$('#deploy').onclick=deploy;$('#post').onclick=postdil;$('#reset').onclick=reset;
+$('#cont').onchange=e=>{S.cont=e.target.checked;drawXS();drawLong()};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{S.mod=b.dataset.mod;refresh(true);newQ()});
+$('#case').onchange=e=>{S.case=e.target.value;F=CS[S.case].F;mlaI=CS[S.case].mla;S.i=mlaI;S.refD=S.refP=null;reset()};
+function setRefs(which){
+  const z=F[S.i].z;if(which==='d')S.refD=z;else S.refP=z;
+  if(S.refD!=null&&S.refP!=null){if(S.refD>S.refP)[S.refD,S.refP]=[S.refP,S.refD];const span=S.refP-S.refD;S.len=LENS.find(l=>l>=span)||38;$('#sl').value=S.len}
+  frameOnly();ui();
+}
+$('#trL').onclick=()=>trMode('lum');$('#trE').onclick=()=>trMode('eem');$('#trF').onclick=trFinish;
+$('#trC').onclick=()=>{delete TR.byFrame[S.i];TR.pts=[];TR.mode=null;trUI();drawXS()};
+{let drag=null;const pxd=(a,b)=>{const r=cv.xs.getBoundingClientRect(),s=r.width/(2*FOV);return Math.hypot((a[0]-b[0])*s,(a[1]-b[1])*s)};
+  cv.xs.addEventListener('pointerdown',e=>{if(!TR.mode)return;e.preventDefault();cv.xs.setPointerCapture(e.pointerId);const q=xsMM(e);
+    if(TR.pts.length>=3&&pxd(q,TR.pts[0])<12){drag=null;trFinish();return}
+    drag={sx:e.clientX,sy:e.clientY,moved:false};TR.pts.push(q);trUI();drawXS()});
+  cv.xs.addEventListener('pointermove',e=>{if(!drag)return;if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>5)drag.moved=true;
+    if(drag.moved){const q=xsMM(e);if(pxd(q,TR.pts[TR.pts.length-1])>4){TR.pts.push(q);drawXS()}}});
+  cv.xs.addEventListener('pointerup',()=>{if(!drag)return;const m=drag.moved;drag=null;if(m&&TR.pts.length>=8)trFinish();else trUI()});}
+$('#markD').onclick=()=>setRefs('d');$('#markP').onclick=()=>setRefs('p');
+$('#clearRef').onclick=()=>{if(S.deployed)return;S.refD=S.refP=null;frameOnly();drawLong();ui()};
+$('#mla').onclick=()=>{S.i=mlaI;frameOnly()};
+$('#scrub').oninput=e=>{S.i=N-1-(+e.target.value);frameOnly()};
+const clk=hh=>{const H=Math.floor(hh)%12||12;return `${H}:${String(Math.round((hh%1)*60)).padStart(2,'0')}`};
+let lt=0;$('#lang').oninput=e=>{const hh=+e.target.value;S.lAng=Math.PI/2-hh*Math.PI/6;$('#langv').textContent=`${clk(hh)} to ${clk((hh+6)%12)}`;drawLong();clearTimeout(lt);lt=setTimeout(()=>{renderLong();drawLong()},60)};
+for(const c of[cv.angio,cv.long]){
+  const set=e=>{const r=c.getBoundingClientRect();let z;
+    if(c===cv.angio){const px=AZ.x0+(e.clientX-r.left)/r.width*AZ.w,py=AZ.y0+(e.clientY-r.top)/r.height*AZ.h,k0=angPt(ZL).k,k1=angPt(0).k;let best=1e9,bk=-1;
+      for(let k=k0;k<=k1;k++){const q=ANG.trunk[k],dd=Math.hypot(q[0]-px,q[1]-py);if(dd<best){best=dd;bk=k}}
+      if(best>45)return;z=ANG.uLM+44-bk*AST}
+    else z=ZL*(1-(e.clientX-r.left)/r.width);
+    S.i=idx(Math.max(0,Math.min(ZL,z)));frameOnly()};
+  c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);set(e)});
+  c.addEventListener('pointermove',e=>{if(e.buttons)set(e)});
+}
+let timer=null;
+$('#play').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;$('#play').textContent='Play pullback';return}
+  if(S.i>=N-1)S.i=0;$('#play').textContent='Pause';
+  timer=setInterval(()=>{S.i++;if(S.i>=N-1){S.i=N-1;clearInterval(timer);timer=null;$('#play').textContent='Play pullback'}frameOnly()},40);
+};
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawAngio();drawLong();drawXS();renderQ();renderAtlas()},80)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{drawAngio();drawLong();drawXS();drawQ()});
+if(FEEDBACK_EMAIL)$('#fbk').innerHTML=` <span class="fb">Feedback: <a href="mailto:${FEEDBACK_EMAIL}?subject=PracticeIVUS%20feedback" target="_blank" rel="noopener">${FEEDBACK_EMAIL}</a></span>`;
+refresh(true);newQ();renderAtlas();
+})();
+</script>
+</body>
+</html>
