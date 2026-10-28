@@ -105,9 +105,9 @@ collections:
             summary: "{{fields.status}}: {{fields.title}}"
             fields:
               - { name: title, label: "Title", widget: string }
-              - { name: status, label: "Status", widget: select, options: ["Ongoing", "Under review", "Published", "Completed", "Coming soon"], default: "Ongoing" }
-              - { name: summary, label: "Summary", widget: text }
-              - { name: data_sources, label: "Data sources", widget: list, field: { name: item, label: Source, widget: string }, required: false }
+              - { name: status, label: "Status (optional)", widget: select, options: ["Ongoing", "Under review", "Published", "Completed", "Coming soon"], required: false }
+              - { name: summary, label: "Summary (optional)", widget: text, required: false }
+              - { name: data_sources, label: "Data sources (optional)", widget: list, field: { name: item, label: Source, widget: string }, required: false }
               - { name: methods, label: "Methods", widget: string, required: false }
               - { name: link, label: "Link (paper, poster, slides)", widget: string, required: false }
               - { name: file, label: "Upload a file (HTML tool, PDF, slides): drag and drop here", widget: file, required: false }

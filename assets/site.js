@@ -16,7 +16,7 @@
   }
 
   function initials(name) {
-    return String(name || "").split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+    return String(name || "").split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 4).join("").toUpperCase();
   }
 
   function chrome(s) {
@@ -73,7 +73,7 @@
       ${p.image ? `<img src="${esc(p.image)}" alt="">` : ""}
       <div class="meta">${p.status ? `<span class="chip status">${esc(p.status)}</span>` : ""}${chips}</div>
       <h3>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(p.title)}</a>` : esc(p.title)}</h3>
-      <p>${esc(p.summary)}</p>
+      ${p.summary ? `<p>${esc(p.summary)}</p>` : ""}
       ${p.methods ? `<div class="methods">Methods: ${esc(p.methods)}</div>` : ""}
       ${url ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">${esc(p.button_label || "Open")} →</a>` : ""}
     </article>`;
@@ -97,8 +97,7 @@
           ${linkRow(s)}
         </div>
       </section>
-      <h2>About</h2>
-      <div class="bio">${md(about.bio)}</div>
+      <div class="bio" style="margin-top:40px">${md(about.bio)}</div>
       ${(about.research_interests || []).length ? `<h2>Research interests</h2><div class="interests">${about.research_interests.map((i) => `<span class="chip">${esc(i)}</span>`).join("")}</div>` : ""}
       ${(about.news || []).length ? `<h2>News</h2><ul class="plain timeline">${about.news.map((n) => `<li><span class="when">${esc(n.date)}</span><span>${md(n.text).replace(/^<p>|<\/p>$/g, "")}</span></li>`).join("")}</ul>` : ""}
       ${s.show_projects !== false && featProj.length ? `<h2>Current projects</h2><div class="cards">${featProj.map(projectHTML).join("")}</div><p><a href="projects.html">All projects →</a></p>` : ""}
@@ -125,12 +124,11 @@
     const items = projs.items || [];
     const order = ["Ongoing", "Under review", "Published", "Completed", "Coming soon"];
     const groups = {};
-    items.forEach((p) => { (groups[p.status || "Other"] ||= []).push(p); });
-    const keys = Object.keys(groups).sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
+    items.forEach((p) => { (groups[p.status || ""] ||= []).push(p); });
+    const keys = Object.keys(groups).sort((a, b) => (a === "" ? -1 : b === "" ? 1 : (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99)));
     document.getElementById("content").innerHTML = `
       <h1>Projects</h1>
-      <p class="muted">Current research and clinical education work, plus what\u2019s coming next.</p>
-      ${items.length ? keys.map((k) => `<h2>${esc(k)}</h2><div class="cards${k === "Coming soon" ? " soon" : ""}">${groups[k].map(projectHTML).join("")}</div>`).join("") : `<p class="empty">Projects coming soon.</p>`}`;
+      ${items.length ? keys.map((k) => `${k ? `<h2>${esc(k)}</h2>` : ""}<div class="cards${k === "Coming soon" ? " soon" : ""}">${groups[k].map(projectHTML).join("")}</div>`).join("") : `<p class="empty">Projects coming soon.</p>`}`;
   }
 
   load("settings").then((s) => {

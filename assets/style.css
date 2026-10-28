@@ -45,7 +45,7 @@ main.wrap { padding-top: 48px; padding-bottom: 72px; }
 
 /* Hero */
 .hero { display: grid; grid-template-columns: 180px 1fr; gap: 36px; align-items: start; }
-.hero .photo { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; background: var(--chip); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 3rem; color: var(--accent); }
+.hero .photo { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; background: var(--chip); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 2.5rem; letter-spacing: .02em; color: var(--accent); }
 .hero .position { font-size: 1.05rem; margin: 0; }
 .hero .inst { color: var(--muted); margin: 0 0 14px; }
 .hero .tagline { font-family: var(--serif); font-style: italic; font-size: 1.12rem; color: var(--muted); margin: 0 0 18px; }
@@ -93,7 +93,7 @@ footer.site .wrap { display: flex; justify-content: space-between; flex-wrap: wr
 @media (max-width: 640px) {
   h1 { font-size: 1.85rem; }
   .hero { grid-template-columns: 1fr; gap: 20px; }
-  .hero .photo { width: 120px; height: 120px; font-size: 2.2rem; }
+  .hero .photo { width: 120px; height: 120px; font-size: 1.7rem; }
   .timeline li { grid-template-columns: 1fr; gap: 0; }
   nav.main { gap: 16px; }
 }
