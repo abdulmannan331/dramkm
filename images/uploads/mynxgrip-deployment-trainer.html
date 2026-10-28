@@ -1,0 +1,1047 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MynxGrip Deployment Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: instrument-panel workbench — step rail | sterile-field stage (camera follows the action) + inflation line | coach panel */
+:root{
+  --bg:#edf1f0; --panel:#ffffff; --ink:#13201d; --muted:#5a6a66; --line:#d2dbd9;
+  --accent:#1f8a5b; --accent-soft:#e2f2ea; --accent-ink:#ffffff;
+  --warn:#b3541a; --warn-soft:#fbeee4; --hl:#f2b705; --field:#dce5e6; --chip:#f3f6f5;
+  --f-display:"Sora","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1614; --panel:#15201d; --ink:#e2ebe8; --muted:#93a39f; --line:#2a3835;
+  --accent:#3dbd81; --accent-soft:#16352a; --accent-ink:#06140e;
+  --warn:#e8935a; --warn-soft:#3a2416; --hl:#f5c537; --field:#1d2a29; --chip:#1c2926; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1614; --panel:#15201d; --ink:#e2ebe8; --muted:#93a39f; --line:#2a3835;
+  --accent:#3dbd81; --accent-soft:#16352a; --accent-ink:#06140e;
+  --warn:#e8935a; --warn-soft:#3a2416; --hl:#f5c537; --field:#1d2a29; --chip:#1c2926; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:-.02em;margin:0;line-height:1;text-wrap:balance}
+h1 small{display:block;font-family:var(--f-body);font-weight:500;font-size:13px;color:var(--muted);letter-spacing:.02em;margin-top:6px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px}
+.tabs button{font:600 13.5px var(--f-body);letter-spacing:.01em;border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tool{font:600 13px var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer}
+.tool:hover{border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.rail{padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.rail .ph{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.rail .ph b{font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.rail button{border:1px solid var(--line);background:var(--chip);color:var(--ink);font:600 12.5px var(--f-body);padding:3px 9px;border-radius:999px;cursor:pointer;display:flex;gap:5px;align-items:baseline}
+.rail button:disabled{cursor:default}
+.rail button .n{font:500 10.5px var(--f-mono);color:var(--muted)}
+.rail button.done{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.rail button.done .n{color:var(--accent)}
+.rail button.cur{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rail button.cur .n{color:var(--accent-ink)}
+.rail .hidden-cue{letter-spacing:.15em;color:var(--muted)}
+.parts{padding:18px;display:flex;flex-direction:column;gap:12px}
+.parts h2{font:700 24px var(--f-display);margin:0}
+.parts>p{margin:0;color:var(--muted);max-width:70ch}
+.partsfig{overflow-x:auto;border-radius:10px;background:var(--field)}
+.partsfig svg{display:block;width:100%;min-width:760px;height:auto}
+.partsfig text{font:700 15px var(--f-display);fill:var(--ink)}
+.partsfig .cap{font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;fill:var(--muted)}
+.partsfig .num circle{fill:var(--accent)}
+.partsfig .num text{font:700 13px var(--f-mono);fill:var(--accent-ink)}
+.partsfig .lead{stroke:var(--ink);stroke-width:1;opacity:.5}
+.glossary{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px}
+.glossary li{display:grid;grid-template-columns:26px 1fr;gap:8px;font-size:14px;min-width:0}
+.glossary li span{font:700 12px var(--f-mono);background:var(--accent);color:var(--accent-ink);border-radius:999px;width:24px;height:24px;display:grid;place-items:center}
+.glossary b{display:block}
+.stagecol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.stage{position:relative;overflow:hidden;padding:0}
+.stage svg{display:block;width:100%;height:auto;aspect-ratio:1060/615;touch-action:none;user-select:none;-webkit-user-select:none}
+.stagebar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.stagebar .legend{font-size:12.5px;color:var(--muted);min-width:0;flex:1 1 240px}
+.shake{animation:shake .28s linear}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.hl{animation:glow 1.3s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 1px var(--hl))}50%{filter:drop-shadow(0 0 6px var(--hl)) drop-shadow(0 0 2px var(--hl))}}
+.hot{animation:ring 1.2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes ring{0%{opacity:.9;transform:scale(.7)}100%{opacity:0;transform:scale(1.6)}}
+.ghost{stroke:var(--hl);stroke-dasharray:8 7;fill:none;animation:dash .8s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-15}}
+@media (prefers-reduced-motion:reduce){.hl,.hot,.ghost,.shake{animation:none}.hl{filter:drop-shadow(0 0 4px var(--hl))}}
+.beacon .bHalo{fill:var(--hl);opacity:.2}
+.beacon .bRing{fill:none;stroke:var(--hl)}
+.beacon .bPulse{fill:none;stroke:var(--hl);animation:beat 1.1s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes beat{0%{transform:scale(.7);opacity:1}100%{transform:scale(1.7);opacity:0}}
+@media (prefers-reduced-motion:reduce){.beacon .bPulse{animation:none;opacity:.6}}
+.note rect{fill:var(--panel);stroke:var(--hl)}
+.note text{font-family:var(--f-body);font-weight:700;fill:var(--ink)}
+.note line{stroke:var(--hl)}
+.angio{position:absolute;right:14px;top:14px;width:min(42%,340px);border-radius:10px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.25);cursor:pointer;border:3px solid var(--hl);background:#cfd2d0}
+.angio svg{display:block;width:100%;height:auto}
+.angio .tag{position:absolute;left:8px;top:6px;font:700 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:#1a1d1c;background:rgba(255,255,255,.75);padding:2px 6px;border-radius:4px}
+.angio .ok{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font:700 14px var(--f-body);color:#fff;background:#1f8a5b;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.angio.pulse{animation:apulse 1.1s ease-in-out infinite}
+@keyframes apulse{50%{box-shadow:0 0 0 8px rgba(242,183,5,.35),0 6px 24px rgba(0,0,0,.25)}}
+.lbl text{font-family:var(--f-body);font-weight:600;fill:var(--ink);paint-order:stroke;stroke:var(--field);stroke-linejoin:round}
+.lbl line{stroke:var(--ink);opacity:.55}
+.anat{font-family:var(--f-body);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.bench{padding:0}
+.bench .head{display:flex;justify-content:space-between;align-items:baseline;padding:8px 12px 0;gap:8px;flex-wrap:wrap}
+.bench .head b{font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.bench .head span{font:500 12px var(--f-mono);color:var(--muted)}
+.bench svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.bench text{font:500 11px var(--f-body);fill:var(--muted)}
+.bench .num{font:500 9.5px var(--f-mono);fill:var(--muted)}
+.coach{padding:16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:max(12px,env(safe-area-inset-top,0px))}
+@media (max-width:760px){.coach{position:static}}
+.phase{display:flex;justify-content:space-between;gap:8px;font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.phase .pp{color:var(--accent)}
+.cue{font-family:var(--f-display);font-weight:700;font-size:34px;line-height:1.05;letter-spacing:-.02em;margin:0}
+.instr{font-size:16.5px;font-weight:600;line-height:1.4;margin:0}
+.how{font-size:14px;color:var(--muted);margin:0}
+.msg{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--chip);min-height:38px}
+.msg.warn{background:var(--warn-soft);color:var(--warn)}
+.msg.ok{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.pearl{border-left:3px solid var(--accent);padding:4px 0 4px 10px;font-size:14px}
+.pearl b{font:700 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);display:block}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.primary{font:600 14px var(--f-body);letter-spacing:.01em;border:0;background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:8px;cursor:pointer}
+.primary:disabled{opacity:.4;cursor:default}
+.choices{display:grid;gap:6px}
+.choices p{margin:0;font-size:14px;font-weight:600}
+.choices button{text-align:left;border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:9px 11px;border-radius:8px;font:500 14px var(--f-body);cursor:pointer}
+.choices button b{font:700 14px var(--f-body);margin-right:6px}
+.choices button.bad{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.stats{display:flex;gap:16px;font:500 12.5px var(--f-mono);color:var(--muted);flex-wrap:wrap}
+.holdbtn{font:600 15px var(--f-body);letter-spacing:.01em;border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent);padding:12px;border-radius:10px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.holdbtn.on{background:var(--accent);color:var(--accent-ink)}
+.mnemo{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.mnemo b{color:var(--ink)}
+.recall{padding:18px;display:flex;flex-direction:column;gap:14px}
+.recall h2{font:700 22px var(--f-display);margin:0}
+.seq{display:flex;flex-wrap:wrap;gap:6px;min-height:42px;padding:8px;border:1px dashed var(--line);border-radius:10px}
+.seq span{font:600 13px var(--f-body);background:var(--accent);color:var(--accent-ink);padding:6px 10px;border-radius:6px}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.pool button{border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:9px 12px;border-radius:8px;font:500 14px var(--f-body);cursor:pointer;text-align:left;max-width:100%}
+.pool button.bad{border-color:var(--warn);background:var(--warn-soft)}
+footer{font-size:12.5px;color:var(--muted);max-width:900px}
+footer a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>MynxGrip Deployment Trainer<small>Hands-on, step-by-step femoral closure simulator · 6F/7F MynxGrip</small></h1>
+  <div class="row">
+    <div class="tabs" role="group" aria-label="Mode">
+      <button id="mLearn" aria-pressed="true">Practice</button>
+      <button id="mPractice" aria-pressed="false">Recall</button>
+    </div>
+    <button class="tool" id="btnRestart">Restart</button>
+  </div>
+</header>
+
+<nav class="card rail" id="rail" aria-label="Steps"></nav>
+
+<div class="grid">
+
+  <div class="stagecol" id="stagecol">
+    <div class="card stage" id="stageCard">
+      <svg id="stage" viewBox="-200 -200 1500 870" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Cut-away view of the groin with the procedural sheath and MynxGrip device">
+        <defs>
+          <pattern id="fat" width="36" height="26" patternUnits="userSpaceOnUse">
+            <rect width="36" height="26" fill="#f1d088"/>
+            <ellipse cx="9" cy="7" rx="8.5" ry="6" fill="#f6dc9e" stroke="#ddb466" stroke-width="1"/>
+            <ellipse cx="27" cy="9" rx="8" ry="6.5" fill="#f5d996" stroke="#ddb466" stroke-width="1"/>
+            <ellipse cx="18" cy="20" rx="9" ry="5.5" fill="#f7dfa4" stroke="#ddb466" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="lumen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a0e16"/><stop offset=".5" stop-color="#a6232c"/><stop offset="1" stop-color="#650d15"/></linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3a7a2"/><stop offset="1" stop-color="#c46a68"/></linearGradient>
+          <linearGradient id="gSheath" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f8f8" stop-opacity=".92"/><stop offset=".5" stop-color="#c9d3d6" stop-opacity=".6"/><stop offset="1" stop-color="#eef2f3" stop-opacity=".9"/></linearGradient>
+          <linearGradient id="gHub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fe0b6"/><stop offset=".45" stop-color="#3dbb7c"/><stop offset="1" stop-color="#1d7a4d"/></linearGradient>
+          <linearGradient id="gValve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#ecefec"/><stop offset="1" stop-color="#c9cfcc"/></linearGradient>
+          <linearGradient id="gShut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef07a"/><stop offset=".4" stop-color="#cfd432"/><stop offset="1" stop-color="#8d9113"/></linearGradient>
+          <linearGradient id="gBlack" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5f64"/><stop offset=".35" stop-color="#1c1e20"/><stop offset="1" stop-color="#2f3235"/></linearGradient>
+          <linearGradient id="gAdv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f1ea"/><stop offset=".55" stop-color="#cfcabf"/><stop offset="1" stop-color="#e8e4dc"/></linearGradient>
+          <linearGradient id="gShaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9edef"/><stop offset="1" stop-color="#8f9aa0"/></linearGradient>
+          <linearGradient id="gPin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6f7"/><stop offset=".5" stop-color="#b5bec3"/><stop offset="1" stop-color="#e2e7ea"/></linearGradient>
+          <radialGradient id="gBalloon" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="#ffffff" stop-opacity=".9"/><stop offset=".45" stop-color="#f1dfe0" stop-opacity=".55"/><stop offset=".8" stop-color="#cfd9de" stop-opacity=".55"/><stop offset="1" stop-color="#98a9b1" stop-opacity=".8"/></radialGradient>
+          <pattern id="knurl" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#1d1f21"/><path d="M0 0H5M0 0V5" stroke="#4a4f54" stroke-width="1"/></pattern>
+          <pattern id="knurl2" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#1d1f21"/><path d="M0 0H7M0 0V7" stroke="#4a4f54" stroke-width="1.3"/></pattern>
+          <clipPath id="clipIn" clipPathUnits="userSpaceOnUse"><path id="clipInP"/></clipPath><clipPath id="clipOut" clipPathUnits="userSpaceOnUse"><path id="clipOutP"/></clipPath><clipPath id="clipBand" clipPathUnits="userSpaceOnUse"><path id="clipBandP"/></clipPath>
+          <clipPath id="lumClip"><rect x="-1200" y="505" width="4000" height="88"/></clipPath>
+          <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--hl)"/></marker>
+        </defs>
+
+        <!-- anatomy (world coords; artery inner top wall at y=505) -->
+        <rect x="-1200" y="-1600" width="4000" height="1945" style="fill:var(--field)"/>
+        <rect x="-1200" y="345" width="4000" height="6" fill="#b47561"/>
+        <rect x="-1200" y="351" width="4000" height="21" fill="#e2a68f"/>
+        <rect x="-1200" y="372" width="4000" height="117" fill="url(#fat)"/>
+        <rect x="-1200" y="489" width="4000" height="8" fill="#d6a19a"/>
+        <rect x="-1200" y="497" width="4000" height="8" fill="url(#wall)"/>
+        <rect x="-1200" y="505" width="4000" height="88" fill="url(#lumen)"/>
+        <rect x="-1200" y="593" width="4000" height="8" fill="url(#wall)"/>
+        <rect x="-1200" y="601" width="4000" height="400" fill="#d6a19a"/>
+        <g id="cells" clip-path="url(#lumClip)"></g>
+        <g id="anatLbl">
+          <text class="anat" id="aSkin" fill="#7a8a87">Skin</text>
+          <text class="anat" id="aFat" fill="#8a6a2c">Subcutaneous tissue</text>
+          <text class="anat" id="aArt" fill="#f3c7c9">Common femoral artery · flow →</text>
+        </g>
+
+        <!-- layer A (tract coords): tract, shaft, advancer, sealant -->
+        <g id="locA" transform="translate(130 505) rotate(-30)">
+          <rect id="tract" x="0" y="-15" width="322" height="30" fill="#9e3f48" opacity=".55"/>
+          <rect id="hole" x="0" y="-13" width="16" height="26" fill="#5c0e15"/>
+        </g>
+
+        <use id="devIn" href="#devCore" clip-path="url(#clipIn)" style="display:none"/>
+        <g id="devFan" style="display:none"></g>
+        <g id="devAll"><g id="devCore">
+        <!-- catheter + balloon (world coords, follows the vessel once out of the sheath) -->
+        <g id="pCath">
+          <polyline id="cathTip" fill="none" stroke="#c9d0d3" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline id="cathTipHi" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+          <polyline id="cathBlk" fill="none" stroke="#1f2225" stroke-width="8.2" stroke-linejoin="round"/>
+          <circle id="balloon" r="3" fill="url(#gBalloon)" stroke="#a3b3ba" stroke-width="1"/>
+          <circle id="balloonHi" r="2" fill="#fff" opacity=".7"/>
+        </g>
+        <!-- advancer + sealant ride over the catheter (it runs through their lumen) -->
+        <g id="locA2" transform="translate(130 505) rotate(-30)">
+          <rect id="shaftG" x="0" y="-4" width="10" height="8" fill="url(#gShaft)" stroke="#7e898e" stroke-width=".5"/>
+          <g id="pAdv"><g transform="scale(1 1.5)">
+            <rect id="adv" x="0" y="-4.3" width="10" height="8.6" fill="url(#gAdv)" stroke="#a49d8e" stroke-width=".6"/>
+            <rect id="gMark" x="0" y="-5.4" width="22" height="10.8" fill="#14b07a"/>
+          </g></g>
+          <g id="pSeal"><g transform="scale(1 1.5)"><path id="seal" fill="#f7f8f8" fill-opacity=".92" stroke="#c2ccd0" stroke-width=".8"/><path id="sealFacets" fill="none" stroke="#d5dde0" stroke-width=".7"/></g></g>
+        </g>
+
+        <!-- layer B (tract coords): marker, black tube, sheath, shuttle, handle -->
+        <g id="locB" transform="translate(130 505) rotate(-30)">
+          <rect id="wMark" x="0" y="-4.4" width="24" height="8.8" fill="#f7f7f5" stroke="#9aa2a6" stroke-width=".5"/>
+          <g id="pTube"><g transform="scale(1 1.5)"><rect id="btube" x="0" y="-5.4" width="10" height="10.8" fill="url(#gBlack)"/><path d="M-3 -4 Q-5 0 -3 4 L1 5.4 L1 -5.4Z" fill="#2a2d30"/></g></g>
+          <g id="pSheath">
+            <g id="artSheath" transform="scale(1 1.45)">
+            <rect x="0" y="-7" width="420" height="14" fill="url(#gSheath)" stroke="#a6b4ba" stroke-width="1"/>
+            <path d="M0 -7 L-10 -3.4 L-10 3.4 L0 7Z" fill="#e6ecee" stroke="#a6b4ba" stroke-width="1" opacity=".95"/>
+            <path d="M436 12 L444 12 L447 30 L435 30Z" fill="#3dbb7c"/>
+            <path d="M441 30 C446 50 458 66 472 80" stroke="#b9c6cc" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+            <path d="M441 30 C446 50 458 66 472 80" stroke="#f3f6f7" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".9"/>
+            <path d="M420 -7 L446 -16 L452 -16 L452 16 L446 16 L420 7Z" fill="url(#gHub)"/>
+            <rect x="452" y="-18" width="24" height="36" rx="4" fill="url(#gValve)" stroke="#bfc6c3" stroke-width="1"/>
+            <rect x="462" y="-18" width="1.6" height="36" fill="#b9c0bd"/>
+            </g>
+            <g id="shStop" transform="translate(479 124)" style="cursor:pointer">
+              <circle id="shHot" r="26" fill="none" stroke="var(--hl)" stroke-width="3" opacity="0"/>
+              <g id="artStop3" transform="scale(1.35)"><rect x="-15" y="-5" width="30" height="10" rx="4" fill="#eef3f4" fill-opacity=".85" stroke="#9fb0b7" stroke-width="1"/>
+              <rect x="-4" y="-15" width="8" height="30" rx="3" fill="#eef3f4" fill-opacity=".85" stroke="#9fb0b7" stroke-width="1"/>
+              <circle r="8" fill="#f7f9fa" stroke="#9fb0b7" stroke-width="1"/></g>
+              <g id="shLever"><path transform="scale(1.35)" d="M-2.5 0 L-2.5 -15 Q0 -18 2.5 -15 L2.5 0 Z M-15 -2.5 L0 -2.5 L0 2.5 L-15 2.5 Q-18 0 -15 -2.5Z M15 -2.5 L0 -2.5 L0 2.5 L15 2.5 Q18 0 15 -2.5Z" fill="#ffffff" stroke="#9aa9b0" stroke-width=".8"/></g>
+              <circle r="2.6" fill="#c6d0d4"/>
+              <circle r="24" fill="transparent"/>
+            </g>
+          </g>
+          <g id="pShuttle"><g id="artShuttle" transform="scale(1 1.5)">
+            <path d="M-14 -5 Q-9 -12 6 -13 L140 -13 Q152 -13 152 0 Q152 13 140 13 L6 13 Q-9 12 -14 5Z" fill="url(#gShut)" stroke="#8b8f14" stroke-width=".6"/>
+            <rect x="34" y="-8.5" width="84" height="17" rx="8.5" fill="#b6bb20" opacity=".75"/>
+            <rect x="38" y="-6" width="76" height="12" rx="6" fill="#c9ce2c" opacity=".7"/>
+            <path d="M8 -12.5 L140 -12.5" stroke="#fbfdc8" stroke-width="1.5" opacity=".6"/>
+          </g></g>
+          <g id="pHandle"><g transform="scale(1 1.5)"><g id="artHandle">
+            <path d="M0 -13 L46 -12 C92 -14 142 -27 190 -36 Q212 -39 212 -24 L212 24 Q212 39 190 36 C142 27 92 14 46 12 L0 13Z" fill="url(#gBlack)"/>
+            <path d="M78 -14 C118 -19 160 -28 192 -32 Q205 -33 205 -22 L205 22 Q205 33 192 32 C160 28 118 19 78 14Z" fill="url(#knurl)"/>
+            <rect x="0" y="-13" width="6" height="26" rx="2" fill="#2b2e31"/></g>
+            <g id="pin"><rect id="pinBody" x="212" y="-3.6" width="6" height="7.2" fill="url(#gPin)" stroke="#8d989d" stroke-width=".5"/><rect id="pinBand" x="212" y="-3.7" width="0" height="7.4" fill="#111"/></g>
+          </g></g>
+        </g>
+        <path id="infTube" fill="none" stroke="#c4cfd4" stroke-width="4.2" stroke-linecap="round"/>
+        <path id="infTube2" fill="none" stroke="#f7fafb" stroke-width="1.4" stroke-linecap="round" opacity=".9"/>
+        </g></g>
+
+        <!-- gloved fingers & dressing -->
+        <g id="finger1" style="cursor:pointer">
+          <circle id="f1Hot" cx="318" cy="330" r="22" fill="none" stroke="var(--hl)" stroke-width="3" opacity="0"/>
+          <g id="f1Shape" opacity="0"><rect x="302" y="268" width="30" height="80" rx="15" fill="#efe9dc" stroke="#c9c0ad"/><rect x="308" y="324" width="18" height="16" rx="7" fill="#f7f3ea" stroke="#d6cdbb" stroke-width=".8"/></g>
+          <circle cx="318" cy="330" r="28" fill="transparent"/>
+        </g>
+        <g id="finger2" style="cursor:pointer">
+          <circle id="f2Hot" cx="404" cy="334" r="22" fill="none" stroke="var(--hl)" stroke-width="3" opacity="0"/>
+          <g id="f2Shape" opacity="0"><rect x="389" y="270" width="30" height="78" rx="15" fill="#efe9dc" stroke="#c9c0ad"/><rect x="395" y="324" width="18" height="16" rx="7" fill="#f7f3ea" stroke="#d6cdbb" stroke-width=".8"/></g>
+          <rect id="dressing" x="372" y="333" width="66" height="14" rx="3" fill="#ffffff" stroke="#c9d2d6" opacity="0"/>
+          <circle cx="404" cy="334" r="28" fill="transparent"/>
+        </g>
+        <g id="notes"></g>
+        <g id="ghostG"></g>
+        <g id="beacon" class="beacon" opacity="0" style="pointer-events:none"><circle class="bHalo"/><circle class="bRing"/><circle class="bPulse"/></g>
+        <g id="labels" class="lbl"></g>
+      </svg>
+      <div class="stagebar">
+        <span class="legend" id="legend">Drag anywhere on the field to move the highlighted part. Arrow keys work too.</span>
+        <button class="tool" id="btnLabels" aria-pressed="false">Show labels</button>
+      </div>
+    </div>
+
+    <div class="card bench" id="benchCard">
+      <div class="head"><b>Inflation line</b><span id="benchRead">Syringe 0.0 mL · balloon deflated</span></div>
+      <svg id="bench" viewBox="-70 0 720 176" role="img" aria-label="10 mL locking syringe, one-way stopcock and the inflation indicator on the handle">
+        <defs>
+          <linearGradient id="gBarrel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".18" stop-color="#ffffff" stop-opacity=".25"/><stop offset=".6" stop-color="#e3edf1" stop-opacity=".18"/><stop offset=".9" stop-color="#b9cbd2" stop-opacity=".45"/><stop offset="1" stop-color="#ffffff" stop-opacity=".7"/></linearGradient>
+          <linearGradient id="gFluid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9f0fb"/><stop offset=".5" stop-color="#a9d7f0"/><stop offset="1" stop-color="#8cc4e4"/></linearGradient>
+          <linearGradient id="gRod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".5" stop-color="#dbe5e9" stop-opacity=".9"/><stop offset="1" stop-color="#b8c7cd" stop-opacity=".95"/></linearGradient>
+          <linearGradient id="gRubber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b6166"/><stop offset=".35" stop-color="#25292c"/><stop offset="1" stop-color="#121416"/></linearGradient>
+          <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eef1f1"/><stop offset="1" stop-color="#c8d0d2"/></linearGradient>
+          <linearGradient id="gCollar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9ea322"/><stop offset=".35" stop-color="#e3e75a"/><stop offset=".7" stop-color="#cfd432"/><stop offset="1" stop-color="#8d9113"/></linearGradient>
+        </defs>
+        <g id="bowl"><ellipse cx="470" cy="146" rx="52" ry="7" fill="#000" opacity=".07"/><path d="M420 118 h100 l-10 26 h-80z" fill="url(#gWhite)" stroke="#a9b6bb"/><ellipse cx="470" cy="118" rx="50" ry="5" fill="#bfe1f3" stroke="#a9b6bb"/><text x="436" y="168">Sterile saline</text></g>
+        <g id="downstream">
+          <path d="M526 85 C548 85 556 85 566 85 C590 85 586 122 606 128" fill="none" stroke="#c4cfd4" stroke-width="5"/>
+          <path d="M526 85 C548 85 556 85 566 85 C590 85 586 122 606 128" fill="none" stroke="#f7fafb" stroke-width="1.6"/>
+          <g id="icStop" transform="translate(504 85)" style="cursor:pointer">
+            <circle id="icHot" r="26" fill="none" stroke="var(--hl)" stroke-width="3" opacity="0"/>
+            <rect x="-22" y="-8" width="44" height="16" rx="4" fill="url(#gWhite)" stroke="#b2bcc0" stroke-width="1"/>
+            <rect x="16" y="-6" width="8" height="12" rx="2" fill="url(#gWhite)" stroke="#b2bcc0" stroke-width="1"/>
+            <circle r="12.5" fill="url(#gWhite)" stroke="#b2bcc0" stroke-width="1"/>
+            <g id="icLever"><path d="M-3.5 0 L-3.5 -10 C-16 -14 -18 -30 -7 -31 L7 -31 C18 -30 16 -14 3.5 -10 L3.5 0Z M-3.5 0 L-3.5 10 C-16 14 -18 30 -7 31 L7 31 C18 30 16 14 3.5 10 L3.5 0Z" fill="url(#gWhite)" stroke="#a7b2b6" stroke-width="1"/><path d="M-9 -26 h18 M-9 26 h18" stroke="#d3dadc" stroke-width="1.2"/></g>
+            <circle r="3.6" fill="#d5dcdf" stroke="#b2bcc0" stroke-width=".6"/>
+            <circle r="34" fill="transparent"/>
+          </g>
+          <text x="482" y="140">Stopcock</text>
+          <text id="stopTxt" x="490" y="42">open</text>
+          <g transform="translate(570 0)">
+            <g id="benchPin"><rect id="bPinBody" x="35.5" y="56" width="9" height="20" fill="url(#gPin)" stroke="#8d989d" stroke-width=".6"/><rect id="bPinBand" x="35.4" y="60" width="9.2" height="0" fill="#111"/></g>
+            <path d="M10 82 Q10 74 20 74 L60 74 Q70 74 70 82 L62 140 L18 140Z" fill="url(#knurl2)" stroke="#000" stroke-width="1"/>
+            <text x="2" y="42">Indicator</text>
+            <text x="2" y="160">handle end</text>
+          </g>
+        </g>
+        <g id="syr" style="cursor:grab">
+          <rect x="-70" y="20" width="580" height="140" fill="transparent"/>
+          <ellipse cx="300" cy="140" rx="250" ry="6" fill="#000" opacity=".07"/>
+          <g id="plunger">
+            <g id="rodG">
+              <rect id="rod" x="0" y="77" width="230" height="16" rx="2" fill="url(#gRod)" stroke="#a9b9bf" stroke-width=".8"/>
+              <rect id="rodRib" x="0" y="84" width="230" height="2" fill="#c3d0d5"/>
+            </g>
+            <g id="thumbG"><rect x="0" y="46" width="10" height="78" rx="4" fill="url(#gRod)" stroke="#9fb0b7" stroke-width="1"/><rect x="3" y="50" width="2" height="70" rx="1" fill="#ffffff" opacity=".8"/></g>
+          </g>
+          <rect id="vac" x="200" y="66" width="0" height="38" fill="#f7fbfc" opacity=".5"/>
+          <rect id="liq" x="440" y="66" width="0" height="38" fill="url(#gFluid)" opacity=".85"/>
+          <g id="vacBub"></g>
+          <g id="seal2"><path d="M0 66 L6 72 L6 98 L0 104Z" fill="#2a2e31"/><rect x="-16" y="66" width="16" height="38" rx="3" fill="url(#gRubber)"/><rect x="-14" y="65" width="3.5" height="40" rx="1.5" fill="#3e4448"/><rect x="-6" y="65" width="3.5" height="40" rx="1.5" fill="#3e4448"/></g>
+          <rect x="200" y="63" width="240" height="44" rx="5" fill="url(#gBarrel)" stroke="#a5b8c0" stroke-width="1.3"/>
+          <path d="M206 68.5 H434" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>
+          <path d="M206 102 H434" stroke="#9fb4bc" stroke-width="1" opacity=".55"/>
+          <g id="grads"></g>
+          <path d="M440 70 L454 78 L454 92 L440 100Z" fill="url(#gBarrel)" stroke="#a5b8c0" stroke-width="1.1"/>
+          <rect x="454" y="72" width="24" height="26" rx="3" fill="url(#gWhite)" fill-opacity=".85" stroke="#a5b8c0" stroke-width="1"/>
+          <path d="M459 72 v26 M464 72 v26 M469 72 v26 M474 72 v26" stroke="#c4d0d4" stroke-width="1"/>
+          <rect x="478" y="79" width="8" height="12" rx="1.5" fill="#eef4f6" stroke="#a5b8c0" stroke-width="1"/>
+          <g id="collarG">
+            <rect x="182" y="34" width="20" height="102" rx="9" fill="url(#gCollar)" stroke="#7f8411" stroke-width="1"/>
+            <rect x="186" y="40" width="3" height="90" rx="1.5" fill="#f6f8a8" opacity=".7"/>
+            <rect id="collarNotch" x="187" y="38" width="10" height="10" rx="3" fill="#71750e"/>
+          </g>
+          <text id="lockTxt" x="206" y="132">unlocked</text>
+          <text x="206" y="32">10 mL locking syringe</text>
+        </g>
+      <g id="beaconB" class="beacon" opacity="0" style="pointer-events:none"><circle class="bHalo"/><circle class="bRing"/><circle class="bPulse"/></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="card coach" id="coach" aria-live="polite">
+    <div class="phase"><span id="phaseLbl" class="pp">Prep</span><span id="stepNum">Step 1 / 21</span></div>
+    <h2 class="cue" id="cue">Fill</h2>
+    <p class="instr" id="instr"></p>
+    <p class="how" id="how"></p>
+    <div class="choices" id="choices" hidden></div>
+    <button class="holdbtn" id="holdBtn" hidden>Press &amp; hold · 0 s</button>
+    <div class="msg" id="msg"></div>
+    <div class="pearl" id="pearl" hidden><b id="pearlLbl">Pearl</b><span id="pearlTxt"></span></div>
+    <div class="row">
+      <button class="primary" id="btnNext" hidden>Next step →</button>
+      <button class="tool" id="btnHint" hidden>Hint</button>
+      <button class="tool" id="btnRedo">Redo step</button>
+    </div>
+    <div class="stats"><span id="sTime">00:00</span><span id="sErr">0 errors</span><span id="sBest"></span></div>
+    <div class="mnemo">Four P's: <b>Prep</b> the balloon → <b>Plug</b> the arteriotomy → <b>Plant</b> the sealant → <b>Pull</b> out. Two stops on the way back: sheath tip, then artery wall.</div>
+  </aside>
+</div>
+
+<section class="card recall" id="recall" hidden>
+  <div class="phase"><span id="rPhase" class="pp">Prep</span><span id="rStat">0 errors</span></div>
+  <h2 id="rTitle">Tap the steps in order</h2>
+  <div class="seq" id="seq"></div>
+  <div class="pool" id="pool"></div>
+  <div class="row"><button class="tool" id="rAgain">Shuffle again</button></div>
+</section>
+
+<section class="card parts" id="parts">
+  <h2>Device parts</h2>
+  <p>The MynxGrip as you will hold it, with the parts hidden inside the black delivery tube pulled out below. Numbers match the list.</p>
+  <div class="partsfig">
+    <svg id="partsSvg" viewBox="0 0 1200 560" role="img" aria-label="Labelled diagram of the MynxGrip device, procedural sheath and locking syringe"></svg>
+  </div>
+  <ol class="glossary" id="glossary"></ol>
+</section>
+
+<footer>Educational simulation. Device parts follow the manufacturer's MynxGrip procedure-guide photographs: black paddle handle with the inflation-indicator pin at its end, yellow shuttle, black delivery tube, off-white advancer tube with a single green mark, spherical balloon with a soft distal tip, 10 mL locking syringe with a one-way stopcock. Lengths are compressed and the artery is enlarged to fit the screen; brand markings are omitted. It does not replace the Instructions for Use, a femoral angiogram review, or proctored training.</footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const C30=Math.cos(Math.PI/6),S30=Math.sin(Math.PI/6),AX=130,AY=505;
+const toG=(u,v=0)=>({x:AX+u*C30+v*S30,y:AY-u*S30+v*C30});
+/* device geometry in px along the tract (u). u=0 inner artery wall, 16 outer wall, 320 skin */
+const VT=476;               // sheath tip -> top of white valve
+const M0=532,MW=24;         // white shaft marker on the black catheter, from balloon centre
+const B0=578;               // black delivery tube tip, from balloon centre
+const LB=456;               // black delivery tube length (tip -> shuttle)
+const SL=150;               // yellow shuttle length
+const H0=B0+LB+SL;          // handle distal face, from balloon centre
+const REC=50,SLEN=60;       // sealant recess inside the tube, sealant length
+const ADVL=520,GMW=22;
+const CO=32;                // balloon centre -> sheath tip at first resistance
+const BAL0=700,BAL_IN=-150,BAL_SEAT=-44;
+const GM=(BAL_SEAT+B0+LB-VT)-(16+SLEN)-GMW-2; // green mark fully clears the sheath/black tube exactly when the sealant is seated
+const ADV0=BAL_SEAT+CO+VT-LB+REC+SLEN; // advancer base after unsheathing
+const PXMM=.25,MLPX=24,SX0=440;
+const PREP=[-220,2000],ALL=[-260,1500],NEAR=[-260,600];
+const FULL=()=>[-260,st.H+300],HAND=()=>({air:[st.H-560,st.H+400]}),WHOLE_AIR=()=>({air:[st.bal-190,st.H+300]});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let advT=null,st,idx=0,mode='learn',errors=0,t0=null,tEnd=null,stepOK=false,chosen=true,showLabels=false,holding=false,anim=null,dragging=null;
+const AR=1060/615;
+let cam={x:-260,y:-160,w:1500,h:1500/AR},camT={...cam};
+
+function fresh(){return{p:0,f:0,b:0,attached:false,devStop:'open',sheathStop:'closed',locked:false,
+  bal:BAL0,sheathTip:-70,S:0,H:0,bt:0,adv:0,seal:0,detached:false,advFree:false,shuttleLocked:false,sealFree:false,cathOut:false,
+  hydr:0,hold:0,laid:0,laying:false,layAng:0,comp:0,angio:false,finger1:false,finger2:false,dressing:false,bub:0};}
+function sync(){
+  st.H=st.bal+H0;
+  if(!st.detached||st.shuttleLocked) st.S=st.bal+B0+LB;
+  if(st.shuttleLocked) st.sheathTip=st.S-VT;
+  st.bt=st.S-LB;
+  if(!st.advFree){st.seal=st.bt+REC;st.adv=st.seal+SLEN;}
+  else if(!st.sealFree){st.seal=st.adv-SLEN;}
+}
+const PH=['Prep','Plug','Plant','Pull'];
+const PHSUB=['Prepare the balloon','Temporary hemostasis','Place the sealant','Remove the device'];
+
+const inflate={kind:'syr',part:'syr',
+  range:()=>[st.f-1.15,Math.max(st.p,st.f)],get:()=>st.p,
+  set:v=>{st.p=v;st.b=clamp(st.f-v,0,1.15);},
+  live:()=>st.b>=.98?(st.b>1.06?'At the marker. Stop pushing.':'Black marker fully visible. Release.'):`Inflating · black marker ${Math.round(st.b*100)}% visible`,
+  release:()=>st.b>=.98?{ok:1}:{msg:'Not there yet. Push until the black marker on the indicator is fully visible.'}};
+
+const steps=[
+ {cue:'Angiogram',ph:0,t:'Perform a femoral angiogram through the sheath side port before closure.',
+  how:'Tap the sheath stopcock to inject contrast.',
+  pearl:'Common femoral artery entry over the femoral head, below the inferior epigastric artery and above the bifurcation; single anterior-wall puncture. Site suitable for MynxGrip.',
+  cam:[-260,760],kind:'click',target:'shStop',part:'shStop',auto:()=>{st.angio=true;}},
+ {cue:'Fill',ph:0,t:'Fill the locking syringe with 2–3 mL of sterile saline.',
+  how:'Pull the plunger back. It draws 2.5 mL for you.',
+  pearl:'Saline only, 2–3 mL. Lift the device out of the tray by the yellow shuttle.',
+  cam:HAND,kind:'syr',part:'syr',range:()=>[0,4],get:()=>st.p,set:v=>{st.p=st.f=v;},
+  live:()=>`${st.p.toFixed(1)} mL drawn`,
+  release:()=>st.p>=.15?{ok:1}:{msg:'Pull the plunger back to draw saline.'},
+  settle:()=>({p:2.5,f:2.5}),
+  auto:()=>{st.f=2.5;st.p=2.5;}},
+ {cue:'Attach',ph:0,t:'Attach the syringe to the stopcock on the inflation line.',
+  how:'Tap the syringe to lock it onto the stopcock.',
+  pearl:'Check the luer connection and tighten it if needed.',
+  cam:HAND,kind:'click',target:'syr',part:'syr',auto:()=>{st.attached=true;}},
+ {cue:'Vacuum',ph:0,t:'Draw vacuum to pull air out of the balloon.',
+  how:'Drag the plunger well back (left), then let go. It returns to neutral.',
+  pearl:'Vacuum purges air from the balloon and tubing, so inflation is predictable.',
+  cam:HAND,kind:'syr',part:'syr',range:()=>[st.f,10],get:()=>st.p,set:v=>{st.p=v;st.bub=v-st.f;},
+  live:()=>st.p>=st.f+2?'Good vacuum. Release.':'Pull further back.',
+  release:()=>st.p>=st.f+2?{ok:1}:{msg:'Pull the plunger further back to draw vacuum.'},
+  auto:()=>{st.p=st.f;st.bub=0;}},
+ {cue:'Test',ph:0,t:'Test-inflate until the black marker on the inflation indicator is fully visible.',
+  how:'Push the plunger right. Watch the pin at the end of the black handle and the balloon.',
+  pearl:'The indicator pin rises out of the handle as the balloon fills; the black band fully showing is the endpoint every time. Check the balloon holds pressure.',
+  cam:WHOLE_AIR,...inflate,auto:()=>{st.b=1;st.p=st.f-1;}},
+ {cue:'Neutral',ph:0,t:'Deflate and leave the syringe at neutral. Do not remove the sealant sleeve.',
+  how:'Pull the plunger back. It settles at neutral by itself.',
+  pearl:'Neutral, not locked vacuum. Leave the sealant sleeve on the device.',
+  cam:WHOLE_AIR,kind:'syr',part:'syr',range:()=>[st.f-1.15,st.f+.6],get:()=>st.p,set:v=>{st.p=v;st.b=clamp(st.f-v,0,1.15);},
+  live:()=>'Deflating…',
+  release:v0=>st.p>v0+.05?{ok:1}:{msg:'Pull the plunger back to deflate.'},
+  settle:()=>({p:st.f,b:0}),
+  auto:()=>{st.p=st.f;st.b=0;}},
+
+ {cue:'Insert',ph:1,t:'Insert the device into the procedural sheath up to the white shaft marker.',
+  how:'Drag down-left. Stop when the white band on the black catheter meets the white sheath valve.',
+  pearl:'Check the femoral angiogram first: common femoral, single anterior-wall puncture, 5–7F sheath. Marker at the valve means the balloon is out of the sheath and in the artery.',
+  cam:()=>[-260,980],kind:'drag',part:'pCath',range:()=>[BAL_IN-20,BAL0],get:()=>st.bal,set:v=>{st.bal=v;},
+  arrow:()=>({u:st.sheathTip+VT+90,dir:-1}),
+  live:()=>{const d=(st.bal+M0+MW-(st.sheathTip+VT))*PXMM;return Math.abs(d)<=2.5?'White marker at the valve. Release.':d>0?`White marker ${d.toFixed(0)} mm above the valve`:`Too deep by ${(-d).toFixed(0)} mm`;},
+  release:()=>{const d=st.bal+M0+MW-(st.sheathTip+VT);return Math.abs(d)<=10?{ok:1}:{msg:d>0?'Keep going to the white shaft marker.':'Too deep. Pull back so the white marker sits at the valve.'};},
+  auto:()=>{st.bal=BAL_IN;}},
+ {cue:'Inflate',ph:1,t:'Inflate the balloon until the black marker is fully visible.',
+  how:'Push the plunger right, same endpoint as the test.',
+  pearl:'Same endpoint as the bench test. Do not push past the marker.',
+  cam:FULL,...inflate,auto:()=>{st.b=1;st.p=st.f-1;}},
+ {cue:'Close',ph:1,t:'Close the stopcock.',
+  how:'Tap the white stopcock lever to turn it off.',
+  pearl:'Closing the stopcock holds the balloon inflated so you can let go of the syringe.',
+  cam:FULL,kind:'click',target:'icStop',part:'icStop',auto:()=>{st.devStop='closed';}},
+ {cue:'Stop 1',ph:1,t:'Grasp the black handle and withdraw to the first resistance: balloon at the sheath tip.',
+  how:'Drag up-right until it stops.',
+  pearl:'First stop is soft. The balloon has met the distal tip of the sheath.',
+  cam:FULL,kind:'drag',part:'pHandle',range:()=>[BAL_IN-20,st.sheathTip-CO],get:()=>st.bal,set:v=>{st.bal=v;},stopAt:'max',
+  arrow:()=>({u:st.H+110,dir:1}),
+  live:()=>st.bal>=st.sheathTip-CO-2?'Resistance. Balloon is at the sheath tip.':'Withdrawing…',
+  release:()=>st.bal>=st.sheathTip-CO-2?{ok:1}:{msg:'Keep withdrawing gently to the first resistance.'},
+  auto:()=>{st.bal=st.sheathTip-CO;}},
+ {cue:'Stop 2',ph:1,t:'Continue to the second resistance: balloon against the arteriotomy.',
+  how:'Keep pulling up-right. The sheath comes back with the balloon.',
+  pearl:'Second stop: balloon seated on the inside of the arteriotomy. Keep steady tension on the black handle from here on.',
+  cam:FULL,kind:'drag',part:'pHandle',range:()=>[-70-CO,BAL_SEAT],get:()=>st.bal,set:v=>{st.bal=v;st.sheathTip=v+CO;},stopAt:'max',
+  arrow:()=>({u:st.H+110,dir:1}),
+  live:()=>st.bal>=BAL_SEAT-2?'Resistance. Balloon is against the artery wall.':'Sheath and balloon coming back together…',
+  release:()=>st.bal>=BAL_SEAT-2?{ok:1}:{msg:'Continue to the second point of resistance.'},
+  auto:()=>{st.bal=BAL_SEAT;st.sheathTip=BAL_SEAT+CO;}},
+ {cue:'Check',ph:1,t:'Holding tension on the handle, open the stopcock on the procedural sheath.',
+  how:'Tap the stopcock on the sheath side port.',
+  pearl:'No backbleed from the side port confirms the balloon is sealing the arteriotomy: temporary hemostasis.',
+  cam:[-120,640],kind:'click',target:'shStop',part:'shStop',auto:()=>{st.sheathStop='open';}},
+
+ {cue:'Shuttle',ph:2,t:'With the stopcock open, detach the shuttle and advance it until resistance is felt.',
+  how:'Drag the yellow shuttle down-left until it docks against the sheath valve.',
+  pearl:'The black delivery tube carries the sealant down the sheath to just above the arteriotomy.',
+  cam:FULL,kind:'drag',part:'pShuttle',range:()=>[st.sheathTip+VT,st.bal+B0+LB],get:()=>st.S,set:v=>{st.detached=true;st.S=v;},stopAt:'min',
+  arrow:()=>({u:st.S+75,dir:-1}),
+  live:()=>st.S<=st.sheathTip+VT+2?'Resistance. Shuttle is docked on the sheath.':'Advancing the shuttle…',
+  release:()=>st.S<=st.sheathTip+VT+2?{ok:1}:{msg:'Advance until you feel resistance at the sheath.'},
+  auto:()=>{st.detached=true;st.S=st.sheathTip+VT;}},
+ {cue:'Unsheath',ph:2,t:'Lighten your hold on the black handle, grasp the sheath and withdraw it until the shuttle locks onto the black handle.',
+  how:'Drag the sheath hub up-right until it clicks into the handle.',
+  pearl:'Sheath and shuttle come back together along the shaft. This unsheaths the sealant in the tissue tract while the balloon still marks the arteriotomy.',
+  cam:FULL,kind:'drag',part:'pSheath',range:()=>[BAL_SEAT+CO,st.bal+B0+LB-VT],get:()=>st.sheathTip,set:v=>{st.advFree=true;st.sheathTip=v;st.S=v+VT;},stopAt:'max',
+  arrow:()=>({u:st.sheathTip+450,dir:1}),
+  live:()=>st.S>=st.bal+B0+LB-2?'Click. Shuttle locked onto the black handle.':st.sheathTip>322?'Sheath tip out of the skin…':'Withdrawing the sheath…',
+  release:()=>st.S>=st.bal+B0+LB-2?{ok:1}:{msg:'Keep withdrawing until the shuttle locks onto the handle.'},
+  auto:()=>{st.advFree=true;st.shuttleLocked=true;}},
+ {cue:'Advance',ph:2,t:'Keep tension on the handle and advance the advancer tube at the skin until the single green mark is fully visible.',
+  how:'Drag the off-white advancer tube down-left, gently.',
+  pearl:'The inflated balloon backs up the sealant so it stays outside the artery. Green mark fully out of the black tube means the sealant is seated.',
+  cam:[-70,600],kind:'drag',part:'pAdv',range:()=>[16+SLEN,ADV0],get:()=>st.adv,set:v=>{st.adv=v;},stopAt:'min',
+  arrow:()=>({u:300,dir:-1}),
+  live:()=>{const g=clamp((visEnd()-(st.adv+GM))/GMW,0,1);return g>=.99?'Green mark fully visible. Release.':`Green mark ${Math.round(g*100)}% visible`;},
+  release:()=>st.adv<=16+SLEN+2?{ok:1}:{msg:'Advance until the green mark is fully visible.'},
+  auto:()=>{st.adv=16+SLEN;}},
+ {cue:'Hold',ph:2,t:'Hold for up to 30 seconds.',
+  how:'Press and hold the button, or press on the picture (time runs 5× fast).',
+  pearl:'The PEG sealant swells as it takes up blood and tissue fluid, and the Grip tip softens onto the outside of the artery wall.',
+  cam:[-90,560],kind:'hold',part:'pSeal',auto:()=>{st.hold=30;st.hydr=.75;}},
+ {cue:'Lay down',ph:2,t:'Lay the device down for 1 minute.',
+  how:'Tap the black handle to lay it down. The minute runs 10× fast.',
+  pearl:'Laying the device down (up to 90 s per the guide) lets the sealant finish hydrating while the balloon still marks the arteriotomy.',
+  cam:()=>({box:[-120,120,1560,612]}),kind:'click',target:'handle',part:'pHandle',auto:()=>{st.laid=60;st.hydr=1;st.sealFree=true;}},
+
+ {cue:'Lock',ph:3,t:'Lock the syringe at the maximum negative position.',
+  how:'Drag the plunger all the way back. It locks at 10 mL.',
+  pearl:'The stopcock is still closed, so the vacuum waits behind it, ready to deflate fast.',
+  cam:FULL,kind:'syr',part:'syr',range:()=>[st.f-st.b,10],get:()=>st.p,set:v=>{st.p=v;},
+  live:()=>st.p>=9.7?'Locked at maximum negative.':'Pulling back…',
+  release:()=>st.p>=9.7?{ok:1}:{msg:'Pull all the way back to lock.'},
+  auto:()=>{st.p=10;st.locked=true;}},
+ {cue:'Stabilize',ph:3,t:'Light fingertip compression proximal to the site; lightly grasp the advancer tube at the skin and realign it with the tract.',
+  how:'Tap the glowing spot just cranial (left) of the puncture.',
+  pearl:'Proximal pressure steadies the artery; realigning the advancer keeps the catheter path straight.',
+  cam:[-90,420],kind:'click',target:'finger1',part:'finger1',auto:()=>{st.finger1=true;}},
+ {cue:'Deflate',ph:3,t:'Open the stopcock to deflate. Wait until air bubbles and fluid stop moving in the tubing.',
+  how:'Tap the stopcock, then watch the bubbles and the indicator pin settle.',
+  pearl:'Do not pull while the line is still moving. A partly inflated balloon can drag the sealant.',
+  cam:FULL,kind:'click',target:'icStop',part:'icStop',auto:()=>{st.devStop='open';st.b=0;st.bub=0;}},
+ {cue:'Withdraw',ph:3,t:'Withdraw the catheter through the advancer tube lumen.',
+  how:'Drag the black handle up-right until the catheter is out.',
+  pearl:'Unusual resistance? Pull the advancer tube and catheter out together through the tract.',
+  cam:[-140,1000],kind:'drag',part:'pHandle',range:()=>[BAL_SEAT,700],get:()=>st.bal,set:v=>{st.bal=v;},
+  arrow:()=>({u:Math.min(st.H+110,1500),dir:1}),
+  live:()=>st.bal>=520?'Catheter out. Release.':'Withdrawing the catheter…',
+  release:()=>st.bal>=520?{ok:1}:{msg:'Keep withdrawing until the catheter is out.'},
+  settle:()=>({bal:3400}),
+  auto:()=>{st.bal=3400;st.cathOut=true;}},
+ {cue:'Remove',ph:3,t:'Remove the advancer tube from the tissue tract.',
+  how:'Drag the advancer tube up-right and out.',
+  pearl:'The sealant stays behind on the outside of the artery and resorbs over weeks.',
+  cam:[-90,900],kind:'drag',part:'pAdv',range:()=>[16+SLEN,980],get:()=>st.adv,set:v=>{st.adv=v;},
+  arrow:()=>({u:Math.min(st.adv+260,700),dir:1}),
+  live:()=>st.adv>=380?'Advancer out.':'Removing…',
+  release:()=>st.adv>=380?{ok:1}:{msg:'Pull the advancer tube fully out.'},
+  auto:()=>{st.adv=Math.max(st.adv,980);}},
+ {cue:'Compress',ph:3,t:'Fingertip compression for up to 60 seconds; assess hemostasis, then apply a sterile dressing.',
+  how:'Tap the glowing spot over the puncture site.',
+  pearl:'Reapply compression if needed until hemostasis is secure, then dress the site.',
+  cam:[-90,420],kind:'click',target:'finger2',part:'finger2',auto:()=>{st.finger2=true;st.dressing=true;}},
+];
+
+/* ---------- static builds ---------- */
+const grads=$('grads');
+for(let h=0;h<=20;h++){const m=h/2,x=SX0-m*MLPX;const l=document.createElementNS(NS,'line');
+  l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',63);l.setAttribute('y2',h%2?69:75);l.setAttribute('stroke','#38474d');l.setAttribute('stroke-width',h%2?.7:1);grads.appendChild(l);
+  if(h%2===0&&m>0&&m<10){const t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',85);t.setAttribute('text-anchor','middle');t.setAttribute('class','num');t.textContent=m;grads.appendChild(t);}}
+const cells=[];const cg=$('cells');
+for(let i=0;i<60;i++){const e=document.createElementNS(NS,'ellipse');const c={x:-600+Math.random()*2400,y:512+Math.random()*74,v:40+Math.random()*50,el:e};
+  e.setAttribute('rx',5);e.setAttribute('ry',2.6);e.setAttribute('fill',i%3?'#c8343e':'#d9545d');e.setAttribute('opacity',.8);cg.appendChild(e);cells.push(c);}
+const bubs=[];
+for(let i=0;i<5;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',2);c.setAttribute('fill','#fff');c.setAttribute('stroke','#7f939c');c.setAttribute('stroke-width',.6);$('downstream').appendChild(c);bubs.push(c);}
+const JIT=[...Array(13)].map((_,i)=>[Math.sin(i*2.7)*.9,Math.cos(i*1.9)*.9]);
+
+/* ---------- catheter centre-line: straight in the tract, curves along the artery once free ---------- */
+function centre(bal){
+  const xe=Math.min(st.sheathTip,0);
+  const v0=[-C30,S30],v1=[-1,0];
+  const pts=[];const E=toG(xe,0);let x=E.x,y=E.y;pts.push([x,y]);
+  const need=Math.max(0,xe-(bal-170));
+  for(let d=3;d<=need+3;d+=3){const k=Math.min(d/95,1);let dx=v0[0]*(1-k)+v1[0]*k,dy=v0[1]*(1-k)+v1[1]*k;const n=Math.hypot(dx,dy);dx/=n;dy/=n;x+=dx*3;y+=dy*3;if(y>568)y=568;pts.push([x,y]);}
+  return u=>{if(u>=xe){const g=toG(u,0);return [g.x,g.y];}const i=Math.min(pts.length-1,Math.round((xe-u)/3));return pts[i];};
+}
+function polyl(f,u0,u1,step=3){if(u1<u0)return '';const a=[];for(let u=u0;u<u1;u+=step){const p=f(u);a.push(p[0].toFixed(1)+','+p[1].toFixed(1));}const p=f(u1);a.push(p[0].toFixed(1)+','+p[1].toFixed(1));return a.join(' ');}
+
+/* ---------- lay-down: external part pivots at the skin onto the skin surface ---------- */
+const PIV=toG(320,0);
+(function(){const d=[C30,-S30],n=[S30,C30],L=4000;const pt=(a,b)=>`${PIV.x+d[0]*a+n[0]*b} ${PIV.y+d[1]*a+n[1]*b}`;
+  $('clipOutP').setAttribute('d',`M${pt(0,-L)} L${pt(L,-L)} L${pt(L,L)} L${pt(0,L)}Z`);
+  $('clipInP').setAttribute('d',`M${pt(0,-L)} L${pt(-L,-L)} L${pt(-L,L)} L${pt(0,L)}Z`);
+  $('clipBandP').setAttribute('d',`M${pt(0,-80)} L${pt(9,-80)} L${pt(9,80)} L${pt(0,80)}Z`);
+  const F=$('devFan');for(let i=1;i<=7;i++){const u=document.createElementNS(NS,'use');u.setAttribute('href','#devCore');u.setAttribute('clip-path','url(#clipBand)');F.appendChild(u);}})();
+function rotPt(p,a){const r=a*Math.PI/180,c=Math.cos(r),s=Math.sin(r);const x=p.x-PIV.x,y=p.y-PIV.y;return {x:PIV.x+x*c-y*s,y:PIV.y+x*s+y*c};}
+function layTransform(){const D=$('devAll'),U=$('devIn');
+  const F=$('devFan');
+  if(st.layAng>0.01){D.setAttribute('transform',`rotate(${st.layAng} ${PIV.x} ${PIV.y})`);D.setAttribute('clip-path','url(#clipOut)');U.style.display='';F.style.display='';
+    [...F.children].forEach((u,i)=>u.setAttribute('transform',`rotate(${st.layAng*(i+1)/8} ${PIV.x} ${PIV.y})`));}
+  else{D.removeAttribute('transform');D.removeAttribute('clip-path');U.style.display='none';F.style.display='none';}}
+/* ---------- render ---------- */
+const tr=(id,x)=>$(id).setAttribute('transform',`translate(${x} 0)`);
+const op=(id,o)=>$(id).setAttribute('opacity',o);
+const sa=(id,k,v)=>$(id).setAttribute(k,v);
+function render(){
+  sync();
+  const b=Math.min(st.b,1.15);
+  const f=centre(st.bal);
+  sa('cathTip','points',polyl(f,st.bal-150,st.bal-12));sa('cathTipHi','points',polyl(f,st.bal-150,st.bal-12));
+  sa('cathBlk','points',polyl(f,st.bal-12,st.bt+2,6));
+  const c=f(st.bal);const r=4.5+19.5*b;sa('balloon','cx',c[0]);sa('balloon','cy',c[1]);sa('balloon','r',r);
+  sa('balloonHi','cx',c[0]-r*.35);sa('balloonHi','cy',c[1]-r*.4);sa('balloonHi','r',Math.max(.8,r*.18));
+  tr('wMark',st.bal+M0);
+  sa('shaftG','x',st.bt);sa('shaftG','width',Math.max(0,st.H-st.bt));
+  tr('pTube',st.bt);sa('btube','width',Math.max(0,st.S-st.bt-10));
+  tr('pSheath',st.sheathTip);tr('pShuttle',st.S);tr('pHandle',st.H);
+  const e=5+17*Math.min(b,1.1);sa('pinBody','width',e);sa('pinBand','x',212+Math.max(0,e-17));sa('pinBand','width',clamp(e-5,0,10));
+  const advEnd=!st.cathOut?Math.min(st.adv+ADVL,st.bt):st.adv+ADVL;
+  tr('pAdv',st.adv);sa('adv','width',Math.max(0,advEnd-st.adv));
+  sa('gMark','x',GM);sa('gMark','width',clamp(advEnd-(st.adv+GM),0,GMW));
+  op('pAdv',st.adv>=900?0:1);
+  const h=st.hydr;const pts=[];
+  for(let i=0;i<=12;i++){const x=i*SLEN/12;pts.push([x,-(4.2+h*(13-7*x/SLEN)+JIT[i][0]*1.6*h)]);}
+  for(let i=12;i>=0;i--){const x=i*SLEN/12;pts.push([x,4.2+h*(13-7*x/SLEN)+JIT[i][1]*1.6*h]);}
+  sa('seal','d','M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'Z');
+  sa('sealFacets','d',h>.2?`M8 ${-6*h} L20 ${4*h} L34 ${-5*h} L48 ${3*h} M14 ${8*h} L28 ${-2*h} L40 ${7*h}`:'M0 0');
+  tr('pSeal',st.seal);
+  op('hole',st.hydr>.6&&st.cathOut?.25:1);
+  op('tract',st.dressing?.3:.55);
+  const t1=toG(st.H+200,-46);const d=`M${t1.x.toFixed(1)} ${t1.y.toFixed(1)} c40 -50 120 -10 150 140 s20 280 110 500`;
+  sa('infTube','d',d);sa('infTube2','d',d);
+  sa('shLever','transform',`rotate(${st.sheathStop==='open'?0:45})`);
+  sa('icLever','transform',`rotate(${st.devStop==='open'?90:0})`);
+  $('stopTxt').textContent=st.devStop==='open'?'open':'off';
+  op('f1Shape',0);op('f2Shape',0);op('dressing',st.dressing?1:0);notes();
+  sa('syr','transform',`translate(${st.attached?0:-46} 0)`);
+  op('bowl',st.attached?0:1);op('downstream',st.attached?1:.35);
+  const sx=SX0-st.p*MLPX;sa('seal2','transform',`translate(${sx} 0)`);sa('rodG','transform',`translate(${sx-246} 0)`);sa('thumbG','transform',`translate(${sx-254} 0)`);
+  const L=Math.max(0,st.f-st.b);const lx=SX0-L*MLPX;sa('liq','x',lx);sa('liq','width',L*MLPX);
+  sa('vac','x',sx+6);sa('vac','width',Math.max(0,lx-sx-6));
+  const vb=$('vacBub');vb.innerHTML='';if(lx-sx>30){for(let i=0;i<4;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('cx',sx+16+((i*37)%(lx-sx-24)));c.setAttribute('cy',72+((i*13)%26));c.setAttribute('r',1.6+(i%2));c.setAttribute('fill','none');c.setAttribute('stroke','#9fb4bc');c.setAttribute('stroke-width',.7);vb.appendChild(c);}}
+  sa('collarNotch','y',st.locked?80:38);
+  $('lockTxt').textContent=st.locked?'locked · max negative':'unlocked';
+  const be=6+16*Math.min(b,1.1);sa('bPinBody','y',74-be);sa('bPinBody','height',be);sa('bPinBand','y',74-be+4);sa('bPinBand','height',clamp(be-6,0,10));
+  $('benchRead').textContent=`Syringe ${st.p.toFixed(1)} mL · saline ${st.f.toFixed(1)} mL · balloon ${b<.05?'deflated':b>=.98?'inflated':'partly inflated'}`;
+  bubs.forEach((c,i)=>{c.setAttribute('opacity',st.bub>0?1:0);const s=((i*24+st.bub*40)%70);c.setAttribute('cx',604-s*1.1);c.setAttribute('cy',s<34?128-s*1.2:85);});
+  layTransform();highlight();labels();ghost();beacon();
+}
+function highlight(){
+  ['pCath','pHandle','pShuttle','pSheath','pAdv','pSeal','syr','plunger','icStop','shStop'].forEach(id=>$(id).classList.remove('hl'));
+  ['icHot','shHot','f1Hot','f2Hot'].forEach(id=>{$(id).classList.remove('hot');op(id,0);});
+  if(stepOK||!chosen||mode==='recall'||tEnd)return;
+  const s=steps[idx];
+  if(s.part==='finger1'||s.part==='finger2'||s.part==='angio')return;
+  if(s.part==='syr'&&s.kind==='syr')$('plunger').classList.add('hl');else $(s.part).classList.add('hl');
+}
+function ghost(){
+  const gg=$('ghostG');gg.innerHTML='';const s=steps[idx];
+  if(stepOK||!chosen||s.kind!=='drag'||mode==='recall'||dragging||tEnd)return;
+  const k=cam.w/1060;const a=s.arrow();const p1=toG(a.u,-58*k),p2=toG(a.u+a.dir*110*k,-58*k);
+  const l=document.createElementNS(NS,'line');l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
+  l.setAttribute('class','ghost');l.setAttribute('stroke-width',4*k);l.setAttribute('marker-end','url(#ah)');gg.appendChild(l);
+}
+const LBL=[
+  ['Balloon',()=>{const c=centre(st.bal)(st.bal);return [c[0],c[1]-4-15*Math.min(st.b,1)];},()=>!st.cathOut&&st.bal<330,'up',true],
+  ['Soft distal tip',()=>{const c=centre(st.bal)(st.bal-130);return [c[0],c[1]+3];},()=>!st.cathOut&&st.bal<0,'down',true],
+  ['Procedural sheath',()=>st.sheathTip+170,()=>st.sheathTip<300,'down'],
+  ['Sheath hub & valve',()=>st.sheathTip+460,()=>!st.advFree,'up'],
+  ['Sheath stopcock',()=>{const g=toG(st.sheathTip+478,86);return [g.x,g.y+12];},()=>!st.advFree,'down',true],
+  ['White shaft marker',()=>st.bal+M0+12,()=>!st.detached,'down'],
+  ['Black delivery tube',()=>Math.max(st.bt+70,st.sheathTip+VT+50),()=>!st.cathOut&&(st.S-Math.max(st.bt,st.sheathTip+VT))>140,'up'],
+  ['Sealant',()=>st.seal+30,()=>st.advFree||st.sealFree,'up'],
+  ['Advancer tube',()=>st.adv+150,()=>st.advFree&&st.adv<700,'down'],
+  ['Green mark',()=>st.adv+GM+11,()=>(visEnd()-(st.adv+GM))>3,'down'],
+  ['Yellow shuttle',()=>st.S+75,()=>!st.cathOut,'up'],
+  ['Black handle',()=>st.H+120,()=>true,'down'],
+  ['Inflation indicator',()=>st.H+222,()=>true,'up'],
+];
+function labels(){
+  const lg=$('labels');lg.innerHTML='';if(!showLabels)return;
+  const k=cam.w/1060;lg.style.fontSize=(12.5*k)+'px';
+  LBL.forEach(([t,fx,fs,side,world])=>{if(!fs())return;let a,p;
+    if(world){const w=fx();a={x:w[0],y:w[1]};p={x:w[0],y:w[1]+(side==='up'?-34:34)*k};}
+    else{const u=fx();a=toG(u,side==='up'?-20:20);p=toG(u,(side==='up'?-30:30)-(side==='up'?36:-36)*k);}
+    if(p.x<cam.x+30*k||p.x>cam.x+cam.w-20*k||p.y<cam.y+14*k||p.y>cam.y+cam.h-6*k)return;
+    const l=document.createElementNS(NS,'line');l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',p.x);l.setAttribute('y2',p.y);l.setAttribute('stroke-width',k);lg.appendChild(l);
+    const tx=document.createElementNS(NS,'text');tx.setAttribute('x',p.x);tx.setAttribute('y',p.y+(side==='up'?-4*k:12*k));
+    tx.setAttribute('text-anchor',p.x>cam.x+cam.w-110*k?'end':p.x<cam.x+90*k?'start':'middle');tx.setAttribute('stroke-width',4*k);tx.textContent=t;lg.appendChild(tx);});
+}
+
+function visEnd(){return st.cathOut?st.adv+ADVL:Math.min(st.bt,st.sheathTip);}
+/* glowing beacon: where to act next */
+function spot(){
+  const s=steps[idx],c=s.cue;const thumb=()=>({w:'b',x:SX0-st.p*MLPX-249+(st.attached?0:-46),y:85});
+  const W=(u,v=0)=>{const g=toG(u,v);return {w:'s',x:g.x,y:g.y};};
+  switch(c){
+    case 'Attach':return {w:'b',x:290-46,y:85};
+    case 'Close':case 'Deflate':return {w:'b',x:504,y:85};
+    case 'Insert':return W(Math.max(st.sheathTip+VT+80,st.bal-90));
+    case 'Stop 1':case 'Stop 2':case 'Withdraw':case 'Lay down':return W(st.H+110);
+    case 'Angiogram':case 'Check':{const g=toG(st.sheathTip+479,124);return {w:'s',x:g.x,y:g.y};}
+    case 'Shuttle':return W(st.S+75);
+    case 'Unsheath':return W(st.sheathTip+464);
+    case 'Advance':return W(380);
+    case 'Hold':return W(st.seal+30);
+    case 'Stabilize':return {w:'s',x:318,y:342};
+    case 'Remove':return W(Math.min(st.adv+300,600));
+    case 'Compress':return {w:'s',x:404,y:342};
+    default:return s.kind==='syr'?thumb():null;
+  }
+}
+function beacon(){
+  const B=$('beacon');let BB=$('beaconB');
+  const show=canAct()&&!dragging&&!holding&&!anim;const p=show?spot():null;
+  B.setAttribute('opacity',p&&p.w==='s'?1:0);BB.setAttribute('opacity',p&&p.w==='b'?1:0);
+  if(!p)return;
+  const k=cam.w/1060;const r=p.w==='s'?30*k:24;const g=p.w==='s'?B:BB;
+  g.querySelectorAll('circle').forEach(c=>{c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',r);});
+  g.querySelector('.bRing').setAttribute('stroke-width',p.w==='s'?4*k:4);g.querySelector('.bPulse').setAttribute('stroke-width',p.w==='s'?5*k:5);
+}
+/* written cues instead of fingers */
+function notes(){
+  const g=$('notes');g.innerHTML='';const k=cam.w/1060;
+  const note=(x,y,t)=>{const fs=15*k,w=(t.length*7.6+26)*k,h=30*k;const top=y-h-34*k;
+    const gg=document.createElementNS(NS,'g');gg.setAttribute('class','note');
+    gg.innerHTML=`<line x1="${x}" y1="${top+h}" x2="${x}" y2="${y-3*k}" stroke-width="${2.5*k}"/><rect x="${x-w/2}" y="${top}" width="${w}" height="${h}" rx="${h/2}" stroke-width="${2*k}"/><text x="${x}" y="${top+h/2+fs*.35}" text-anchor="middle" font-size="${fs}">${t}</text>`;g.appendChild(gg);};
+  if(st.finger1&&!st.cathOut)note(318,345,'Fingertip compression (proximal)');
+  if(st.finger2&&!st.dressing)note(404,345,`Fingertip compression · ${st.comp||0} s`);
+  if(st.dressing)note(404,333,'Sterile dressing');
+  if(st.angio&&steps[idx].cue==='Angiogram'){const g3=toG(st.sheathTip+479,124);note(g3.x+60,g3.y-90,'Femoral angiogram: site suitable ✓');}
+  if(st.laying&&st.layAng>20&&st.laid<60){const g2=rotPt(toG(st.H+60,0),st.layAng);note(g2.x,g2.y-34,`On the skin · ${Math.floor(st.laid)} / 60 s`);}
+}
+/* ---------- camera ---------- */
+function camFor(c){
+  if(typeof c==='function')c=c();
+  if(c.box){let [x0,y0,x1,y1]=c.box,w=x1-x0,h=y1-y0;if(w/h<AR){const nw=h*AR;x0-=(nw-w)/2;w=nw;}else{const nh=w/AR;y0-=(nh-h);h=nh;}if(y0+h>625)y0=625-h;return {x:x0,y:y0,w,h};}
+  const air=!Array.isArray(c);const [u0,u1]=air?c.air:c;
+  const pts=[toG(u0,-70),toG(u0,70),toG(u1,-70),toG(u1,70)];
+  if(!air){pts.push({x:toG(u0).x,y:610});if(u0<0)pts.push({x:toG(u0).x-170,y:560});}
+  let x0=Math.min(...pts.map(p=>p.x)),x1=Math.max(...pts.map(p=>p.x)),y0=Math.min(...pts.map(p=>p.y)),y1=Math.max(...pts.map(p=>p.y));
+  x0-=16;x1+=16;y0-=20;y1+=8;let w=x1-x0,h=y1-y0;
+  if(w/h<AR){const nw=h*AR;x0-=(nw-w)/2;w=nw;}else{const nh=w/AR;y0-=(nh-h)/(air?2:1);h=nh;}
+  if(y0+h>625)y0=625-h;
+  return {x:x0,y:y0,w,h};
+}
+function setCam(r,instant){camT=camFor(r);if(instant||reduce){cam={...camT};applyCam();}}
+function applyCam(){const k=cam.w/1060;sa('stage','viewBox',`${cam.x.toFixed(1)} ${cam.y.toFixed(1)} ${cam.w.toFixed(1)} ${cam.h.toFixed(1)}`);
+  [['aSkin',340],['aFat',430],['aArt',570]].forEach(([id,y])=>{const t=$(id);t.setAttribute('x',cam.x+14*k);t.setAttribute('y',y);t.style.fontSize=(11*k)+'px';});}
+
+/* ---------- step flow ---------- */
+function setMsg(t,cls=''){const m=$('msg');m.textContent=t;m.className='msg'+(cls?' '+cls:'');}
+function startStep(){
+  stepOK=false;tEnd=null;const s=steps[idx];
+  $('phaseLbl').textContent=`${PH[s.ph]} · ${PHSUB[s.ph]}`;$('stepNum').textContent=`Step ${idx+1} / ${steps.length}`;
+  $('holdBtn').hidden=true;$('holdBtn').textContent='Press & hold · 0 s';
+  if(mode==='practice'){
+    chosen=false;$('cue').textContent='What next?';$('instr').textContent='';$('how').textContent='';$('btnHint').hidden=false;
+    buildChoices();setMsg('Choose the next step.');
+  }else{
+    chosen=true;$('choices').hidden=true;$('btnHint').hidden=true;
+    $('cue').textContent=s.cue;$('instr').textContent=s.t;$('how').textContent=s.how;setMsg(s.kind==='click'?'Tap the glowing circle.':s.kind==='hold'?'Press and hold.':'Drag from the glowing circle.');
+    if(s.kind==='hold')$('holdBtn').hidden=false;
+  }
+  $('legend').textContent=s.kind==='syr'||s.part==='icStop'||s.part==='syr'?'Use the inflation line below for this step. The indicator pin on the handle moves with the balloon.':'Drag anywhere on the field to move the highlighted part. Arrow keys work too.';
+  sync();setCam(s.cam||ALL,false);rail();render();
+}
+function buildChoices(){
+  const c=$('choices');c.innerHTML='';c.hidden=false;
+  const pool=steps.map((_,i)=>i).filter(i=>i!==idx&&Math.abs(i-idx)<=5);
+  pool.sort(()=>Math.random()-.5);
+  const opts=[idx,...pool.slice(0,3)].sort(()=>Math.random()-.5);
+  const p=document.createElement('p');p.textContent='Which step comes next?';c.appendChild(p);
+  opts.forEach(i=>{const b=document.createElement('button');b.innerHTML=`<b>${steps[i].cue}</b>${steps[i].t}`;
+    b.onclick=()=>{if(chosen)return;if(!t0)t0=Date.now();
+      if(i===idx){chosen=true;c.hidden=true;const s=steps[idx];$('cue').textContent=s.cue;$('instr').textContent=s.t;$('how').textContent='';
+        setMsg('Correct. Now perform it.','ok');if(s.kind==='hold')$('holdBtn').hidden=false;render();}
+      else{errors++;b.classList.add('bad');b.disabled=true;setMsg(i<idx?`"${steps[i].cue}" is already behind you.`:`Not yet. "${steps[i].cue}" comes later.`,'warn');stats();}};
+    c.appendChild(b);});
+}
+function succeed(){
+  if(stepOK)return;stepOK=true;const s=steps[idx];s.auto&&s.auto();render();
+  setMsg('✓ '+s.cue+' done','ok');$('pearlLbl').textContent='Pearl · '+s.cue;$('pearlTxt').textContent=s.pearl;$('pearl').hidden=false;$('holdBtn').hidden=true;
+  rail();clearTimeout(advT);const at=idx;advT=setTimeout(()=>{if(stepOK&&idx===at)next();},1300);
+}
+function fail(m){if(mode==='practice'){errors++;stats();}setMsg(m,'warn');}
+function next(){if(!stepOK)return;if(idx===steps.length-1){finish();return;}idx++;startStep();}
+function finish(){
+  tEnd=Date.now();const secs=t0?Math.round((tEnd-t0)/1000):0;let best='';
+  if(mode==='practice'){let rec=null;try{rec=JSON.parse(localStorage.getItem('mynx-best')||'null');}catch(e){}
+    if(!rec||errors<rec.e||(errors===rec.e&&secs<rec.s)){rec={e:errors,s:secs};try{localStorage.setItem('mynx-best',JSON.stringify(rec));}catch(e){}best='New personal best.';}}
+  $('cue').textContent=errors===0&&mode==='practice'?'Mastered':'Closed';
+  $('instr').textContent=mode==='practice'?`Run complete in ${fmt(secs)} with ${errors} error${errors===1?'':'s'}. ${best}`:'Site closed and dressed. Switch to Recall to run it from memory.';
+  $('how').textContent='';$('pearl').hidden=true;$('btnNext').disabled=true;
+  setMsg(mode==='practice'?(errors===0?'Perfect sequence from memory.':'Run it again to bring errors to zero.'):`All ${steps.length} steps complete.`,'ok');
+  stats();render();
+}
+const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+function stats(){$('sErr').textContent=`${errors} error${errors===1?'':'s'}`;
+  let rec=null;try{rec=JSON.parse(localStorage.getItem('mynx-best')||'null');}catch(e){}
+  $('sBest').textContent=rec?`best ${rec.e}e · ${fmt(rec.s)}`:'';}
+setInterval(()=>{if(mode==='practice'&&t0&&!tEnd)$('sTime').textContent=fmt(Math.round((Date.now()-t0)/1000));},500);
+function rail(){
+  const r=$('rail');r.innerHTML='';
+  PH.forEach((p,pi)=>{const g=document.createElement('div');g.className='ph';g.innerHTML=`<b>${pi+1} · ${p}</b>`;
+    steps.forEach((s,i)=>{if(s.ph!==pi)return;
+      const done=i<idx||(i===idx&&stepOK);const b=document.createElement('button');b.className=done?'done':i===idx?'cur':'';
+      const hide=mode==='practice'&&!done;
+      b.innerHTML=`<span class="n">${i+1}</span><span class="${hide?'hidden-cue':''}">${hide?'···':s.cue}</span>`;
+      if(mode==='learn'){b.title='Jump to this step';b.onclick=()=>jump(i);}else b.disabled=true;
+      g.appendChild(b);});
+    r.appendChild(g);});
+}
+function jump(i){cancelAnim();$('pearl').hidden=true;st=fresh();for(let k=0;k<i;k++){sync();steps[k].auto&&steps[k].auto();sync();}idx=i;startStep();}
+function restart(){cancelAnim();$('pearl').hidden=true;st=fresh();idx=0;errors=0;t0=null;tEnd=null;$('sTime').textContent='00:00';stats();if(mode==='recall')startRecall();else startStep();}
+function cancelAnim(){if(anim){cancelAnimationFrame(anim);anim=null;}holding=false;clearTimeout(advT);if(st){st.layAng=0;st.laying=false;}}
+
+/* ---------- interactions ---------- */
+function svgPt(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+function canAct(){return chosen&&!stepOK&&mode!=='recall'&&!tEnd;}
+function beginDrag(svg,e,kind){
+  const s=steps[idx];if(!canAct()||s.kind!==kind)return false;
+  if(mode==='practice'&&!t0)t0=Date.now();
+  const p=svgPt(svg,e);dragging={svg,x:p.x,y:p.y,v:s.get(),hit:false};svg.setPointerCapture(e.pointerId);
+  if(kind==='syr')$('syr').style.cursor='grabbing';ghost();return true;
+}
+function moveDrag(e){
+  if(!dragging)return;const s=steps[idx];const p=svgPt(dragging.svg,e);
+  const d=s.kind==='syr'?-(p.x-dragging.x)/MLPX:((p.x-dragging.x)*C30-(p.y-dragging.y)*S30);
+  const [mn,mx]=s.range();const raw=dragging.v+d;const v=clamp(raw,mn,mx);s.set(v);
+  const over=(s.stopAt==='max'&&raw>mx+4)||(s.stopAt==='min'&&raw<mn-4);
+  if(over&&!dragging.hit){dragging.hit=true;bump();}if(!over)dragging.hit=false;
+  setMsg(s.live());render();
+}
+function endDrag(){if(!dragging)return;const s=steps[idx];const dragging0=dragging.v;dragging=null;$('syr').style.cursor='grab';
+  const r=s.release(dragging0);if(r.ok){if(s.settle)settle(s.settle(),succeed);else succeed();}else fail(r.msg);render();}
+function settle(to,done){const from={};for(const k in to)from[k]=st[k];const t1=performance.now();
+  const tick=t=>{const k=Math.min(1,(t-t1)/(to.bal?900:420));const e=1-Math.pow(1-k,3);for(const n in to)st[n]=from[n]+(to[n]-from[n])*e;render();if(k<1)anim=requestAnimationFrame(tick);else{anim=null;done();}};anim=requestAnimationFrame(tick);}
+function bump(){const c=$('stageCard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');if(navigator.vibrate)try{navigator.vibrate(15);}catch(e){}}
+const stage=$('stage'),bench=$('bench');
+stage.addEventListener('pointerdown',e=>{const s=steps[idx];
+  if(s.kind==='hold'&&canAct()){startHold();e.preventDefault();return;}
+  if(e.target.closest('#shStop')||e.target.closest('#finger1')||e.target.closest('#finger2'))return;
+  beginDrag(stage,e,'drag');});
+bench.addEventListener('pointerdown',e=>{if(e.target.closest('#icStop'))return;
+  const s=steps[idx];if(s.kind==='click'&&s.target==='syr'){if(canAct()&&e.target.closest('#syr'))click('syr');return;}
+  beginDrag(bench,e,'syr');});
+[stage,bench].forEach(el=>{el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',()=>{endDrag();stopHold();});el.addEventListener('pointercancel',()=>{endDrag();stopHold();});});
+$('icStop').addEventListener('click',()=>click('icStop'));
+$('shStop').addEventListener('click',()=>click('shStop'));
+$('finger1').addEventListener('click',()=>click('finger1'));
+$('finger2').addEventListener('click',()=>click('finger2'));
+$('pHandle').addEventListener('click',()=>click('handle'));
+
+function click(target){
+  const s=steps[idx];if(!canAct()||s.kind!=='click')return;
+  if(mode==='practice'&&!t0)t0=Date.now();
+  if(s.target!==target){setMsg('That control is not part of this step.','warn');return;}
+  const id=s.cue;
+  if(id==='Angiogram'){st.angio=true;render();setMsg('Femoral angiogram: site suitable.','ok');setTimeout(succeed,900);return;}
+  if(id==='Attach'){st.attached=true;render();succeed();return;}
+  if(id==='Lay down'){st.laying=true;const t1=performance.now();const h0=st.hydr;const E=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    const tick=t=>{const ms=t-t1;
+      if(ms<900){st.layAng=27*E(ms/900);setMsg('Laying the device down on the skin…');}
+      else if(ms<5900){st.layAng=27;const k=(ms-900)/5000;st.laid=k*60;st.hydr=h0+(1-h0)*k;setMsg(`Device lying on the skin · ${Math.floor(st.laid)} / 60 s`);}
+      else if(ms<6800){st.laid=60;st.hydr=1;st.layAng=27*(1-E((ms-5900)/900));setMsg('Picking the device back up…');}
+      else{st.layAng=0;render();anim=null;st.laying=false;st.sealFree=true;succeed();return;}
+      render();anim=requestAnimationFrame(tick);};anim=requestAnimationFrame(tick);return;}
+  if(id==='Close'){st.devStop='closed';render();succeed();return;}
+  if(id==='Check'){st.sheathStop='open';render();setMsg('Side port dry: no backbleed.','ok');setTimeout(succeed,500);return;}
+  if(id==='Stabilize'){st.finger1=true;render();succeed();return;}
+  if(id==='Deflate'){deflate();return;}
+  if(id==='Compress'){st.finger2=true;render();const t1=performance.now();
+    const tick=t=>{const k=(t-t1)/3000;st.comp=Math.min(60,Math.round(k*60));setMsg(`Fingertip compression… ${st.comp} s`);render();if(k<1)anim=requestAnimationFrame(tick);else{anim=null;st.dressing=true;render();succeed();}};anim=requestAnimationFrame(tick);}
+}
+function deflate(){
+  st.devStop='open';const t1=performance.now();const b0=st.b;
+  const tick=t=>{const k=Math.min(1,(t-t1)/2600);st.b=b0*(1-Math.min(1,k*1.4));st.bub=k<1?k*6:0;
+    setMsg(k<1?'Deflating… wait for bubbles and fluid to stop moving.':'Line is still. Balloon deflated.',k<1?'':'ok');render();
+    if(k<1)anim=requestAnimationFrame(tick);else{anim=null;succeed();}};
+  anim=requestAnimationFrame(tick);
+}
+let holdLast=0;
+function startHold(){if(holding||!canAct())return;holding=true;$('holdBtn').classList.add('on');if(mode==='practice'&&!t0)t0=Date.now();holdLast=performance.now();
+  const tick=t=>{if(!holding)return;const dt=(t-holdLast)/1000;holdLast=t;st.hold=Math.min(30,st.hold+dt*5);st.hydr=st.hold/30;
+    $('holdBtn').textContent=`Holding · ${Math.floor(st.hold)} s`;setMsg(`Sealant hydrating… ${Math.floor(st.hold)} / 30 s`);render();
+    if(st.hold>=30){holding=false;$('holdBtn').classList.remove('on');succeed();return;}anim=requestAnimationFrame(tick);};
+  anim=requestAnimationFrame(tick);}
+function stopHold(){if(!holding)return;holding=false;$('holdBtn').classList.remove('on');
+  if(st.hold<30){$('holdBtn').textContent=`Press & hold · ${Math.floor(st.hold)} s`;fail(`Released early at ${Math.floor(st.hold)} s. Keep holding to 30 s.`);}}
+const hb=$('holdBtn');
+hb.addEventListener('pointerdown',e=>{e.preventDefault();hb.setPointerCapture(e.pointerId);startHold();});
+hb.addEventListener('pointerup',stopHold);hb.addEventListener('pointercancel',stopHold);
+hb.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();startHold();}});
+hb.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')stopHold();});
+let keyT;
+document.addEventListener('keydown',e=>{
+  if(mode==='recall')return;const s=steps[idx];
+  if(e.target.tagName==='BUTTON'&&(e.key==='Enter'||e.key===' '))return;
+  if(e.key==='Enter'){if(stepOK){next();e.preventDefault();}else if(canAct()&&s.kind==='click'){click(s.target);e.preventDefault();}return;}
+  if(!canAct()||(s.kind!=='drag'&&s.kind!=='syr'))return;
+  const k={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[e.key];if(!k)return;e.preventDefault();
+  const step=s.kind==='syr'?.1:5;const dir=s.kind==='syr'?-k:k;const [mn,mx]=s.range();s.set(clamp(s.get()+dir*step,mn,mx));setMsg(s.live());render();
+  clearTimeout(keyT);keyT=setTimeout(()=>{const r=s.release();if(r.ok)succeed();},700);
+});
+$('btnNext').onclick=next;
+$('btnRedo').onclick=()=>{if(mode==='recall')return;jump(idx);};
+$('btnHint').onclick=()=>{if(mode!=='practice')return;errors++;stats();const s=steps[idx];
+  if(!chosen){setMsg(`Hint: next is "${s.cue}".`,'warn');}else{$('how').textContent=s.how;}};
+$('btnRestart').onclick=restart;
+$('btnLabels').onclick=()=>{showLabels=!showLabels;$('btnLabels').textContent=showLabels?'Hide labels':'Show labels';$('btnLabels').setAttribute('aria-pressed',showLabels);labels();};
+function setMode(m){mode=m;['Learn','Practice'].forEach(n=>$('m'+n).setAttribute('aria-pressed',m===n.toLowerCase()));
+  $('recall').hidden=m!=='recall';document.querySelector('.grid').hidden=m==='recall';
+  $('btnLabels').setAttribute('aria-pressed',showLabels);
+  restart();}
+$('mLearn').onclick=()=>setMode('learn');$('mPractice').onclick=()=>setMode('practice');
+
+/* ---------- recall ---------- */
+let rPh=0,rPos=0,rErr=0;
+function startRecall(){rPh=0;rErr=0;buildRecall();}
+function buildRecall(){
+  rPos=0;const ids=steps.map((s,i)=>i).filter(i=>steps[i].ph===rPh);
+  $('rPhase').textContent=`Phase ${rPh+1} of 4 · ${PH[rPh]} · ${PHSUB[rPh]}`;$('rTitle').textContent=`Tap the ${ids.length} ${PH[rPh]} steps in order`;
+  $('rStat').textContent=`${rErr} error${rErr===1?'':'s'}`;$('seq').innerHTML='';const pool=$('pool');pool.innerHTML='';
+  [...ids].sort(()=>Math.random()-.5).forEach(i=>{const b=document.createElement('button');b.textContent=steps[i].t;
+    b.onclick=()=>{if(i===ids[rPos]){rPos++;b.remove();const sp=document.createElement('span');sp.textContent=`${i+1} ${steps[i].cue}`;$('seq').appendChild(sp);
+        if(rPos===ids.length){if(rPh<3){rPh++;setTimeout(buildRecall,500);}else{$('rTitle').textContent=rErr===0?`All ${steps.length} steps in perfect order`:`All ${steps.length} steps placed · ${rErr} error${rErr===1?'':'s'}`;pool.innerHTML='';}}}
+      else{rErr++;b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),500);$('rStat').textContent=`${rErr} error${rErr===1?'':'s'}`;}};
+    pool.appendChild(b);});
+}
+$('rAgain').onclick=startRecall;
+
+/* ---------- animation loop: blood flow + camera ---------- */
+let lastT=performance.now();
+function loop(t){const dt=Math.min(.05,(t-lastT)/1000);lastT=t;
+  if(!reduce)cells.forEach(c=>{c.x+=c.v*dt;if(c.x>1800)c.x=-600;c.el.setAttribute('cx',c.x);});
+  const a=1-Math.pow(.004,dt);let moved=false;
+  ['x','y','w','h'].forEach(k=>{const d=camT[k]-cam[k];if(Math.abs(d)>.3){cam[k]+=d*a;moved=true;}else cam[k]=camT[k];});
+  if(moved){applyCam();if(!dragging){labels();ghost();notes();}beacon();}
+  requestAnimationFrame(loop);}
+cells.forEach(c=>{c.el.setAttribute('cx',c.x);c.el.setAttribute('cy',c.y);});
+
+/* ---------- device parts figure ---------- */
+function buildParts(){
+  const P=$('partsSvg');const k=document.createElementNS.bind(document,NS);
+  const add=(tag,at,parent=P)=>{const e=k(tag);for(const n in at)e.setAttribute(n,at[n]);parent.appendChild(e);return e;};
+  const txt=(x,y,t,cls)=>{const e=add('text',{x,y,class:cls||''});e.textContent=t;return e;};
+  // Row A: device
+  const Y=118;
+  add('line',{x1:40,y1:Y,x2:150,y2:Y,stroke:'#c9d0d3','stroke-width':8,'stroke-linecap':'round'});
+  add('line',{x1:198,y1:Y,x2:420,y2:Y,stroke:'#1f2225','stroke-width':8.2});
+  add('circle',{cx:174,cy:Y,r:25,fill:'url(#gBalloon)',stroke:'#a3b3ba'});
+  add('circle',{cx:166,cy:Y-9,r:4.5,fill:'#fff',opacity:.7});
+  add('rect',{x:330,y:Y-4.4,width:24,height:8.8,fill:'#f7f7f5',stroke:'#9aa2a6','stroke-width':.5});
+  add('path',{d:`M428 ${Y+14} l10 -28 M440 ${Y+14} l10 -28`,stroke:'var(--muted)','stroke-width':2});
+  add('rect',{x:456,y:Y-8,width:104,height:16,fill:'url(#gBlack)'});
+  add('rect',{x:712,y:Y-4,width:92,height:8,fill:'url(#gShaft)',stroke:'#7e898e','stroke-width':.5});
+  add('use',{href:'#artShuttle',transform:`translate(574 ${Y})`});
+  add('use',{href:'#artHandle',transform:`translate(800 ${Y}) scale(1 1.5)`});
+  add('rect',{x:1012,y:Y-5.4,width:22,height:10.8,fill:'url(#gPin)',stroke:'#8d989d','stroke-width':.5});
+  add('rect',{x:1018,y:Y-5.5,width:10,height:11,fill:'#111'});
+  // Row B: contents of the black tube
+  const Y2=272;
+  add('rect',{x:440,y:Y2-7,width:64,height:14,rx:3,fill:'#f7f8f8',stroke:'#c2ccd0'});
+  add('path',{d:`M448 ${Y2-4} l10 7 l12 -7 l12 7 l12 -6`,fill:'none',stroke:'#d5dde0'});
+  add('rect',{x:504,y:Y2-6.5,width:500,height:13,fill:'url(#gAdv)',stroke:'#a49d8e','stroke-width':.6});
+  add('rect',{x:900,y:Y2-7,width:24,height:14,fill:'#1f8f6a'});
+  // Row C: sheath + syringe
+  const Y3=410;
+  add('use',{href:'#artSheath',transform:`translate(60 ${Y3})`});
+  add('use',{href:'#artStop3',transform:`translate(539 ${Y3+124})`});
+  const syr=$('syr').cloneNode(true),stop=$('icStop').cloneNode(true);
+  const g=add('g',{transform:'translate(612 330) scale(.86)'});
+  [syr,stop].forEach(n=>{n.removeAttribute('id');n.style.cursor='default';g.appendChild(n);});
+  const q=(root,sel)=>root.querySelector(sel);
+  const sx=SX0-3*MLPX;
+  q(syr,'#seal2').setAttribute('transform',`translate(${sx} 0)`);q(syr,'#rodG').setAttribute('transform',`translate(${sx-246} 0)`);q(syr,'#thumbG').setAttribute('transform',`translate(${sx-254} 0)`);
+  q(syr,'#liq').setAttribute('x',sx);q(syr,'#liq').setAttribute('width',3*MLPX);q(syr,'#vac').setAttribute('width',0);q(syr,'#lockTxt').textContent='';
+  stop.removeAttribute('transform');stop.setAttribute('transform','translate(504 85)');q(stop,'#icLever').setAttribute('transform','rotate(90)');q(stop,'#icHot').setAttribute('opacity',0);
+  g.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));g.querySelectorAll('text').forEach(e=>e.remove());g.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));syr.classList.remove('hl');stop.classList.remove('hl');
+  syr.removeAttribute('transform');
+  const ex=612+526*.86,ey=330+85*.86;
+  add('path',{d:`M${ex} ${ey} C1150 ${ey} 1175 330 1160 230 S1080 112 1034 ${Y}`,fill:'none',stroke:'#c4cfd4','stroke-width':5,'stroke-linecap':'round'});
+  // captions
+  txt(40,190,'MynxGrip device','cap');txt(40,312,'Inside the black tube (shown pulled out)','cap');
+  txt(40,548,'Procedural sheath','cap');txt(640,548,'Inflation syringe','cap');
+  // callouts
+  const C=[
+   [1,95,Y,95,58],[2,174,Y-25,174,50],[3,342,Y-5,342,58],[4,508,Y-8,508,58],[5,650,Y-20,650,44],[6,758,Y-4,758,58],
+   [7,920,Y-40,920,34],[8,1023,Y-6,1060,56],[9,1166,280,1166,320],
+   [10,472,Y2-7,472,222],[11,720,Y2-7,720,222],[12,912,Y2-7,912,222],
+   [13,240,Y3-10,240,360],[14,520,Y3-26,520,352],[15,560,Y3+124,604,Y3+124],
+   [16,612+504*.86,330+60*.86,1046,340],[17,612+300*.86,330+63*.86,870,340]];
+  C.forEach(([n,ax,ay,lx,ly])=>{add('line',{x1:ax,y1:ay,x2:lx,y2:ly,class:'lead'});const gg=add('g',{class:'num'});add('circle',{cx:lx,cy:ly,r:13},gg);const t=add('text',{x:lx,y:ly+4.5,'text-anchor':'middle'},gg);t.textContent=n;});
+  const G=[
+   ['Soft distal tip','Flexible lead-in beyond the balloon; follows the artery.'],
+   ['Balloon','Inflated in the artery and pulled back against the arteriotomy for temporary hemostasis.'],
+   ['White shaft marker','Insert the device until this band reaches the sheath valve.'],
+   ['Black delivery tube','Carries the sealant; slides into the sheath when you advance the shuttle.'],
+   ['Yellow shuttle','Detach, advance to the sheath; it locks back onto the handle as you withdraw the sheath.'],
+   ['Catheter shaft','Runs from the balloon to the handle; shuttle and sheath slide along it.'],
+   ['Black handle','Hold here to keep gentle tension on the balloon.'],
+   ['Inflation indicator','Pin at the handle end. Black marker fully visible = balloon inflated.'],
+   ['Inflation tubing','Connects the stopcock and syringe to the balloon.'],
+   ['Sealant with Grip tip','Freeze-dried PEG plug; swells in the tract and grips the outside of the artery.'],
+   ['Advancer tube','Pushed at the skin to seat the sealant on the artery wall.'],
+   ['Single green mark','Fully visible = sealant seated.'],
+   ['Procedural sheath','The existing 5–7F femoral sheath.'],
+   ['Sheath hub & valve','The white marker meets it; the shuttle docks on it.'],
+   ['Sheath stopcock','Open it to check for backbleed.'],
+   ['One-way stopcock','Close to hold inflation; open to deflate.'],
+   ['10 mL locking syringe','Yellow collar locks the plunger at maximum negative.']];
+  const ol=$('glossary');G.forEach(([a,b],i)=>{const li=document.createElement('li');li.innerHTML=`<span>${i+1}</span><div><b>${a}</b>${b}</div>`;ol.appendChild(li);});
+}
+st=fresh();stats();sync();setCam(PREP,true);startStep();buildParts();requestAnimationFrame(loop);
+})();
+</script>
+
+</body></html>

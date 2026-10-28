@@ -17,6 +17,12 @@
       "title": "Angioseal",
       "button_label": "Try Angioseal",
       "file": "/images/uploads/angio-seal-vip-trainer.html"
+    },
+    {
+      "featured": false,
+      "title": "MynxGrip",
+      "button_label": "Try MynxGrip",
+      "file": "/images/uploads/mynxgrip-deployment-trainer.html"
     }
   ]
 }
