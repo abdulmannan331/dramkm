@@ -11,6 +11,12 @@
       "link": "",
       "image": "",
       "file": "/images/uploads/practiceivus-beta-.html"
+    },
+    {
+      "featured": false,
+      "title": "Angioseal",
+      "button_label": "Try Angioseal",
+      "file": "/images/uploads/angio-seal-vip-trainer.html"
     }
   ]
 }

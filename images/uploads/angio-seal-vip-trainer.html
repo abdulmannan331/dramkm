@@ -1,0 +1,876 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Angio-Seal VIP Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: instrument console. Procedure scene left, step console right; memory card + parts reference below. */
+:root{
+  --bg:#eaeef1; --panel:#ffffff; --soft:#f3f6f8; --ink:#13202b; --muted:#566571; --line:#d3dbe1;
+  --accent:#1c5cb5; --accent-soft:#e3ecf9; --accent-ink:#ffffff;
+  --ok:#1b7348; --ok-soft:#e2f3ea; --warn:#9a4b0f; --warn-soft:#fbeedd; --bad:#ad2a1f; --bad-soft:#fbe5e2;
+  --f-display:'Archivo','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1317; --panel:#141c22; --soft:#1a242b; --ink:#e4eaee; --muted:#93a2ad; --line:#26333c;
+  --accent:#74a9ff; --accent-soft:#16263d; --accent-ink:#081627;
+  --ok:#62cf95; --ok-soft:#12291e; --warn:#f2a868; --warn-soft:#2c1f12; --bad:#ff8378; --bad-soft:#2e1514; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1317; --panel:#141c22; --soft:#1a242b; --ink:#e4eaee; --muted:#93a2ad; --line:#26333c;
+  --accent:#74a9ff; --accent-soft:#16263d; --accent-ink:#081627;
+  --ok:#62cf95; --ok-soft:#12291e; --warn:#f2a868; --warn-soft:#2c1f12; --bad:#ff8378; --bad-soft:#2e1514; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.brand h1{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.brand p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:7px 16px;border-radius:999px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.ghost{border:1px solid var(--line);background:var(--panel);padding:7px 14px;border-radius:999px;font-weight:600}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;grid-template-areas:"scene panel" "tray panel";gap:14px 20px;align-items:start}
+.scene-wrap{grid-area:scene;min-width:0}.tray{grid-area:tray}.panel{grid-area:panel;align-self:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"scene" "panel" "tray"}}
+.scene-wrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#2b6a79}
+#scene{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+#scene.dragmode{touch-action:none;cursor:grab}
+#scene.dragging{cursor:grabbing}
+.readout{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.readout span{background:rgba(9,20,28,.78);color:#eef4f7;font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.readout span.blood{color:#ff9a90}
+.scale-note{position:absolute;left:10px;bottom:8px;color:rgba(255,255,255,.7);font-size:11px;pointer-events:none}
+
+.tray{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:820px){.tray{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){.tray{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tray-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.item{display:flex;flex-direction:column;gap:6px;align-items:stretch;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px;min-width:0;transition:border-color .15s,transform .15s}
+.item:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.item svg{width:100%;height:44px}
+.item b{font-family:var(--f-display);font-size:14px;font-weight:700}
+.item small{color:var(--muted);font-size:12px;line-height:1.3}
+.item:disabled{opacity:.42;cursor:default}
+.item.want{border:2px solid #e6b800;animation:want 1.2s ease-in-out infinite}
+@keyframes want{0%,100%{box-shadow:0 0 0 3px rgba(255,210,63,.35)}50%{box-shadow:0 0 0 8px rgba(255,210,63,.6),0 0 22px rgba(255,210,63,.6)}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (min-width:981px){.panel{position:sticky;top:max(12px,env(safe-area-inset-top,0px))}}
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.ph{border:0;background:var(--soft);padding:7px 4px;border-radius:8px;font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ph.past{color:var(--ok)}
+.ph.on{background:var(--accent);color:var(--accent-ink)}
+.ph:disabled{cursor:default}
+.stepno{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.stepno b{color:var(--ink);font-size:20px}
+.panel h2{font-size:1.32rem;font-weight:700;line-height:1.2}
+.detail{margin:0;color:var(--ink);max-width:62ch}
+.cue{margin:0;display:flex;gap:10px;align-items:baseline;font-weight:600}
+.cue span{flex:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:6px}
+.nudge{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nudge button{border:1px solid var(--line);background:var(--soft);padding:10px;border-radius:10px;font-weight:600}
+.nudge button:active{background:var(--accent-soft)}
+.fb{min-height:1.5em;border-radius:10px;padding:0;font-size:14px}
+.fb:not(:empty){padding:10px 12px}
+.fb.ok{background:var(--ok-soft);color:var(--ok)}
+.fb.warn{background:var(--warn-soft);color:var(--warn)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}
+.fb.info{background:var(--soft);color:var(--ink)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--soft);padding:11px 13px;border-radius:10px;font-weight:600;line-height:1.3}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.wrong{border-color:var(--bad);color:var(--bad);background:var(--bad-soft);text-decoration:line-through}
+.checks{display:flex;flex-direction:column;gap:8px}
+.chk{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--soft);padding:8px 10px;border-radius:10px;font-weight:600;line-height:1.3}
+.chk svg{width:120px;height:30px;background:#2b6a79;border-radius:6px}
+.chk.wrong{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:12px;max-height:340px;overflow:auto}
+.steps .grp{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin:8px 0 2px}
+.steps .grp:first-child{margin-top:0}
+.steps li.s{display:grid;grid-template-columns:26px 1fr;gap:6px;font-size:13px;color:var(--muted);padding:3px 6px;border-radius:6px}
+.steps li.s i{font-style:normal;font-family:var(--f-mono);font-size:12px}
+.steps li.done{color:var(--ink)}
+.steps li.done i{color:var(--ok)}
+.steps li.miss i{color:var(--bad)}
+.steps li.cur{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.finish{display:flex;flex-direction:column;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--soft);border-radius:10px;padding:10px}
+.stats b{display:block;font-family:var(--f-display);font-size:1.5rem;font-variant-numeric:tabular-nums}
+.stats small{color:var(--muted)}
+.primary{border:0;background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:10px;font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card h2{font-size:1.25rem;font-weight:800;margin-bottom:4px}
+.card > p{margin:0 0 14px;color:var(--muted)}
+.mem{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.mem{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){.mem{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.mem{grid-template-columns:minmax(0,1fr)}}
+.mem section{background:var(--soft);border-radius:12px;padding:14px;min-width:0}
+.mem h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.mem .chant{font-family:var(--f-display);font-weight:800;font-size:1.3rem;margin:4px 0 8px;line-height:1.15}
+.mem .note{margin:10px 0 0;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+.mem ul{margin:0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:3px}
+.never{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px}
+.never b{color:var(--bad);text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.never span{border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+
+.parts-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.parts-fig{overflow-x:auto;border-radius:12px;background:var(--soft)}
+.parts-fig svg{display:block;min-width:620px;width:100%;max-width:1000px;margin:0 auto;height:auto}
+.legend{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 16px;font-size:13.5px}
+.legend li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;padding:4px 6px;border-radius:8px;cursor:pointer}
+.legend li:hover{background:var(--soft)}
+.legend .n{font-family:var(--f-mono);font-size:12px;background:var(--ink);color:var(--panel);border-radius:999px;text-align:center;line-height:20px;height:20px}
+.legend .nm{font-weight:700}
+.legend .fn{color:var(--muted)}
+.quiz .legend .nm,.quiz .legend .fn{filter:blur(6px);transition:filter .2s}
+.quiz .legend li.show .nm,.quiz .legend li.show .fn{filter:none}
+.parts-fig .pn circle{fill:var(--ink)}
+.parts-fig .pn text{fill:var(--panel);font:600 13px var(--f-mono);text-anchor:middle}
+.parts-fig .pl{stroke:var(--muted);stroke-width:1}
+.parts-fig .cap{fill:var(--muted);font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase}
+
+footer{color:var(--muted);font-size:12.5px;max-width:90ch}
+footer a{color:var(--accent)}
+
+/* scene */
+.wire{fill:none;stroke:#aeb7bf;stroke-width:2.6;stroke-linecap:round}
+.suture{stroke:#d8cfb5;stroke-width:2.2}
+.clearstop{fill:rgba(235,246,250,.55);stroke:#6f8792;stroke-width:1.2}
+.sidearm{fill:none;stroke:rgba(225,235,240,.85);stroke-width:5;stroke-linecap:round}
+.lbl{pointer-events:none}
+.lbl line{stroke:#ffffff;stroke-width:1.4;opacity:.9}
+.lbl circle{fill:#fff}
+.lbl rect{fill:rgba(8,18,26,.82);stroke:rgba(255,255,255,.35)}
+.lbl text{fill:#fff;font:600 17px var(--f-body)}
+.tissue text{fill:#fff;font:600 15px var(--f-body);opacity:.92}
+.tissue rect.pill{fill:rgba(8,18,26,.55)}
+.ring{fill:none;stroke:#ffd23f;stroke-width:7;transform-box:fill-box;transform-origin:center;animation:ring 1.3s ease-out infinite}
+.ring.r2{animation-delay:.65s}
+.halo{fill:#ffd23f;opacity:.35;transform-box:fill-box;transform-origin:center;animation:halo 1.3s ease-in-out infinite}
+.glow{filter:drop-shadow(0 0 8px #ffd23f) drop-shadow(0 0 16px rgba(255,210,63,.7))}
+@keyframes halo{0%,100%{opacity:.22;transform:scale(.9)}50%{opacity:.5;transform:scale(1.08)}}
+.burst circle{fill:none;stroke:#ffd23f;stroke-width:5;transform-box:fill-box;transform-origin:center;animation:burst .9s ease-out forwards}
+.burst .b2{animation-delay:.15s;stroke:#fff}
+.burst text{fill:#fff;font:800 22px var(--f-display);letter-spacing:.08em;paint-order:stroke;stroke:#13202b;stroke-width:5px;animation:bursttxt 1.6s ease-out forwards}
+@keyframes burst{0%{transform:scale(.3);opacity:1}100%{transform:scale(2.4);opacity:0}}
+@keyframes bursttxt{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+.holdmark rect.outline{fill:none;stroke:#ffd23f;stroke-width:3;stroke-dasharray:6 4;animation:holdpulse 1.2s ease-in-out infinite}
+.holdmark .badge rect{fill:#ffd23f;stroke:#13202b;stroke-width:1.5}
+.holdmark .badge text{fill:#13202b;font:800 15px var(--f-display);letter-spacing:.06em}
+@keyframes holdpulse{0%,100%{opacity:.55}50%{opacity:1}}
+.zoompanel rect.frame{fill:#eef2f4;stroke:#ffd23f;stroke-width:3}
+.zoompanel text{fill:#13202b;font:700 17px var(--f-body)}
+@keyframes ring{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.9);opacity:0}}
+.cut circle{fill:#13202b;stroke:#ffe27a;stroke-width:2.5}
+.cut text{fill:#ffe27a;font:700 17px var(--f-mono);text-anchor:middle}
+.cut line{stroke:#ffe27a;stroke-width:2.5;stroke-dasharray:4 3}
+.cut{cursor:pointer}
+.cut:hover circle{fill:#24394b}
+.hotable{cursor:pointer}
+.flow{animation:flow 2.2s linear infinite}
+@keyframes flow{from{transform:translateX(0)}to{transform:translateX(120px)}}
+.drop{animation:drop 1.05s linear infinite}
+@keyframes drop{0%{transform:translateY(0);opacity:0}12%{opacity:1}100%{transform:translateY(54px);opacity:0}}
+.chev{animation:chev 1.1s ease-in-out infinite}
+@keyframes chev{0%{transform:translateX(-8px);opacity:.2}60%{opacity:1}100%{transform:translateX(14px);opacity:0}}
+#angio{opacity:0}
+#angio.flash{animation:angio 2.8s ease-in-out}
+@keyframes angio{0%{opacity:0}25%{opacity:.85}70%{opacity:.85}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.flow,.drop,.chev,.ring,.halo,.item.want{animation:none}#angio.flash{animation:none;opacity:.6}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Angio-Seal VIP Trainer</h1>
+      <p>Deploy the device yourself, step by step. Practice with prompts, then switch to Recall and run it from memory.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Mode">
+        <button id="mPractice" aria-pressed="true">Practice</button>
+        <button id="mRecall" aria-pressed="false">Recall</button>
+      </div>
+      <button class="ghost" id="restart">Restart</button>
+    </div>
+  </header>
+
+  <main class="grid">
+      <div class="scene-wrap">
+        <svg id="scene" viewBox="0 0 1000 680" role="img" aria-label="Cutaway of the groin: skin, subcutaneous tissue and common femoral artery with the closure device">
+          <defs>
+            <pattern id="pDrape" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#2b6a79"/><path d="M0 7h14M7 0v14" stroke="#2f7383" stroke-width="1"/></pattern>
+            <pattern id="pFat" width="46" height="34" patternUnits="userSpaceOnUse"><rect width="46" height="34" fill="#f0cf78"/><ellipse cx="12" cy="10" rx="13" ry="9" fill="#f6dc8e" stroke="#ddb75a" stroke-width="1.2"/><ellipse cx="35" cy="25" rx="13" ry="9" fill="#f6dc8e" stroke="#ddb75a" stroke-width="1.2"/><ellipse cx="38" cy="4" rx="8" ry="5" fill="#f6dc8e" stroke="#ddb75a" stroke-width="1.2"/></pattern>
+            <pattern id="pMuscle" width="60" height="12" patternUnits="userSpaceOnUse"><rect width="60" height="12" fill="#a9483f"/><path d="M0 4 Q15 1 30 4 T60 4" stroke="#bd5a4f" stroke-width="2" fill="none"/><path d="M0 10 Q15 7 30 10 T60 10" stroke="#963c34" stroke-width="1.5" fill="none"/></pattern>
+            <pattern id="pCol" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#efe2c2"/><path d="M0 2 L10 4 M0 6 L10 8 M2 0 L4 10" stroke="#d3bf92" stroke-width="1"/></pattern>
+            <pattern id="pGauze" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fbfbf6"/><path d="M0 3h6M3 0v6" stroke="#dedcd0" stroke-width="1"/></pattern>
+            <linearGradient id="gLumen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d0c12"/><stop offset=".5" stop-color="#9c171d"/><stop offset="1" stop-color="#6d0c12"/></linearGradient>
+            <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9796b"/><stop offset="1" stop-color="#c24a45"/></linearGradient>
+            <linearGradient id="gSheath" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfdde6"/><stop offset=".35" stop-color="#ffffff"/><stop offset="1" stop-color="#93a6b2"/></linearGradient>
+            <linearGradient id="gProc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c7d2d9"/><stop offset=".35" stop-color="#f4f7f9"/><stop offset="1" stop-color="#8e9ca6"/></linearGradient>
+            <linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a7e50"/><stop offset=".4" stop-color="#5bbd84"/><stop offset="1" stop-color="#1b5535"/></linearGradient>
+            <linearGradient id="gHub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#76848f"/><stop offset=".4" stop-color="#c9d2d9"/><stop offset="1" stop-color="#4c5964"/></linearGradient>
+            <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e8ec"/><stop offset=".35" stop-color="#ffffff"/><stop offset="1" stop-color="#bcc5cc"/></linearGradient>
+            <linearGradient id="gCap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#aeb9c2"/><stop offset=".4" stop-color="#e6ebef"/><stop offset="1" stop-color="#7f8c97"/></linearGradient>
+            <linearGradient id="gBand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63c8ab"/><stop offset=".45" stop-color="#2fa184"/><stop offset="1" stop-color="#1a6553"/></linearGradient>
+            <linearGradient id="gTamp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9ee" stop-opacity=".7"/><stop offset=".35" stop-color="#ffffff" stop-opacity=".9"/><stop offset="1" stop-color="#93bcc5" stop-opacity=".75"/></linearGradient>
+            <linearGradient id="gAnchor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf8ee"/><stop offset="1" stop-color="#cfc8b2"/></linearGradient>
+            <linearGradient id="gFoil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef1f3"/><stop offset=".45" stop-color="#bcc4ca"/><stop offset=".55" stop-color="#dce1e5"/><stop offset="1" stop-color="#98a2a9"/></linearGradient>
+            <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3e8eb"/><stop offset=".5" stop-color="#cdd4d8"/><stop offset="1" stop-color="#b3bcc2"/></linearGradient>
+            <pattern id="pCrimp" width="6" height="24" patternUnits="userSpaceOnUse"><rect width="6" height="24" fill="#c3cad0"/><line x1="3" y1="0" x2="3" y2="24" stroke="#9aa4ab" stroke-width="1"/></pattern>
+            <linearGradient id="gTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63c8ab"/><stop offset=".45" stop-color="#2fa184"/><stop offset="1" stop-color="#1a6553"/></linearGradient>
+            <linearGradient id="gRib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e9ec"/><stop offset=".3" stop-color="#ffffff"/><stop offset=".75" stop-color="#eef1f3"/><stop offset="1" stop-color="#c3ccd2"/></linearGradient>
+            <linearGradient id="gShaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e7ea"/><stop offset=".35" stop-color="#ffffff"/><stop offset="1" stop-color="#c2cbd1"/></linearGradient>
+            <linearGradient id="gClear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9f1f4" stop-opacity=".75"/><stop offset=".4" stop-color="#ffffff" stop-opacity=".9"/><stop offset="1" stop-color="#b5c6ce" stop-opacity=".8"/></linearGradient>
+            <linearGradient id="gAnchorB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f3f8"/><stop offset=".5" stop-color="#b7dbe7"/><stop offset="1" stop-color="#86b9ca"/></linearGradient>
+            <clipPath id="clipLumen"><rect x="0" y="480" width="1000" height="80"/></clipPath>
+          </defs>
+
+          <rect width="1000" height="362" fill="url(#pDrape)"/>
+          <g class="tissue">
+            <rect y="382" width="1000" height="90" fill="url(#pFat)"/>
+            <rect y="366" width="1000" height="16" fill="#f0c7ad"/>
+            <rect y="360" width="1000" height="6" fill="#d9a286"/>
+            <rect y="568" width="1000" height="112" fill="url(#pMuscle)"/>
+            <rect y="468" width="1000" height="4" fill="#e7a998"/>
+            <rect y="472" width="1000" height="8" fill="url(#gWall)"/>
+            <rect y="480" width="1000" height="80" fill="url(#gLumen)"/>
+            <rect y="560" width="1000" height="8" fill="url(#gWall)"/>
+            <rect y="568" width="1000" height="4" fill="#e7a998"/>
+            <g clip-path="url(#clipLumen)"><g class="flow" id="flow"></g></g>
+            <rect id="angio" y="480" width="1000" height="80" fill="#e9eef2"/>
+            <line x1="640" y1="360" x2="833.9" y2="472" stroke="#8b4a3a" stroke-width="15" opacity=".28"/>
+            <rect class="pill" x="10" y="368" width="54" height="22" rx="11"/><text x="20" y="384">Skin</text>
+            <rect class="pill" x="10" y="414" width="152" height="22" rx="11"/><text x="20" y="430">Subcutaneous fat</text>
+            <rect class="pill" x="10" y="508" width="198" height="22" rx="11"/><text x="20" y="524">Common femoral artery</text>
+            <text x="216" y="524" opacity=".8">→ flow</text>
+            <rect class="pill" x="10" y="322" width="108" height="22" rx="11"/><text x="20" y="338">Sterile field</text>
+          </g>
+          <g id="dyn"></g>
+          <g id="drip" visibility="hidden">
+            <circle class="drop" cx="0" cy="0" r="3.6" fill="#b3141b"/>
+            <circle class="drop" cx="0" cy="0" r="3.2" fill="#b3141b" style="animation-delay:.35s"/>
+            <circle class="drop" cx="0" cy="0" r="3.4" fill="#b3141b" style="animation-delay:.7s"/>
+          </g>
+          <g id="guide" visibility="hidden"><g id="guideRot">
+            <g class="chev"><path d="M-22 -12 L-10 0 L-22 12 M-6 -12 L6 0 L-6 12 M10 -12 L22 0 L10 12" fill="none" stroke="#ffe27a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+          </g></g>
+          <g id="over"></g>
+          <g id="fx"></g>
+        </svg>
+        <div class="readout" id="readout"></div>
+        <div class="scale-note">Schematic cutaway, not to scale</div>
+      </div>
+      <div class="tray" id="tray" aria-label="Sterile tray"></div>
+
+    <aside class="panel" id="panel" aria-live="off"></aside>
+  </main>
+
+  <section class="card" aria-labelledby="memH">
+    <h2 id="memH">Memory card</h2>
+    <p>Five phases, three beats each. Say the chant out loud while you run Recall mode.</p>
+    <div class="mem">
+      <section><h3>1 · Prep</h3><div class="chant">Angio · Open · Snap</div>
+        <ul><li>Angiogram first: site suitable</li><li>Peel the foil fully apart</li><li>Lay out sheath, locator, wire, device</li><li>Snap locator into sheath, indicators aligned</li></ul><p class="note">IFU notes: use within 1 hour of opening. Do not use if the package is damaged or its temperature indicator has darkened.</p></section>
+      <section><h3>2 · Locate</h3><div class="chant">Drip · Stop · Drip</div>
+        <ul><li>Wire in, procedure sheath out</li><li>Blood on, blood off, blood on (≤ 2 cm)</li><li>Hold sheath still, pull locator + wire</li></ul></section>
+      <section><h3>3 · Set</h3><div class="chant">Snap · Pull · Lock</div>
+        <ul><li>Device in until the caps snap</li><li>Hold sheath, pull device cap straight back</li><li>Resistance as it snaps into full rear lock</li><li>Sleeve bands fully visible</li></ul></section>
+      <section><h3>4 · Seal</h3><div class="chant">Pull · Tension · Tamp</div>
+        <ul><li>Withdraw along the tract: anchor seats</li><li>Tamper tube appears at the skin</li><li>Keep tension until the clear stop shows</li><li>Tamp to resistance, black marker exposed</li></ul></section>
+      <section><h3>5 · Cut</h3><div class="chant">Clear stop, then skin</div>
+        <ul><li>Cut below the clear stop, device off</li><li>Twirl the tamper tube off</li><li>Suture up, skin down, cut below the black marker</li><li>Clean, sterile dressing, check pulses</li></ul></section>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="partsH" id="partsCard">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
+      <div><h2 id="partsH">Know the parts</h2></div>
+      <button class="ghost" id="quizBtn" aria-pressed="false">Quiz me: hide names</button>
+    </div>
+    <p>The kit: insertion sheath, arteriotomy locator, 70 cm guidewire, and the VIP device. Hide the names, then tap a number to check yourself.</p>
+    <div class="parts-grid">
+      <div class="parts-fig" id="partsFig"></div>
+      <ol class="legend" id="legend"></ol>
+    </div>
+  </section>
+
+  <footer>
+    Independent teaching simulation built from the Angio-Seal VIP Instructions for Use (Terumo, PM-02943, 2018). Device shapes and colors are drawn from the manufacturer's published illustrations; brand marks are left off. Not affiliated with or endorsed by Terumo. The cutaway is schematic and not to scale. Always follow the current IFU and your lab's protocol.
+  </footer>
+</div>
+
+<script>
+(function(){
+const svg=document.getElementById('scene'), dyn=document.getElementById('dyn'), over=document.getElementById('over');
+const dripG=document.getElementById('drip'), guideG=document.getElementById('guide'), guideRot=document.getElementById('guideRot');
+const angioEl=document.getElementById('angio'), readout=document.getElementById('readout');
+const panel=document.getElementById('panel'), tray=document.getElementById('tray');
+
+// geometry: tract enters skin at (640,360) at 30 degrees. d = distance along tract (px), w = perpendicular offset.
+const C=Math.cos(Math.PI/6), SN=0.5, SX=640, SY=360, PX_CM=60;
+const D_WALL=240, TIP_FLOW=330, TIP_MAX=360, D_SEAT=236;
+const toG=(d,w=0)=>({x:SX+d*C-w*SN,y:SY+d*SN+w*C});
+const r1=n=>Math.round(n*10)/10;
+const R=(d0,d1,h,a='')=>`<rect x="${r1(d0)}" y="${-h/2}" width="${r1(Math.max(0,d1-d0))}" height="${h}" ${a}/>`;
+
+// lumen flow cells (seamless 120px tile)
+(function(){let s='';const tile=[[10,492],[38,522],[66,505],[92,540],[108,488],[52,548],[24,532]];
+ for(let k=-2;k<10;k++)for(const [x,y] of tile)s+=`<ellipse cx="${k*120+x}" cy="${y}" rx="7" ry="3.4" fill="#c7272d" opacity=".55"/>`;
+ document.getElementById('flow').innerHTML=s;})();
+
+const init=()=>({opened:false,snapT:null,proc:true,procTip:330,wire:false,locSnapped:false,assembly:false,locIn:false,tip:-40,
+  device:false,gap:140,s:0,seated:false,c:0,devRemoved:false,tampRemoved:false,cut1:false,cut2:false,dressing:false,angio:false});
+let W=init();
+
+const PH=['Prep','Locate','Set','Seal','Cut'];
+const STEPS=[
+ {id:'angio',ph:0,kind:'hot',hot:'arm',title:'Shoot a femoral angiogram through the procedure sheath',short:'Femoral angiogram through the sheath',
+  detail:'Before you open the closure kit, confirm the site is suitable for closure.',
+  cue:'Tap the side-arm stopcock to inject contrast.',apply(){W.angio=true},done:'Site suitable.'},
+ {id:'open',ph:0,kind:'tray',tray:'pouch',title:'Peel the foil pouch fully apart and lay out the kit',short:'Open pouch, lay out the kit',
+  detail:'On the back table, pull the foil completely apart before removing anything. Lay out the insertion sheath, arteriotomy locator, guidewire with J-straightener, and the VIP device, and check nothing looks damaged.',
+  cue:'Tap the foil pouch.',apply(){W.opened=true},done:'On the tray: insertion sheath, locator, guidewire, VIP device. Use within 1 hour.'},
+ {id:'snap',ph:0,kind:'tray',tray:'locator',title:'Snap the arteriotomy locator into the insertion sheath',short:'Snap locator into insertion sheath',
+  detail:'Still on the back table. Line up the reference indicator on the locator hub with the 6F arrow on the sheath cap, then push the locator in until the hub snaps into the sheath cap.',
+  cue:'Tap the arteriotomy locator.',apply(){W.locSnapped=true;W.snapT=1},done:'Snapped. Reference indicators aligned.'},
+ {id:'wire',ph:1,kind:'tray',tray:'wire',title:'Pass the guidewire through the procedure sheath',short:'Guidewire through procedure sheath',
+  detail:'Insert the 70 cm guidewire through the existing procedure sheath into the artery.',
+  cue:'Tap the guidewire on the tray.',apply(){W.wire=true},done:'Wire is in the artery.'},
+ {id:'procOut',ph:1,kind:'drag',way:'out',title:'Remove the procedure sheath and leave the wire in',short:'Remove procedure sheath, keep wire',
+  detail:'Withdraw the procedure sheath over the wire. The guidewire stays in the artery. Once the sheath is out, hold pressure over the puncture site.',
+  cue:'Drag the procedure sheath back out of the tract.',
+  drag:{key:'procTip',dir:1,min:-90,max:()=>W.procTip,auto:true,doneAt:v=>v<=-60},
+  apply(){W.proc=false;W.procTip=-90},done:'Procedure sheath out. Wire stays.'},
+ {id:'advance',ph:1,kind:'drag',way:'in',pre:'assembly',title:'Thread the locator/sheath over the wire and advance until blood drips',short:'Advance until blood drips',
+  detail:'Keep holding pressure until the sheath enters the skin. Drip hole faces down, reference indicator faces up. Advance until blood drips from the locator drip hole. The sheath tip is then about 1.5 cm inside the artery.',
+  cue:'Tap the assembly on the tray, then drag it into the tract.',
+  drag:{key:'tip',dir:1,min:-40,max:()=>392,auto:false,doneAt:v=>v>=TIP_FLOW,hint:()=>'No blood at the drip hole yet. Keep advancing.'},
+  apply(){W.assembly=true;W.locIn=true;if(W.tip<TIP_FLOW)W.tip=344},done:'Blood from the drip hole.'},
+ {id:'withdraw',ph:1,kind:'drag',way:'out',title:'Withdraw slowly until the blood flow slows or stops',short:'Withdraw until flow stops',
+  detail:'When the drip stops, the locator inlet holes have just left the artery.',
+  cue:'Drag back slowly and watch the drip hole.',
+  drag:{key:'tip',dir:1,min:250,max:()=>W.tip,auto:false,doneAt:v=>v<TIP_FLOW,hint:()=>'Blood is still dripping. Withdraw a little more.'},
+  apply(){if(W.tip>=TIP_FLOW)W.tip=318},done:'Flow stopped. The inlet is just outside the vessel wall.'},
+ {id:'readvance',ph:1,kind:'drag',way:'in',title:'Re-advance until the blood flow resumes',short:'Re-advance until flow resumes',
+  detail:'Advance just until blood drips again. The sheath should be no more than about 2 cm into the artery.',
+  cue:'Drag forward and stop as soon as it drips.',
+  drag:{key:'tip',dir:1,min:250,max:()=>404,auto:false,doneAt:v=>v>=TIP_FLOW,hint:()=>'No flow yet. Advance a little.'},
+  apply(){if(W.tip<TIP_FLOW)W.tip=338},done:'Flow is back. The sheath is in position. Do not move it from here.'},
+ {id:'locOut',ph:1,kind:'hot',hot:'locator',title:'Hold the sheath still; remove the locator and guidewire',short:'Hold sheath still, remove locator + wire',
+  detail:'Flex the locator up at the sheath hub to unsnap it, then pull it out with the wire. The sheath must not move for the rest of the deployment.',
+  cue:'Tap the locator hub.',apply(){W.locIn=false;W.wire=false},done:'Locator and wire out. Sheath held steady.'},
+ {id:'insert',ph:2,kind:'drag',way:'in',pre:'device',title:'Insert the VIP device until the caps snap together',short:'Insert device until caps snap',
+  detail:'Grip the device just behind the bypass tube. Line up the green arrow on the device with the 6F arrow on the sheath cap (they point at each other). Advance in small increments until the device cap snaps onto the sheath cap. The anchor is now out of the sheath tip, inside the artery.',
+  cue:'Tap the VIP device on the tray, then drag it in.',
+  drag:{key:'gap',dir:-1,min:0,max:()=>140,auto:true,doneAt:v=>v<=0},
+  apply(){W.device=true;W.gap=0},done:'Snap. Caps locked together. Anchor released into the lumen.'},
+ {id:'lock',ph:2,kind:'drag',way:'out',title:'Hold the sheath; pull the device cap straight back to full rear lock',short:'Pull device cap back to full lock',
+  detail:'Keep the insertion sheath still and pull the device cap straight back. The anchor catches on the sheath tip, you feel resistance as the handle and sleeve snap into lock, and the device sleeve bands become fully visible. If the sleeve separates from the sheath, do not push it forward again.',
+  cue:'Drag the device cap back until it clicks.',
+  drag:{key:'s',dir:-1,min:0,max:()=>30,auto:true,doneAt:v=>v>=30},
+  apply(){W.s=30},done:'Click. Full rear lock: both sleeve bands fully visible.'},
+ {id:'seatOut',ph:3,kind:'drag',way:'out',title:'Withdraw the device and sheath along the tract angle',short:'Withdraw along tract: anchor seats',
+  detail:'Pull slowly along the same angle. The anchor seats against the inside of the arterial wall. Keep going until the sheath clears the skin and the tamper tube appears. Never re-insert the device.',
+  cue:'Drag the whole assembly back.',
+  drag:{key:'tip',dir:1,min:-5,max:()=>W.tip,auto:true,doneAt:v=>v<=-5},
+  apply(){W.seated=true;W.tip=-5},done:'Tamper tube exposed at the skin. Anchor against the wall.'},
+ {id:'clearStop',ph:3,kind:'drag',way:'out',title:'Keep suture tension and withdraw until the clear stop appears',short:'Keep tension, withdraw to clear stop',
+  detail:'Grip the tamper tube and keep tension on the suture the whole time. Losing tension can push collagen into the artery. Continue until the clear stop appears and the suture is fully deployed and locked in the device cap.',
+  cue:'Keep dragging back.',
+  drag:{key:'tip',dir:1,min:-120,max:()=>W.tip,auto:true,doneAt:v=>v<=-120},
+  apply(){W.seated=true;W.tip=-120},done:'Suture fully deployed. Clear stop visible.'},
+ {id:'tamp',ph:3,kind:'drag',way:'in',title:'Hold tension and tamp the collagen down to resistance',short:'Tamp to resistance (black marker shows)',
+  detail:'Advance the tamper tube along the tract angle until you feel resistance and hemostasis is achieved. The black compaction marker is usually exposed. Do not tamp past the distal end of the marker.',
+  cue:'Drag the tamper tube forward.',
+  drag:{key:'c',dir:1,min:0,max:()=>30,auto:true,doneAt:v=>v>=30},
+  apply(){W.c=30},done:'Resistance. Collagen compacted, black marker exposed, hemostasis.'},
+ {id:'cut1',ph:4,kind:'cut',title:'Cut the suture below the clear stop',short:'Cut suture below clear stop',
+  detail:'This frees the device and sheath, which you then lift away.',cue:'Choose where to cut.',
+  cuts:[{id:'A',d:-110,ok:false,msg:'That is above the clear stop. Cut below it, between the clear stop and the tamper tube.'},{id:'B',d:-62,ok:true}],
+  apply(){W.cut1=true;W.devRemoved=true},done:'Cut. Device and sheath removed.'},
+ {id:'tamperOff',ph:4,kind:'hot',hot:'tamper',title:'Remove the tamper tube with a slight upward twirl',short:'Twirl the tamper tube off',
+  detail:'Slide the tamper tube up and off the suture.',cue:'Tap the tamper tube.',apply(){W.tampRemoved=true},done:'Tamper tube off. Only the suture remains.'},
+ {id:'cut2',ph:4,kind:'cut',title:'Pull the suture up, push the skin down, and cut below skin level',short:'Cut below black marker + skin',
+  detail:'Cut below the black compaction marker and below skin level. The marker is not absorbable and must come off. The suture end should retract under the skin.',
+  cue:'Choose where to cut.',
+  cuts:[{id:'A',d:-58,ok:false,msg:'That is above the black marker. The marker is not absorbable and would stay in the patient.'},{id:'B',d:-12,ok:false,msg:'Below the marker but above the skin. The suture end must retract below skin level to lower infection risk.'},{id:'C',d:10,ok:true}],
+  apply(){W.cut2=true},done:'Cut. The suture end retracts below the skin.'},
+ {id:'dressing',ph:4,kind:'hot',hot:'site',title:'Clean the site and apply a sterile dressing',short:'Clean site, sterile dressing',
+  detail:'Use antiseptic, then a dressing that keeps the site visible in recovery. If it oozes, light pressure with one or two fingers is usually enough. Check distal pulses.',
+  cue:'Tap the access site.',apply(){W.dressing=true},done:'Done. Hemostasis achieved.'}
+];
+const N=STEPS.length;
+const I=Object.fromEntries(STEPS.map((x,k)=>[x.id,k]));
+const ERRS=[
+ {t:'Advance the sheath another 2–3 cm to be safe',why:'More than 2 cm in risks the anchor catching early and poor hemostasis.',ph:[1,2]},
+ {t:'Pull the guidewire out with the procedure sheath',why:'The wire stays in. It guides the locator/sheath assembly into the artery.',ph:[1]},
+ {t:'Push the device forward to re-seat the sleeve',why:'Never push forward. If the sleeve separates, carry on to the withdrawal step.',ph:[2,3]},
+ {t:'Re-insert the device to reposition it',why:'Re-insertion after partial deployment can deposit collagen inside the artery.',ph:[3]},
+ {t:'Release suture tension, then tamp',why:'Without tension the collagen can be pushed into the artery.',ph:[3,4]},
+ {t:'Tamp past the black compaction marker',why:'Over-tamping can deform the anchor or tear the collagen.',ph:[3,4]},
+ {t:'Cut the suture at the skin, above the black marker',why:'The marker is not absorbable and must be removed.',ph:[4]},
+ {t:'Hold firm manual compression for 15 minutes',why:'Not part of the deployment. Light finger pressure only if it oozes.',ph:[3,4]},
+ {t:'Open the pouch at the start of the case so it is ready',why:'Components degrade once exposed. Open only when you are ready, and use within 1 hour.',ph:[0]},
+ {t:'Thread the locator alone over the wire, then add the sheath',why:'The locator is snapped into the sheath on the tray first, reference indicators aligned.',ph:[0,1]}
+];
+const CHECK=[
+ {s:13,t:'Cap edge sits within the colored bands',ok:true},
+ {s:2,t:'Cap completely covers the colored bands',ok:false,why:'That pattern means the anchor caught early. Fix: re-advance the device, push the cap back to the rear holding position, then withdraw again until it catches correctly.'},
+ {s:30,t:'Both bands fully visible, handle locked',ok:false,why:'Not yet. You have only felt resistance. Locking is the next step.'}
+];
+
+let idx=0, mode='practice', pstate='do', busy=false, timer=null, opts=null, checkOrder=null;
+let fb={text:'',kind:''}, missed=new Set(), t0=Date.now(), drag=null;
+
+const preOK=st=>!st.pre||(st.pre==='assembly'?W.assembly:W.device);
+const canAct=()=>!busy&&idx<N&&!(mode==='recall'&&pstate==='ask');
+function setFb(text,kind){fb={text,kind};const el=document.getElementById('fb');if(el){el.textContent=text;el.className='fb '+(kind||'')}}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// ---------- scene ----------
+// ---------- device drawing (side view; +x = toward patient, y=0 = device axis) ----------
+const DV={
+ shaft(x0,x1,h=13){let o=`<rect x="${r1(x0)}" y="${-h/2}" width="${r1(Math.max(0,x1-x0))}" height="${h}" fill="url(#gShaft)" stroke="#a5afb6" stroke-width=".7"/>`;
+  for(let x=x0+24;x<x1-12;x+=30)o+=`<ellipse cx="${r1(x)}" cy="-1.4" rx="1.9" ry="1.4" fill="#262b2f"/>`;return o},
+ sheathTip(x){return `<path d="M${r1(x)} -6.5 L${r1(x+8)} -4 L${r1(x+8)} 4 L${r1(x)} 6.5Z" fill="#e3e8eb" stroke="#a5afb6" stroke-width=".6"/>`},
+ sheathCap(x0){ // 28 long x 48 tall; 6F arrow points back toward the device (reference indicator)
+  let o=`<path d="M${r1(x0+28)} -11 L${r1(x0+36)} -7 L${r1(x0+36)} 7 L${r1(x0+28)} 11Z" fill="url(#gShaft)" stroke="#9aa5ac" stroke-width=".7"/>`;
+  o+=`<rect x="${r1(x0)}" y="-24" width="29" height="48" rx="4" fill="url(#gRib)" stroke="#8f9aa2" stroke-width=".9"/>`;
+  for(let k=0;k<12;k++){const x=x0+2.2+k*2.2;o+=`<line x1="${r1(x)}" y1="-23" x2="${r1(x)}" y2="-15" stroke="#bfc7cc" stroke-width=".8"/><line x1="${r1(x)}" y1="15" x2="${r1(x)}" y2="23" stroke="#bfc7cc" stroke-width=".8"/>`}
+  o+=`<path d="M${r1(x0+1.5)} 0 L${r1(x0+11)} -14 L${r1(x0+11)} -8 L${r1(x0+27)} -8 L${r1(x0+27)} 8 L${r1(x0+11)} 8 L${r1(x0+11)} 14Z" fill="url(#gTeal)" stroke="#14574a" stroke-width=".7"/>`;
+  o+=`<text x="${r1(x0+19)}" y="4" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="10.5" fill="#fff" text-anchor="middle">6F</text>`;return o},
+ locatorHub(x0){ // clip ring with green reference arrow (points toward the sheath cap), clear funnel, green tube with drip hole
+  return `<path d="M${r1(x0-10)} -14 L${r1(x0-40)} -5 L${r1(x0-40)} 5 L${r1(x0-10)} 14Z" fill="url(#gClear)" stroke="#97aab3" stroke-width=".9"/>`+
+  `<path d="M${r1(x0-12)} -10.5 L${r1(x0-37)} -3.4" stroke="#fff" stroke-width="2" opacity=".85"/>`+
+  `<rect x="${r1(x0-11)}" y="-18" width="11" height="36" rx="2.5" fill="url(#gClear)" stroke="#8ea3ad" stroke-width=".9"/>`+
+  `<path d="M${r1(x0-10)} -5 L${r1(x0-5.5)} -5 L${r1(x0-5.5)} -10 L${r1(x0-0.8)} 0 L${r1(x0-5.5)} 10 L${r1(x0-5.5)} 5 L${r1(x0-10)} 5Z" fill="#ffffff" stroke="#6f7c85" stroke-width=".8"/>`+
+  `<rect x="${r1(x0-47)}" y="-4.5" width="7" height="9" fill="url(#gClear)" stroke="#97aab3" stroke-width=".7"/>`+
+  `<rect x="${r1(x0-80)}" y="-4" width="33" height="8" rx="2" fill="url(#gTeal)" stroke="#17594a" stroke-width=".6"/>`+
+  `<circle cx="${r1(x0-70)}" cy="2.2" r="1.7" fill="#0d2621"/>`},
+ locatorTip(x){return `<path d="M${r1(x)} -4.2 L${r1(x+26)} -4 Q${r1(x+36)} -2.5 ${r1(x+38)} 0 Q${r1(x+36)} 2.5 ${r1(x+26)} 4 L${r1(x)} 4.2Z" fill="url(#gTeal)" stroke="#14574a" stroke-width=".7"/>`},
+ collar(f){ // green clip frame at the front of the device cap: back plate, two arms with hooked tips, inner ring
+  let o=`<rect x="${r1(f-16)}" y="-23" width="4" height="46" rx="1" fill="url(#gTeal)" stroke="#124f42" stroke-width=".7"/>`;
+  for(const sg of [-1,1]){const y0=sg*19.5;
+   o+=`<rect x="${r1(f-13)}" y="${r1(y0-2.6)}" width="12" height="5.2" rx="1" fill="url(#gTeal)" stroke="#124f42" stroke-width=".6"/>`;
+   o+=`<path d="M${r1(f-1.5)} ${r1(y0-2.6*sg*-1)} L${r1(f+2.5)} ${r1(y0+sg*5.5)} L${r1(f)} ${r1(y0+sg*6)} L${r1(f-2.5)} ${r1(y0+sg*2.6)}Z" fill="#2a9479" stroke="#124f42" stroke-width=".5"/>`;
+   o+=`<rect x="${r1(f-4)}" y="${r1(y0-sg*1-1)}" width="2" height="2" fill="#f1f4f5"/>`}
+  o+=`<rect x="${r1(f-12)}" y="-6.5" width="6" height="13" rx="1.5" fill="#2a9479" stroke="#124f42" stroke-width=".5"/>`;
+  return o},
+ sleeve(f,e){ // exposed between the clip frame and the device cap when pulled back: white rod + two longitudinal green bands
+  const a=e-2,b=f-14;if(b<=a)return '';
+  let o=`<rect x="${r1(a)}" y="-4" width="${r1(b-a)}" height="8" fill="url(#gShaft)" stroke="#a5afb6" stroke-width=".6"/>`;
+  for(const sg of [-1,1]){const y=sg>0?6:-14;
+   o+=`<rect x="${r1(a)}" y="${y}" width="${r1(b-a)}" height="8" rx="1" fill="url(#gTeal)" stroke="#124f42" stroke-width=".6"/>`;
+   if(b-a>8)o+=`<rect x="${r1(a+3)}" y="${y+2.2}" width="${r1(b-a-6)}" height="3.6" rx="1" fill="#c8efe1" opacity=".9"/>`}
+  return o},
+ deviceCap(e){ // long white body (≈1.6× its height): ribbed front, slot window with green slider, green arrow along the top edge pointing to the patient, green back cap
+  const x0=e-84;let o=`<rect x="${r1(x0)}" y="-26" width="84" height="52" rx="7" fill="url(#gRib)" stroke="#8f9aa2" stroke-width=".9"/>`;
+  o+=`<rect x="${r1(e-6)}" y="-27.5" width="6" height="55" rx="2" fill="#eef1f3" stroke="#8f9aa2" stroke-width=".7"/>`;
+  for(let x=e-36;x<e-7;x+=2.3)o+=`<line x1="${r1(x)}" y1="-14" x2="${r1(x)}" y2="25" stroke="#c4cbd0" stroke-width=".8"/>`;
+  for(const sg of [-1,1])o+=`<path d="M${r1(e-20)} ${r1(sg*26)} L${r1(e-20)} ${r1(sg*29.5)} L${r1(e-8)} ${r1(sg*29.5)} L${r1(e-8)} ${r1(sg*26)}Z" fill="#eef1f3" stroke="#97a2a9" stroke-width=".6"/>`;
+  o+=`<path d="M${r1(x0)} -19 Q${r1(x0)} -26 ${r1(x0+7)} -26 L${r1(x0+12)} -26 L${r1(x0+12)} 26 L${r1(x0+7)} 26 Q${r1(x0)} 26 ${r1(x0)} 19Z" fill="url(#gTeal)" stroke="#124f42" stroke-width=".7"/><line x1="${r1(x0+3.5)}" y1="-19" x2="${r1(x0+3.5)}" y2="19" stroke="#a6ead6" stroke-width="1.2" opacity=".7"/>`;
+  o+=`<path d="M${r1(x0+14)} -26 L${r1(e-20)} -26 L${r1(e-20)} -29 L${r1(e-8)} -21.5 L${r1(e-20)} -14 L${r1(e-20)} -17 L${r1(x0+14)} -17Z" fill="url(#gTeal)" stroke="#124f42" stroke-width=".6"/>`;
+  o+=`<path d="M${r1(x0+22)} -6 L${r1(e-42)} -6 A6 6 0 0 1 ${r1(e-42)} 6 L${r1(x0+22)} 6 A6 6 0 0 1 ${r1(x0+22)} -6Z" fill="#dde4e8" stroke="#97a2a9" stroke-width=".8"/>`;
+  o+=`<path d="M${r1(e-55)} -4 L${r1(e-46)} -4 L${r1(e-46)} -1.4 L${r1(e-40)} -1.4 L${r1(e-40)} 1.4 L${r1(e-46)} 1.4 L${r1(e-46)} 4 L${r1(e-55)} 4Z" fill="url(#gTeal)" stroke="#124f42" stroke-width=".5"/>`;
+  return o},
+ bypass(x){ // clear bypass tube with flange at the tip of the carrier tube
+  return `<path d="M${r1(x-14)} -5.5 L${r1(x-3)} -5.5 L${r1(x+2)} -2.5 L${r1(x+2)} 2.5 L${r1(x-3)} 5.5 L${r1(x-14)} 5.5Z" fill="url(#gClear)" stroke="#8ea3ad" stroke-width=".8"/>`+
+  `<rect x="${r1(x-16)}" y="-10" width="3" height="20" rx="1.4" fill="url(#gClear)" stroke="#8ea3ad" stroke-width=".8"/>`},
+ device(f,s,carrierTo,bp){let o='';if(carrierTo>f)o+=`<rect x="${r1(f)}" y="-3.6" width="${r1(carrierTo-f)}" height="7.2" fill="url(#gShaft)" stroke="#a5afb6" stroke-width=".7"/>`;
+  if(bp&&carrierTo-f>18)o+=DV.bypass(carrierTo);
+  const e=f-16-s;return o+DV.sleeve(f,e)+DV.collar(f)+DV.deviceCap(e)},
+ anchor(cx,cy){return `<path d="M${r1(cx-24)} ${r1(cy)} L${r1(cx-18)} ${r1(cy-3.6)} L${r1(cx+21)} ${r1(cy-3.6)} Q${r1(cx+25)} ${r1(cy)} ${r1(cx+21)} ${r1(cy+3.6)} L${r1(cx-18)} ${r1(cy+3.6)}Z" fill="url(#gAnchorB)" stroke="#5f97aa" stroke-width="1"/><circle cx="${r1(cx)}" cy="${r1(cy-4.6)}" r="2.2" fill="none" stroke="#5f97aa" stroke-width="1.2"/>`},
+ collagen(x0,x1,h){const pts=[];const st=Math.max(4,Math.min(h*.42,(x1-x0)/3));for(let x=x0+st*.6,k=0;x<=x1-st*.4;x+=st,k++)pts.push([x,(k%2?1:-1)*h*.16,h*.36+(k%3)*1.2]);if(!pts.length)pts.push([(x0+x1)/2,0,h*.4]);
+  return pts.map(([x,y,r])=>`<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(r+1.2)}" fill="#cfd2cc"/>`).join('')+pts.map(([x,y,r])=>`<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(r)}" fill="#fbfbf8"/>`).join('')},
+ tamper(x0,x1){return `<rect x="${r1(x0)}" y="-4.5" width="${r1(x1-x0)}" height="9" rx="2" fill="url(#gTeal)" stroke="#17594a" stroke-width=".7"/><line x1="${r1(x0+2)}" y1="-2" x2="${r1(x1-2)}" y2="-2" stroke="#9be3cf" stroke-width="1" opacity=".7"/>`},
+ clearStop(x0,x1){return `<rect x="${r1(x0)}" y="-5" width="${r1(x1-x0)}" height="10" rx="3" fill="url(#gClear)" stroke="#8ea3ad" stroke-width="1"/><line x1="${r1(x0+3)}" y1="-2.5" x2="${r1(x1-3)}" y2="-2.5" stroke="#fff" stroke-width="1.4"/>`},
+ marker(x0,x1){return `<rect x="${r1(x0)}" y="-3.2" width="${r1(x1-x0)}" height="6.4" rx="1" fill="#111"/>`}
+};
+function lbl(x,y,text,dx,dy){const w=text.length*9.2+20, tx=x+dx, ty=y+dy, rx=dx>=0?tx:tx-w;
+ return `<g class="lbl"><line x1="${r1(x)}" y1="${r1(y)}" x2="${r1(tx)}" y2="${r1(ty)}"/><circle cx="${r1(x)}" cy="${r1(y)}" r="3"/><rect x="${r1(rx)}" y="${r1(ty-14)}" width="${r1(w)}" height="28" rx="14"/><text x="${r1(rx+10)}" y="${r1(ty+6)}">${text}</text></g>`}
+function anchorPos(){if(W.seated)return{x:844.4,y:484};const p=toG(W.tip+13-Math.min(W.s,13));return{x:p.x,y:p.y+6}}
+function hotPos(h){const o=W.procTip-330;
+ if(h==='arm')return toG(-166+o,-92); if(h==='locator')return toG(W.tip-440,0);
+ if(h==='tamper')return toG(-8,0); return {x:640,y:362}}
+
+function draw(){
+ const t=W.tip, loc=[], pre=[], post=[];
+ if(W.wire){const pull=W.locPull||0,a=toG(-520-pull);
+  const lead=W.proc?W.procTip+2:(W.assembly&&W.locIn?W.tip+30:268), ex=Math.max(lead,262);
+  if(pull>0){const b=toG(ex+40-pull);pre.push(`<path class="wire" d="M${r1(a.x)} ${r1(a.y)} L${r1(b.x)} ${r1(b.y)}"/>`)}
+  else{const b=toG(ex),ey=522;pre.push(`<path class="wire" d="M${r1(a.x)} ${r1(a.y)} L${r1(b.x)} ${r1(b.y)} Q${r1(b.x+38)} ${r1((b.y+ey)/2+5)} 1010 ${ey}"/>`)}
+  pre.push(`<circle cx="${r1(a.x)}" cy="${r1(a.y)}" r="2.6" fill="#8e979e"/>`)}
+ // implant (under the sheath)
+ if(W.seated){
+  const end=W.cut2?8:W.cut1?-62:t-400;
+  loc.push(`<line class="suture" x1="${r1(end)}" y1="0" x2="${D_SEAT}" y2="0"/>`);
+  if(!W.cut2)loc.push(DV.marker(-28,-20));
+  if(!W.cut1)loc.push(DV.clearStop(-100,-76));
+  if(!W.tampRemoved){const tp=W.tampPull||0;loc.push(`<g data-hot="tamper" class="hotable" opacity="${r1(1-tp/400)}">${DV.tamper(-50+W.c-tp,180+W.c-tp)}${R(-50+W.c-tp,10-tp,34,'fill="transparent"')}</g>`)}
+  loc.push(DV.collagen(176+W.c,230,16+W.c*.6));
+ }
+ // procedure sheath
+ if(W.proc){const o=W.procTip-330,p=W.procTip;
+  loc.push(`<path class="sidearm" d="M${-41+o} -14 C${-41+o} -60 ${-110+o} -92 ${-150+o} -92"/>`);
+  loc.push(R(-20+o,p-6,12,'fill="url(#gProc)" stroke="#8d9aa3" stroke-width=".8"'));
+  loc.push(`<path d="M${p-6} -6 L${p} -3.2 L${p} 3.2 L${p-6} 6Z" fill="#c4ced5"/>`);
+  loc.push(R(-62+o,-20+o,30,'rx="4" fill="url(#gGreen)"'));
+  loc.push(R(-78+o,-62+o,24,'rx="3" fill="url(#gCap)"'));
+  loc.push(`<g data-hot="arm" class="hotable" transform="translate(0 -92)">${R(-182+o,-150+o,16,'rx="3" fill="#2d6bcc" stroke="#163f7d"')}${R(-172+o,-164+o,34,'rx="2" fill="#2d6bcc" stroke="#163f7d"')}<circle cx="${-166+o}" cy="0" r="30" fill="transparent"/></g>`);
+ }
+ // insertion sheath + locator + device
+ if(W.assembly&&!W.devRemoved){
+  const lp=W.locPull||0;
+  if(W.locIn)loc.push(DV.locatorTip(t+4-lp));
+  loc.push(DV.shaft(t-371,t-4),DV.sheathTip(t-4));
+  if(W.locIn&&!lp){
+   const inL=t-90>D_WALL;
+   loc.push(`<ellipse cx="${r1(t-90)}" cy="0" rx="4.5" ry="2.8" fill="${inL?'#8d1a1e':'#36414a'}" stroke="#1d252b" stroke-width=".6"/>`);
+  }
+  if(W.device){const f=t-400-W.gap;loc.push(DV.device(f,W.s,t-400,W.gap>16))}
+  if(W.locIn)loc.push(`<g data-hot="locator" class="hotable">${lp?R(t-400-lp,t-400,7,'fill="url(#gShaft)" stroke="#a8b2b9" stroke-width=".7"'):''}${DV.locatorHub(t-400-lp)}${R(t-490-lp,t-400-lp,50,'fill="transparent"')}</g>`);
+  loc.push(DV.sheathCap(t-400));
+  const holdIds=['locOut','insert','lock'];
+  if(STEPS[idx]&&holdIds.includes(STEPS[idx].id)&&W.assembly){const d=t-386;
+   const b=toG(d,-34);post.push(`<g class="holdmark" pointer-events="none"><line x1="${r1(b.x)}" y1="${r1(b.y)}" x2="${r1(b.x)}" y2="${r1(b.y-44)}" stroke="#ffd23f" stroke-width="3"/><g class="badge"><rect x="${r1(b.x-62)}" y="${r1(b.y-72)}" width="124" height="30" rx="15"/><text x="${r1(b.x)}" y="${r1(b.y-52)}" text-anchor="middle">HOLD SHEATH</text></g></g>`);
+   loc.push(`<g class="holdmark"><rect class="outline" x="${r1(d-20)}" y="-31" width="40" height="62" rx="8"/></g>`);}
+  if(false){const d=0;
+   loc.push(`<g class="hold"><rect x="${r1(d-17)}" y="-37" width="34" height="14" rx="7"/><rect class="nail" x="${r1(d-12)}" y="-34" width="10" height="7" rx="3"/><rect x="${r1(d-17)}" y="23" width="34" height="14" rx="7"/><rect class="nail" x="${r1(d-12)}" y="27" width="10" height="7" rx="3"/></g>`)}
+ }
+ if((W.device&&W.gap===0&&!W.devRemoved)||W.seated){const a=anchorPos();
+  post.push(DV.anchor(a.x,a.y))}
+ if(W.dressing)post.push(`<rect x="572" y="349" width="136" height="22" rx="7" fill="#f6f6f0" stroke="#bdbcb0"/><rect x="590" y="353" width="100" height="14" rx="3" fill="url(#pGauze)"/>`);
+ if(!W.proc&&W.wire&&!(W.assembly&&W.tip>0)&&idx>=I.procOut&&idx<=I.advance){const b=toG(30,-40);post.push(`<g class="holdmark" pointer-events="none"><g class="badge"><rect x="${r1(b.x-80)}" y="${r1(b.y-60)}" width="160" height="30" rx="15"/><text x="${r1(b.x)}" y="${r1(b.y-40)}" text-anchor="middle">HOLD PRESSURE</text></g></g>`)}
+ const prepping=idx>=I.open&&idx<=I.snap;
+ dyn.innerHTML=prepping?prepView():pre.join('')+`<g transform="translate(${SX} ${SY}) rotate(30)">${loc.join('')}</g>`+post.join('');
+
+ // overlay: labels, hot rings, cut targets
+ const st=STEPS[idx], ov=[];
+ if(st&&st.hot==='site'&&!W.dressing)ov.push(`<circle data-hot="site" class="hotable" cx="640" cy="362" r="40" fill="transparent"/>`);
+ if(mode==='practice'&&st&&(canAct()||prepping))ov.push(prepping?prepLabels():labelsFor());
+ if(st&&st.kind==='tray'&&prepping&&canAct()&&mode==='practice'){const p=st.tray==='pouch'?{x:500,y:335}:{x:240,y:320};ov.push(ringAt(p.x,p.y))}
+ if(st&&st.kind==='hot'&&canAct()&&mode==='practice'){const p=hotPos(st.hot);ov.push(ringAt(p.x,p.y))}
+ if(st&&st.kind==='cut'&&canAct()){st.cuts.forEach((c,ci)=>{const side=ci%2?1:-1,a=toG(c.d,-15),b=toG(c.d,15),k=toG(c.d,side*48),e=side<0?a:b;
+  ov.push(`<g class="cut" data-cut="${c.id}"><line x1="${r1(a.x)}" y1="${r1(a.y)}" x2="${r1(b.x)}" y2="${r1(b.y)}"/><line x1="${r1(e.x)}" y1="${r1(e.y)}" x2="${r1(k.x)}" y2="${r1(k.y)}" stroke-dasharray="2 3"/><circle cx="${r1(k.x)}" cy="${r1(k.y)}" r="16"/><text x="${r1(k.x)}" y="${r1(k.y+6)}">${c.id}</text></g>`)})}
+ over.innerHTML=ov.join('');
+
+ // drip
+ const dripping=W.assembly&&W.locIn&&!W.locPull&&t>=TIP_FLOW&&t<=440;
+ if(dripping){const d=toG(t-470,4);dripG.setAttribute('transform',`translate(${r1(d.x)} ${r1(d.y)})`)}
+ dripG.setAttribute('visibility',dripping?'visible':'hidden');
+
+ // guide chevrons
+ let gp=null;
+ if(st&&st.kind==='drag'&&canAct()&&mode==='practice'&&preOK(st)){
+  const k=st.drag.key;
+  if(k==='procTip')gp=toG(W.procTip-430,-58);
+  else if(k==='tip')gp=toG(t-500,-60);
+  else if(k==='gap')gp=toG(t-400-W.gap-90,-56);
+  else if(k==='s')gp=toG(t-400-W.s-140,-56);
+  else if(k==='c')gp=toG(-80,-44);
+ }
+ if(gp){guideG.setAttribute('transform',`translate(${r1(gp.x)} ${r1(gp.y)})`);guideRot.setAttribute('transform',`rotate(${st.way==='in'?30:210})`)}
+ guideG.setAttribute('visibility',gp?'visible':'hidden');
+
+ // readout
+ let ro='';
+ if(prepping&&W.opened)ro+=`<span>Kit opened: use within 1 hour</span>`;
+ if(W.assembly&&W.locIn){
+  ro+=`<span class="${dripping?'blood':''}">Drip hole: ${dripping?'blood flowing':'no flow'}</span>`;
+  if(mode==='practice'){const cm=(t-D_WALL)/PX_CM;ro+=`<span>Sheath tip: ${cm>0?cm.toFixed(1)+' cm in artery':'outside artery'}</span>`}
+ }
+ if(W.device&&!W.devRemoved&&idx>=I.lock&&idx<=I.lock)ro+=`<span>Bands showing: ${W.s>=30?'both, locked':W.s>=10?'partly':'none'}</span>`;
+ if(idx===I.seatOut&&W.seated)ro+=`<span>Anchor: seated on wall</span>`;
+ readout.innerHTML=ro;
+ svg.classList.toggle('dragmode',!!(st&&st.kind==='drag'&&canAct()));
+}
+
+function prepView(){
+ const T=W.snapT==null?(W.locSnapped?1:0):W.snapT;
+ let h=`<rect width="1000" height="680" fill="url(#pDrape)"/><rect x="60" y="56" width="880" height="568" rx="18" fill="url(#gSteel)" stroke="#87929a" stroke-width="2"/><rect x="74" y="70" width="852" height="540" rx="12" fill="none" stroke="#fff" stroke-opacity=".4"/>`;
+ h+=`<g class="tissue"><rect class="pill" x="10" y="16" width="112" height="22" rx="11"/><text x="20" y="32">Back table</text></g>`;
+ if(!W.opened){
+  h+=`<g data-hot="pouch" class="hotable"><rect x="250" y="220" width="500" height="230" rx="10" fill="url(#gFoil)" stroke="#7f8990" stroke-width="2"/>`;
+  h+=`<rect x="250" y="220" width="500" height="22" rx="8" fill="url(#pCrimp)" opacity=".85"/><rect x="250" y="428" width="500" height="22" rx="8" fill="url(#pCrimp)" opacity=".85"/>`;
+  h+=`<path d="M250 290 L250 232 Q250 220 262 220 L320 220Z" fill="#f4f6f7" stroke="#8b949b"/><text x="262" y="246" font-family="var(--f-mono)" font-size="12" fill="#4a5660">PEEL</text>`;
+  h+=`<rect x="320" y="270" width="300" height="130" rx="6" fill="#f8f9fa" stroke="#c3c9ce"/>`;
+  h+=`<text x="338" y="300" font-family="var(--f-mono)" font-size="15" font-weight="600" fill="#26333d">VASCULAR CLOSURE DEVICE</text><text x="338" y="326" font-family="var(--f-mono)" font-size="15" fill="#26333d">VIP · 6F</text><text x="338" y="352" font-family="var(--f-mono)" font-size="11" fill="#5d6a74">STERILE · SINGLE USE</text><text x="338" y="374" font-family="var(--f-mono)" font-size="11" fill="#5d6a74">SHEATH · LOCATOR · 70 CM GUIDEWIRE · DEVICE</text></g>`;
+  return h}
+ h+=`<path d="M700 92 L900 92 L900 150 L760 150 Z" fill="url(#gFoil)" stroke="#8b949b" opacity=".9"/><path d="M712 158 L900 158 L900 176 L700 176 Z" fill="url(#gFoil)" stroke="#8b949b" opacity=".75"/>`;
+ // locator: drawn before the sheath so its shaft disappears inside once snapped
+ const lx=-80*T, ly=320-120*T;
+ h+=`<g data-hot="locator" class="hotable" transform="translate(${r1(lx)} ${r1(ly)})"><rect x="280" y="-3.5" width="600" height="7" fill="url(#gShaft)" stroke="#a8b2b9" stroke-width=".7"/>${DV.locatorTip(880)}${DV.locatorHub(280)}<rect x="190" y="-26" width="720" height="52" fill="transparent"/></g>`;
+ if(T>0)h+=`<line x1="${r1(192-80*T+80)}" y1="${r1(ly-20)}" x2="222" y2="180" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+ h+=`<g data-hot="sheath" class="hotable" transform="translate(0 200)">${DV.shaft(229,760)}${DV.sheathTip(760)}${DV.sheathCap(200)}</g>`;
+ h+=`<g data-hot="wire" class="hotable"><circle cx="250" cy="480" r="82" fill="none" stroke="#9aa4ac" stroke-width="3.5"/><circle cx="250" cy="480" r="72" fill="none" stroke="#b9c1c8" stroke-width="3.5"/><path d="M332 480 L410 480" stroke="#9aa4ac" stroke-width="3"/><rect x="400" y="474" width="44" height="12" rx="3" fill="#dfe5e8" stroke="#9aa4ac"/></g>`;
+ h+=`<g data-hot="device" class="hotable" transform="translate(0 480)">${DV.device(760,0,900,1)}</g>`;
+ if(W.zoomT!=null)h+=snapZoom(W.zoomT);
+ return h}
+function snapZoom(z){ // close-up: indicators already lined up; locator slides into the sheath cap and clicks home
+ const ease=k=>k<0?0:k>1?1:k*k*(3-2*k);
+ const bx=z<.6?-70+64*ease(z/.6):z<.75?-6+6*ease((z-.6)/.15):0;
+ const msg=z<.6?'Reference indicators lined up · slide the locator into the sheath cap':z<.75?'Push until it clicks':'Seated. Reference indicators aligned';
+ let h=`<g class="zoompanel"><rect class="frame" x="250" y="250" width="640" height="300" rx="14"/><clipPath id="zc"><rect x="254" y="254" width="632" height="292" rx="12"/></clipPath>`;
+ h+=`<g clip-path="url(#zc)"><g transform="translate(560 405) scale(3.2)">`;
+ h+=`<rect x="${r1(bx)}" y="-3.5" width="${r1(200-bx)}" height="7" fill="url(#gShaft)" stroke="#a8b2b9" stroke-width=".5"/>${DV.locatorHub(bx)}`;
+ h+=`${DV.shaft(29,110)}${DV.sheathCap(0)}`;
+ h+=`<rect x="${r1(bx-12)}" y="-13" width="13" height="26" rx="3" fill="none" stroke="#e0a800" stroke-width="1.1" stroke-dasharray="2 1.5"/><rect x="-0.5" y="-16" width="29" height="32" rx="3" fill="none" stroke="#e0a800" stroke-width="1.1" stroke-dasharray="2 1.5"/>`;
+ h+=`</g></g><text x="274" y="282">Close-up · ${msg}</text></g>`;
+ return h}
+function prepLabels(){if(W.zoomT!=null)return '';const L=[],T=W.snapT==null?(W.locSnapped?1:0):W.snapT;
+ if(!W.opened){L.push(lbl(620,236,'Foil pouch',60,-90));return L.join('')}
+ L.push(lbl(640,200,'Insertion sheath',0,-60));
+ if(T===0){L.push(lbl(600,320,'Arteriotomy locator',20,50));L.push(lbl(274,320,'Locator reference indicator',40,-46));L.push(lbl(212,200,'Sheath reference indicator',30,-56));L.push(lbl(222,320,'Drip hole',-20,64))}
+ if(T>0){L.push(lbl(200,200,'Reference indicators aligned',20,-64));L.push(lbl(812,200,'Locator tip',-10,60));L.push(lbl(150,202,'Locator hub',-20,80))}
+ L.push(lbl(250,398,'Guidewire, 70 cm',60,-30));
+ L.push(lbl(620,503,'VIP device',0,62));
+ return L.join('')}
+function labelsFor(){const L=[],t=W.tip,i=idx,f=t-400-W.gap,s=W.s;
+ if(i===I.angio&&W.proc){const p=toG(-166,-92);L.push(lbl(p.x,p.y,'Side-arm stopcock',30,-70))}
+ if(i===I.procOut&&W.proc){const p=toG(W.procTip-380,0);L.push(lbl(p.x,p.y,'Procedure sheath',-20,-80))}
+ if(i>=I.advance&&i<=I.locOut&&W.assembly&&W.locIn){
+  const d=toG(t-470,3);L.push(lbl(d.x,d.y,'Drip hole',-40,90));
+  if(i<=I.readvance){const r=toG(t-386,-8);L.push(lbl(r.x,r.y,'Reference indicator (6F arrow)',30,-60))}
+  if(i<=I.readvance){const q=toG(t-90,0);L.push(lbl(q.x,q.y,'Locator inlet',-60,120))}
+ }
+ if(i===I.locOut&&W.locIn){const p=toG(t-430,0);L.push(lbl(p.x,p.y,'Locator hub',30,-70))}
+ if(i===I.insert&&W.device){const p=toG(f-16-W.s-42,-26);L.push(lbl(p.x,p.y,'Device cap',20,-70));const q=toG(t-386,-24);L.push(lbl(q.x,q.y,'Sheath cap',50,-30))}
+ if(i===I.lock&&W.device){if(s>4){const p=toG(f-16-s/2,-10);L.push(lbl(p.x,p.y,s>=30?'Sleeve bands fully visible':'Sleeve bands appearing',60,-40))}const q=toG(f-16-s-42,-26);L.push(lbl(q.x,q.y,'Device cap',-40,-70))}
+ if(i>=I.insert&&i<=I.seatOut&&W.device&&W.gap===0){const a=anchorPos();L.push(lbl(a.x,a.y,'Anchor',-60,110))}
+ if(i>=I.seatOut&&i<=I.tamp&&W.seated&&t<222){const p=toG(205,0);L.push(lbl(p.x,p.y,'Collagen',-150,90))}
+ if(i>=I.seatOut&&i<=I.tamperOff&&W.seated&&!W.tampRemoved&&t<120){const p=toG(110,-5);L.push(lbl(p.x,p.y,'Tamper tube',60,-50))}
+ if(i>=I.clearStop&&i<=I.cut1&&!W.cut1&&t<-100){const p=toG(-88,-5);L.push(lbl(p.x,p.y,'Clear stop',-60,-70))}
+ if(i>=I.tamp&&i<=I.cut2&&!W.cut2&&W.c>=20){const p=toG(-24,-3);L.push(lbl(p.x,p.y,'Black compaction marker',40,-90))}
+ if(i===I.cut2){L.push(lbl(990,363,'Skin level',-10,-40))}
+ if(i===I.dressing){L.push(lbl(640,362,'Access site',30,-90))}
+ return L.join('')}
+
+function ringAt(x,y){x=r1(x);y=r1(y);return `<g pointer-events="none" class="glow"><circle class="halo" cx="${x}" cy="${y}" r="30"/><circle class="ring" cx="${x}" cy="${y}" r="26"/><circle class="ring r2" cx="${x}" cy="${y}" r="26"/><circle cx="${x}" cy="${y}" r="7" fill="#ffd23f" stroke="#fff" stroke-width="2"/></g>`}
+function burst(x,y,text){const fx=document.getElementById('fx');const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','burst');g.setAttribute('pointer-events','none');
+ g.innerHTML=`<circle cx="${r1(x)}" cy="${r1(y)}" r="22"/><circle class="b2" cx="${r1(x)}" cy="${r1(y)}" r="22"/>${text?`<text x="${r1(x+26)}" y="${r1(y-24)}">${text}</text>`:''}`;fx.appendChild(g);setTimeout(()=>g.remove(),1700)}
+function tween(ms,fn,done){const t0=performance.now();const f=now=>{const k=Math.min(1,(now-t0)/ms);fn(k);if(k<1)requestAnimationFrame(f);else if(done)done()};requestAnimationFrame(f)}
+function flashAngio(){angioEl.classList.remove('flash');void angioEl.getBBox();angioEl.classList.add('flash')}
+
+// ---------- interaction ----------
+function svgPt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+svg.addEventListener('pointerdown',e=>{
+ const st=STEPS[idx];if(!st||busy)return;
+ if(mode==='recall'&&pstate==='ask'){setFb('Choose the next step in the panel first.','info');return}
+ const cutEl=e.target.closest('[data-cut]');if(cutEl){doCut(cutEl.getAttribute('data-cut'));return}
+ if(st.kind==='drag'){
+  if(!preOK(st)){setFb(`Pick up the ${st.pre==='device'?'VIP device':'locator/sheath assembly'} from the tray first.`,'info');return}
+  drag={st,p0:svgPt(e),v0:W[st.drag.key],max:st.drag.max(),warned:false};
+  try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  svg.classList.add('dragging');e.preventDefault();return}
+ const hotEl=e.target.closest('[data-hot]');if(hotEl){doHot(hotEl.getAttribute('data-hot'));return}
+ if(st.kind==='hot')setFb(mode==='practice'?'Tap the highlighted part.':'Tap the part you would use.','info');
+ if(st.kind==='tray')setFb('This step uses an item from the tray below.','info');
+});
+svg.addEventListener('pointermove',e=>{if(!drag)return;const p=svgPt(e);const proj=(p.x-drag.p0.x)*C+(p.y-drag.p0.y)*SN;applyDrag(drag.v0+proj*drag.st.drag.dir,drag)});
+function endDrag(){drag=null;svg.classList.remove('dragging')}
+function release(){if(!drag)return;const st=drag.st;endDrag();const v=W[st.drag.key];
+ if(st.drag.doneAt(v))complete();else if(st.drag.hint)setFb(st.drag.hint(v),'warn')}
+svg.addEventListener('pointerup',release);svg.addEventListener('pointercancel',release);
+
+function applyDrag(raw,ctx){
+ const d=ctx.st.drag,i=idx;
+ const v=Math.max(d.min,Math.min(ctx.max,raw));W[d.key]=v;
+ if((i===I.seatOut||i===I.clearStop)&&raw>ctx.max+4)setFb('Never re-insert after partial deployment. Collagen can end up inside the artery.','bad');
+ if(i===I.withdraw&&raw<d.min-2)setFb('Stay in the artery. You only need the flow to stop.','warn');
+ if(i===I.lock&&v>=13&&v<30&&!ctx.res){ctx.res=1;setFb('Resistance: the anchor is catching on the sheath tip. Keep pulling straight back.','info')}
+ if(i===I.tamp&&v>=24&&!W.mkShown){W.mkShown=1;const q=toG(-24,0);burst(q.x,q.y,'BLACK MARKER')}
+ if(i===I.tamp&&raw>30+3)setFb('Stop at resistance. Do not tamp past the black marker.','warn');
+ if(i===I.seatOut&&v<=0&&!ctx.tt){ctx.tt=1;const q=toG(-20,0);burst(q.x,q.y,'TAMPER TUBE')}
+ if(i===I.seatOut&&v<=D_SEAT&&!W.seated){W.seated=true;setFb('Resistance: the anchor is seated against the arterial wall. Keep withdrawing.','info')}
+ draw();
+ if(d.auto&&d.doneAt(v)){endDrag();complete()}
+}
+function nudge(sign){const st=STEPS[idx];if(!st||st.kind!=='drag'||!canAct())return;
+ if(!preOK(st)){setFb(`Pick up the ${st.pre==='device'?'VIP device':'locator/sheath assembly'} from the tray first.`,'info');return}
+ const ctx={st,max:st.drag.max()};applyDrag(W[st.drag.key]+sign*8*st.drag.dir,ctx);
+ if(!busy&&!st.drag.auto&&st.drag.doneAt(W[st.drag.key]))complete()}
+
+function doHot(h){const st=STEPS[idx];if(!canAct())return;
+ if(idx>=I.open&&idx<=I.snap){doTray(h==='sheath'&&W.locSnapped?'assembly':h);return}
+ if(st.kind==='hot'&&st.hot===h)complete();else setFb('Not that part for this step.','warn')}
+function doCut(id){const st=STEPS[idx];if(!canAct()||st.kind!=='cut')return;const c=st.cuts.find(x=>x.id===id);if(!c)return;
+ if(c.ok)complete();else{setFb(c.msg,'bad');if(mode==='recall')missed.add(idx);renderList()}}
+function doTray(item){const st=STEPS[idx];if(!st||!canAct()){if(mode==='recall'&&pstate==='ask')setFb('Choose the next step in the panel first.','info');return}
+ if(st.kind==='tray'&&st.tray===item){complete();return}
+ if(st.pre===item&&!preOK(st)){
+  if(item==='assembly'){W.assembly=true;W.locIn=true;W.tip=-560;busy=true;setFb('Loading the locator/sheath onto the back end of the guidewire…','info');renderTray();
+   tween(1400,k=>{W.tip=-560+520*(1-Math.pow(1-k,2));draw()},()=>{W.tip=-40;busy=false;setFb('Threaded over the wire: drip hole down, reference indicator up. Now drag it into the tract.','info');draw()});return}
+  if(item==='device'){W.device=true;W.gap=140;W.s=0;setFb('Device at the sheath valve, sleeve in the rear holding position. Drag it in.','info')}
+  renderTray();draw();return}
+ if(item==='sheath'&&!W.locSnapped){setFb('The locator snaps into this sheath. Pick the locator.','warn');return}
+ setFb('Not yet. That item comes at another step.','warn')}
+
+function complete(){if(busy)return;const st=STEPS[idx];
+ busy=true;
+ const next=ms=>{timer=setTimeout(()=>{idx++;busy=false;pstate=mode==='recall'?'ask':'do';opts=null;renderAll()},ms)};
+ if(st.id==='snap'){setFb('Close-up: seating the locator in the sheath cap.','info');let clicked=false;W.zoomT=0;
+  tween(3400,k=>{W.zoomT=k;W.snapT=Math.max(0,(k-.15)/.85);if(k>=.75&&!clicked){clicked=true;burst(560,405,'CLICK')}draw()},()=>{st.apply();W.snapT=1;setFb(st.done,'ok');draw();renderTray();renderList();
+   setTimeout(()=>{W.zoomT=null;draw()},2200);next(2400)});return}
+ if(st.id==='tamperOff'){setFb('Sliding the tamper tube up and off the suture with a slight twirl.','info');
+  tween(1200,k=>{W.tampPull=280*k*k;draw()},()=>{W.tampPull=0;st.apply();setFb(st.done,'ok');draw();renderList();next(800)});return}
+ if(st.id==='cut1'){W.cut1=true;setFb('Cut below the clear stop. Lifting the device and sheath away.','info');const t0=W.tip;
+  tween(1200,k=>{W.tip=t0-320*k*k;draw()},()=>{W.tip=t0;st.apply();setFb(st.done,'ok');draw();renderList();next(800)});return}
+ if(st.id==='locOut'){setFb('Pulling the locator and guidewire out. Sheath held still.','info');draw();
+  tween(1300,k=>{W.locPull=360*k*k;draw()},()=>{W.locPull=0;st.apply();setFb(st.done,'ok');draw();renderList();next(900)});return}
+ st.apply();if(st.id==='angio')flashAngio();
+ if(st.id==='insert'){const p=toG(W.tip-400,0);burst(p.x,p.y,'CLICK')}
+ if(st.id==='lock'){const p=toG(W.tip-400-46,0);burst(p.x,p.y,'CLICK · LOCKED')}
+ setFb(st.done,'ok');draw();renderTray();renderList();
+ clearTimeout(timer);timer=setTimeout(()=>{idx++;busy=false;pstate=mode==='recall'?'ask':'do';opts=null;renderAll()},st.id==='angio'?1600:1050)}
+
+// ---------- panel ----------
+function makeOpts(){const i=idx;const near=STEPS.map((s,j)=>j).filter(j=>j!==i&&Math.abs(j-i)<=3);shuffle(near);
+ const o=[{t:STEPS[i].short,ok:true}];near.slice(0,2).forEach(j=>o.push({t:STEPS[j].short,ok:false,why:j<i?`Already done. That was step ${j+1}.`:'Too early. That comes later.'}));
+ const errs=ERRS.filter(e=>e.ph.includes(STEPS[i].ph));const e=errs[Math.floor(Math.random()*errs.length)];if(e)o.push({t:e.t,ok:false,why:e.why});
+ return shuffle(o)}
+function mini(s){return `<svg viewBox="70 -33 150 66" aria-hidden="true">${DV.device(150,s,220)}</svg>`}
+
+function renderPanel(){
+ if(idx>=N){renderFinish();return}
+ const st=STEPS[idx];
+ let h=`<div class="phases">${PH.map((p,i)=>`<button class="ph ${i===st.ph?'on':''} ${i<st.ph?'past':''}" data-ph="${i}" ${mode==='recall'?'disabled':''} title="${mode==='practice'?'Jump to '+p:''}">${p}</button>`).join('')}</div>`;
+ h+=`<div class="stepno"><b>${String(idx+1).padStart(2,'0')}</b> / ${N}</div>`;
+ if(mode==='recall'&&pstate==='ask'){
+  if(!opts)opts=makeOpts();
+  h+=`<h2>What do you do next?</h2><div class="opts">${opts.map((o,k)=>`<button class="opt" data-opt="${k}">${o.t}</button>`).join('')}</div>`;
+ }else{
+  h+=`<h2>${st.title}</h2>`;
+  if(mode==='practice')h+=`<p class="detail">${st.detail}</p>`;
+  h+=`<p class="cue"><span>Do</span>${mode==='practice'?st.cue:recallCue(st)}</p>`;
+  if(st.kind==='check'||(st.confirm&&W.s>=13&&!W.bandOK)){if(!checkOrder)checkOrder=shuffle(CHECK.slice());
+   h+=`<div class="checks">${checkOrder.map((c,k)=>`<button class="chk" data-chk="${k}">${mini(c.s)}<span>${c.t}</span></button>`).join('')}</div>`}
+  if(st.kind==='drag'&&!(st.confirm&&W.s>=13))h+=`<div class="nudge"><button id="nBack" aria-label="Pull back along the tract">← Pull back</button><button id="nFwd" aria-label="Push in along the tract">Push in →</button></div>`;
+ }
+ h+=`<div id="fb" class="fb ${fb.kind}" role="status" aria-live="polite">${fb.text}</div>`;
+ h+=`<ol class="steps" id="steps"></ol>`;
+ panel.innerHTML=h;renderList();
+ panel.querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{if(mode==='practice')jumpTo(STEPS.findIndex(s=>s.ph===+b.dataset.ph))});
+ panel.querySelectorAll('[data-opt]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.opt];
+  if(o.ok){pstate='do';setFb('','');renderAll()}else{missed.add(idx);b.classList.add('wrong');b.disabled=true;setFb(o.why,'bad');renderList()}});
+ panel.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{if(!canAct())return;const c=checkOrder[+b.dataset.chk];
+  if(c.ok){W.bandOK=true;complete()}else{b.classList.add('wrong');setFb(c.why,'bad');if(mode==='recall')missed.add(idx);renderList()}});
+ const nb=document.getElementById('nBack'),nf=document.getElementById('nFwd');
+ if(nb)nb.onclick=()=>nudge(-1);if(nf)nf.onclick=()=>nudge(1);
+}
+function recallCue(st){return {drag:'Drag in the scene, or use the buttons.',hot:'Tap the right part in the scene.',tray:'Pick the right item from the tray.',cut:'Choose a cut point.',check:'Pick what you see.'}[st.kind]}
+function renderList(){const el=document.getElementById('steps');if(!el)return;let h='',last=-1;
+ STEPS.forEach((s,i)=>{if(s.ph!==last){h+=`<li class="grp">${PH[s.ph]}</li>`;last=s.ph}
+  const done=i<idx||(i===idx&&busy), cur=i===idx&&!busy, hide=mode==='recall'&&!done;
+  const cls=['s',done?'done':'',cur?'cur':'',missed.has(i)?'miss':''].join(' ');
+  h+=`<li class="${cls}"><i>${done?(missed.has(i)?'✕':'✓'):String(i+1).padStart(2,'0')}</i><span>${hide?(cur?'?':'· · ·'):s.short}</span></li>`});
+ el.innerHTML=h;const c=el.querySelector('.cur');if(c&&c.scrollIntoView&&el.scrollHeight>el.clientHeight){el.scrollTop=c.offsetTop-el.offsetTop-80}}
+
+function renderFinish(){
+ const secs=Math.round((Date.now()-t0)/1000), first=N-missed.size;
+ let best=null;if(mode==='recall'){try{const b=JSON.parse(localStorage.getItem('asvip-best')||'null');if(!b||first>b.first||(first===b.first&&secs<b.secs)){localStorage.setItem('asvip-best',JSON.stringify({first,secs}))}best=JSON.parse(localStorage.getItem('asvip-best')||'null')}catch(_){}}
+ const ms=[...missed].sort((a,b)=>a-b);
+ panel.innerHTML=`<div class="finish"><div class="stepno"><b>${N}</b> / ${N}</div><h2>Hemostasis achieved</h2>
+ <p class="detail">${mode==='recall'?'Recall run complete.':'Practice run complete. Now switch to Recall and do it from memory.'}</p>
+ ${mode==='recall'?`<div class="stats"><div><b>${first}/${N}</b><small>right first time</small></div><div><b>${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}</b><small>time</small></div><div><b>${best?best.first+'/'+N:'—'}</b><small>your best</small></div></div>`:''}
+ ${ms.length?`<div class="fb bad">Review: ${ms.map(i=>`${i+1}. ${STEPS[i].short}`).join(' · ')}</div>`:(mode==='recall'?'<div class="fb ok">Clean run. Every step right first time.</div>':'')}
+ <div class="row"><button class="primary" id="again">Run again</button><button class="ghost" id="swap">${mode==='recall'?'Back to Practice':'Start Recall'}</button></div>
+ <ol class="steps" id="steps"></ol></div>`;
+ renderList();
+ document.getElementById('again').onclick=()=>restart();
+ document.getElementById('swap').onclick=()=>setMode(mode==='recall'?'practice':'recall');
+}
+
+// ---------- tray ----------
+const TRAY={
+ pouch:{n:()=>'Foil pouch',d:()=>'Sealed. Peel fully apart to open',key:()=>'pouch',
+  svg:()=>`<svg viewBox="0 0 200 44"><rect x="40" y="4" width="120" height="36" rx="4" fill="#c7ced3" stroke="#8b949b"/><rect x="52" y="12" width="56" height="20" rx="2" fill="#f7f8f9"/><path d="M40 14 L52 4" stroke="#8b949b"/></svg>`,
+  used:()=>W.opened},
+ sheath:{n:()=>W.locSnapped?'Locator + sheath':'Insertion sheath',d:()=>W.locSnapped?'Assembled, ready to thread':'Reference indicator on the cap',key:()=>W.locSnapped?'assembly':'sheath',
+  svg:()=>W.locSnapped?`<svg viewBox="0 0 200 44"><g transform="translate(30 22) scale(.36)">${DV.shaft(29,430)}${DV.sheathTip(430)}${DV.locatorTip(438)}${DV.locatorHub(0)}${DV.sheathCap(0)}</g></svg>`:`<svg viewBox="0 0 200 44"><g transform="translate(8 22) scale(.4)">${DV.shaft(29,440)}${DV.sheathTip(440)}${DV.sheathCap(0)}</g></svg>`,
+  used:()=>W.assembly},
+ locator:{n:()=>'Arteriotomy locator',d:()=>'Modified dilator with drip hole',key:()=>'locator',
+  svg:()=>`<svg viewBox="0 0 200 44"><g transform="translate(6 22) scale(.4)"><rect x="80" y="-3.5" width="360" height="7" fill="url(#gShaft)" stroke="#a8b2b9" stroke-width=".7"/>${DV.locatorTip(440)}${DV.locatorHub(80)}</g></svg>`,
+  used:()=>W.locSnapped},
+ wire:{n:()=>'Guidewire',d:()=>'70 cm, J-tip with straightener',key:()=>'wire',
+  svg:()=>`<svg viewBox="0 0 200 44"><circle cx="100" cy="22" r="17" fill="none" stroke="#9aa4ac" stroke-width="2.4"/><circle cx="100" cy="22" r="12" fill="none" stroke="#b9c1c8" stroke-width="2.4"/><path d="M117 22 L170 22 Q180 22 180 14" fill="none" stroke="#9aa4ac" stroke-width="2.4"/></svg>`,
+  used:()=>W.wire||idx>I.procOut},
+ device:{n:()=>'Angio-Seal VIP device',d:()=>'Handle, sleeve with colored bands, cap',key:()=>'device',
+  svg:()=>`<svg viewBox="0 0 200 44"><g transform="translate(-2 22) scale(.42)">${DV.device(110,0,470,1)}</g></svg>`,
+  used:()=>W.device}
+};
+function renderTray(){
+ const st=STEPS[idx];const want=st&&mode==='practice'&&canAct()?(st.kind==='tray'?st.tray:(st.pre&&!preOK(st)?st.pre:null)):null;
+ tray.innerHTML=`<div class="tray-head"><span>Sterile tray</span><span>${mode==='practice'?'Highlighted item is next':'Pick the right item'}</span></div>`+
+  ['pouch','sheath','locator','wire','device'].map(k=>{const t=TRAY[k],sealed=k!=='pouch'&&!W.opened,used=t.used();const key=t.key();
+   return `<button class="item ${want===key?'want':''}" data-tray="${key}" ${used||sealed?'disabled':''}>${t.svg()}<b>${t.n()}</b><small>${sealed?'Still in the pouch':used?(k==='pouch'?'Opened: use within 1 hour':'In use'):t.d()}</small></button>`}).join('');
+ tray.querySelectorAll('[data-tray]').forEach(b=>b.onclick=()=>doTray(b.dataset.tray));
+}
+
+function renderAll(){draw();renderPanel();renderTray()}
+function jumpTo(k){clearTimeout(timer);busy=false;endDrag();W=init();for(let i=0;i<k;i++)STEPS[i].apply();idx=k;checkOrder=null;opts=null;pstate='do';setFb('','');renderAll()}
+function restart(){clearTimeout(timer);busy=false;endDrag();W=init();idx=0;missed=new Set();t0=Date.now();checkOrder=null;opts=null;pstate=mode==='recall'?'ask':'do';fb={text:'',kind:''};renderAll()}
+function setMode(m){mode=m;document.getElementById('mPractice').setAttribute('aria-pressed',m==='practice');document.getElementById('mRecall').setAttribute('aria-pressed',m==='recall');restart();
+ if(m==='recall')setFb('Recall mode: no prompts, no labels. Pick each next step, then do it.','info')}
+document.getElementById('mPractice').onclick=()=>setMode('practice');
+document.getElementById('mRecall').onclick=()=>setMode('recall');
+document.getElementById('restart').onclick=()=>restart();
+document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;
+ if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(STEPS[idx]&&STEPS[idx].kind==='drag'){nudge(1);e.preventDefault()}}
+ if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(STEPS[idx]&&STEPS[idx].kind==='drag'){nudge(-1);e.preventDefault()}}});
+
+// ---------- parts reference ----------
+const PARTS=[
+ ['Arteriotomy locator','Clear funnel hub (with its own reference indicator) that clips into the sheath cap; green tube at the back.',520,126],
+ ['Drip hole','On the locator\'s green tube. Blood here means the inlet is inside the artery.',130,142],
+ ['Reference indicators','There are three: the 6F arrow on the sheath cap, a white arrow on the locator hub, and the green arrow on the device cap. Line the locator\'s and the device\'s up with the sheath\'s.',150,18],
+ ['Insertion sheath','White shaft with black markings. Sits ~1.5 cm in while the device is delivered.',380,22],
+ ['Guidewire','70 cm, with J-straightener. Swaps the procedure sheath for the locator/sheath.',880,132],
+ ['Device cap','Long white body with a ribbed front, slot window with green slider and a green back cap. Its green arrow points to the patient and lines up with the 6F arrow. Pull it straight back to lock.',320,150],
+ ['Device sleeve bands','Longitudinal green bands on the sleeve, exposed between the caps as the device cap comes back. Fully visible = full rear lock.',398,124],
+ ['Clip frame','Green frame with two hooked arms that click into the sheath cap.',446,150],
+ ['Carrier tube','Carries anchor, collagen and suture down the sheath.',560,240],
+ ['Bypass tube','Clear tube with a flange at the tip of the carrier tube; opens the sheath valve. Grip the device just behind it to insert.',690,154],
+ ['Anchor','Pale blue bioabsorbable bar. Sits inside the artery against the wall.',90,266],
+ ['Collagen','Bioabsorbable sponge. Compacted outside the arterial wall.',180,266],
+ ['Suture','Self-tightening. Ties anchor and collagen into a sandwich.',240,338],
+ ['Tamper tube','Green tube that pushes the collagen down onto the arteriotomy.',400,266],
+ ['Black compaction marker','Exposed at resistance. Not absorbable: cut below it, below skin.',561,266],
+ ['Clear stop','Clear segment on the suture. Appears when the suture is fully deployed; cut below it first.',670,266]
+];
+(function(){
+ let s=`<svg viewBox="0 0 1000 360" role="img" aria-label="Exploded view of the Angio-Seal VIP kit and implant">`;
+ s+=`<text class="cap" x="20" y="14">Kit</text><text class="cap" x="20" y="150">Device</text><text class="cap" x="20" y="252">Implant</text>`;
+ s+=`<g transform="translate(0 50)">${DV.shaft(159,560)}${DV.sheathTip(560)}${DV.sheathCap(130)}</g>`;
+ s+=`<g transform="translate(0 98)"><rect x="130" y="-3.5" width="490" height="7" fill="url(#gShaft)" stroke="#a8b2b9" stroke-width=".7"/>${DV.locatorTip(620)}${DV.locatorHub(130)}</g>`;
+ s+=`<g><circle cx="820" cy="70" r="40" fill="none" stroke="#9aa4ac" stroke-width="3"/><circle cx="820" cy="70" r="32" fill="none" stroke="#b9c1c8" stroke-width="3"/><path d="M860 70 L930 70" stroke="#9aa4ac" stroke-width="3"/><rect x="922" y="64" width="36" height="12" rx="3" fill="#dfe5e8" stroke="#9aa4ac"/></g>`;
+ s+=`<g transform="translate(0 200)">${DV.device(420,30,700,1)}</g>`;
+ s+=`<g transform="translate(0 300)"><line x1="96" y1="0" x2="760" y2="0" class="suture"/>${DV.collagen(140,222,26)}${DV.tamper(260,540)}${DV.marker(556,566)}${DV.clearStop(640,700)}</g>${DV.anchor(90,300)}`;
+ const pts=[[500,98],[60,100],[150,50],[380,50],[820,110],[330,178],[390,188],[414,181],[560,200],[690,200],[90,300],[180,300],[240,300],[400,300],[561,300],[670,300]];
+ PARTS.forEach((p,i)=>{const [x,y]=pts[i];const cx=p[2],cy=p[3];s+=`<line class="pl" x1="${x}" y1="${y}" x2="${cx}" y2="${cy}"/><g class="pn" data-part="${i}" style="cursor:pointer"><circle cx="${cx}" cy="${cy}" r="12"/><text x="${cx}" y="${cy+4.5}">${i+1}</text></g>`});
+ s+=`</svg>`;
+ document.getElementById('partsFig').innerHTML=s;
+ const leg=document.getElementById('legend');
+ leg.innerHTML=PARTS.map((p,i)=>`<li data-part="${i}" tabindex="0"><span class="n">${i+1}</span><span><span class="nm">${p[0]}</span><br><span class="fn">${p[1]}</span></span></li>`).join('');
+ const reveal=i=>{const li=leg.querySelector(`li[data-part="${i}"]`);if(li)li.classList.toggle('show')};
+ leg.querySelectorAll('li').forEach(li=>{li.onclick=()=>reveal(li.dataset.part);li.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();reveal(li.dataset.part)}}});
+ document.querySelectorAll('#partsFig [data-part]').forEach(g=>g.addEventListener('click',()=>reveal(g.getAttribute('data-part'))));
+ const qb=document.getElementById('quizBtn'),card=document.getElementById('partsCard');
+ qb.onclick=()=>{const on=!card.classList.contains('quiz');card.classList.toggle('quiz',on);qb.setAttribute('aria-pressed',on);qb.textContent=on?'Show all names':'Quiz me: hide names';leg.querySelectorAll('li').forEach(li=>li.classList.remove('show'))};
+})();
+
+renderAll();
+})();
+</script>
+
+</body></html>
