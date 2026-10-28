@@ -1,17 +1,20 @@
 {
   "items": [
     {
-      "title": "IVUS: a practical guide to intravascular ultrasound",
-      "status": "Ongoing",
-      "summary": "A step-by-step guide to using IVUS in the cath lab, from image acquisition and interpretation to lesion assessment and stent optimization.",
       "data_sources": [
         "Interventional cardiology",
-        "Education"
+        "Education",
+        "Claude"
       ],
+      "summary": "",
+      "button_label": "IVUS",
+      "featured": true,
       "methods": "",
+      "status": "Ongoing",
+      "title": "IVUS",
       "link": "",
       "image": "",
-      "featured": true
+      "file": "/images/uploads/practiceivus-beta-.html"
     },
     {
       "title": "Vascular closure devices: a step-by-step guide",
