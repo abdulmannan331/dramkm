@@ -1,23 +1,38 @@
 {
-  "site_title": "Abdul Mannan Khan Minhas, MD",
+  "author_highlight": "Minhas AMK",
+  "site_title": "Abdul Mannan Khan Minhas",
+  "position": "Cardiovascular Disease Fellow",
   "name": "Abdul Mannan Khan Minhas",
-  "credentials": "MD",
-  "position": "Interventional Cardiology Fellow",
-  "institution": "Baylor College of Medicine · Houston, Texas",
-  "tagline": "Outcomes research, health economics, and the global burden of cardiovascular disease.",
-  "email": "abdulmannan331@hotmail.com",
+  "tagline": "",
+  "accent_color": "#7a1f2b",
+  "footer_text": "Views expressed are my own.",
   "photo": "",
   "cv": "",
-  "author_highlight": "Minhas AMK",
-  "accent_color": "#7a1f2b",
-  "show_research": true,
-  "show_projects": true,
+  "institution": "Baylor College of Medicine · Houston, Texas",
   "links": [
-    { "label": "Google Scholar", "url": "" },
-    { "label": "ORCID", "url": "" },
-    { "label": "PubMed", "url": "" },
-    { "label": "LinkedIn", "url": "" },
-    { "label": "X / Twitter", "url": "" }
+    {
+      "label": "Google Scholar",
+      "url": ""
+    },
+    {
+      "label": "ORCID",
+      "url": ""
+    },
+    {
+      "label": "PubMed",
+      "url": ""
+    },
+    {
+      "label": "LinkedIn",
+      "url": ""
+    },
+    {
+      "label": "X / Twitter",
+      "url": ""
+    }
   ],
-  "footer_text": "Views expressed are my own."
+  "credentials": "",
+  "show_projects": true,
+  "email": "abdulmannan331@hotmail.com",
+  "show_research": true
 }
