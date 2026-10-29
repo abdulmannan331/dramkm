@@ -120,15 +120,27 @@
   }
 
   async function projects() {
-    const projs = await load("projects");
-    const items = projs.items || [];
-    const order = ["Ongoing", "Under review", "Published", "Completed", "Coming soon"];
+    const [projs, cs] = await Promise.all([load("projects"), load("coming-soon")]);
+    const all = projs.items || [];
+    const items = all.filter((p) => p.status !== "Coming soon");
+    // "Coming soon": its own editable list, plus any project whose status is set to Coming soon
+    const seen = new Set();
+    const soon = [...(cs.items || []), ...all.filter((p) => p.status === "Coming soon")]
+      .filter((p) => p.title && !seen.has(p.title.trim().toLowerCase()) && seen.add(p.title.trim().toLowerCase()))
+      .map((p) => ({ ...p, summary: p.summary || p.description, status: "" }));
+    const order = ["Ongoing", "Under review", "Published", "Completed"];
     const groups = {};
     items.forEach((p) => { (groups[p.status || ""] ||= []).push(p); });
     const keys = Object.keys(groups).sort((a, b) => (a === "" ? -1 : b === "" ? 1 : (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99)));
+    const soonHTML = cs.show !== false && soon.length ? `
+      <h2>${esc(cs.heading || "Coming soon")}</h2>
+      ${cs.intro ? `<p class="muted">${esc(cs.intro)}</p>` : ""}
+      <div class="cards soon">${soon.map(projectHTML).join("")}</div>` : "";
     document.getElementById("content").innerHTML = `
       <h1>Projects</h1>
-      ${items.length ? keys.map((k) => `${k ? `<h2>${esc(k)}</h2>` : ""}<div class="cards${k === "Coming soon" ? " soon" : ""}">${groups[k].map(projectHTML).join("")}</div>`).join("") : `<p class="empty">Projects coming soon.</p>`}`;
+      ${items.length ? keys.map((k) => `${k ? `<h2>${esc(k)}</h2>` : ""}<div class="cards">${groups[k].map(projectHTML).join("")}</div>`).join("") : ""}
+      ${soonHTML}
+      ${!items.length && !soonHTML ? `<p class="empty">Projects coming soon.</p>` : ""}`;
   }
 
   load("settings").then((s) => {

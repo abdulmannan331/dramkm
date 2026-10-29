@@ -92,6 +92,25 @@ collections:
               - { name: url, label: "URL", widget: string }
               - { name: description, label: "Short description", widget: string, required: false }
 
+      # ---------- COMING SOON ----------
+      - name: coming_soon
+        label: "⏳ Coming soon (Projects page)"
+        file: data/coming-soon.json
+        format: json
+        fields:
+          - { name: show, label: "Show this section", widget: boolean, default: true }
+          - { name: heading, label: "Section heading", widget: string, default: "Coming soon" }
+          - { name: intro, label: "Intro line (optional)", widget: string, required: false }
+          - name: items
+            label: "Coming soon items"
+            label_singular: "item"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: title, label: "Title", widget: string }
+              - { name: description, label: "Short description (optional)", widget: text, required: false }
+              - { name: link, label: "Link (optional)", widget: string, required: false }
+
       # ---------- PROJECTS ----------
       - name: projects
         label: "🔬 Projects"

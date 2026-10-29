@@ -1,0 +1,10 @@
+{
+  "show": true,
+  "heading": "Coming soon",
+  "intro": "",
+  "items": [
+    { "title": "Intra-aortic balloon pump (IABP)", "description": "Step-by-step setup, timing, and troubleshooting.", "link": "" },
+    { "title": "Impella", "description": "Patient selection, insertion, and management.", "link": "" },
+    { "title": "Central venous access", "description": "A practical guide to central line placement.", "link": "" }
+  ]
+}
