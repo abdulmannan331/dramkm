@@ -23,6 +23,12 @@
       "title": "MynxGrip",
       "button_label": "Try MynxGrip",
       "file": "/images/uploads/mynxgrip-deployment-trainer.html"
+    },
+    {
+      "featured": false,
+      "title": "Perclose Proglide",
+      "button_label": "Try Perclose Proglide",
+      "file": "/images/uploads/perclose-proglide-trainer.html"
     }
   ]
 }

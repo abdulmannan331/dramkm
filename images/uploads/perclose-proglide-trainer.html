@@ -1,0 +1,1475 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Perclose ProGlide Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Saira+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: cath-lab work surface — a large cutaway scene beside a procedure card; Recall swaps the scene for drills. */
+:root{
+  --bg:#eef1f5; --panel:#ffffff; --ink:#152030; --muted:#566578; --line:#d5dce5; --chip:#eef2f7;
+  --accent:#1f57c3; --accent-soft:#e3ebfa; --accent-ink:#ffffff;
+  --ok:#17845a; --ok-soft:#e1f3ea; --bad:#c2303a; --bad-soft:#fbe6e7; --warn:#a86200;
+  --sky:#e6ebf1; --cue:#ff9d0a; --sky-ink:#5d6b7c; --label-bg:rgba(255,255,255,.92); --label-ink:#152030;
+  --f-display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1117; --panel:#131a23; --ink:#e4ebf3; --muted:#91a0b2; --line:#243040; --chip:#1a2430;
+  --accent:#78a2f2; --accent-soft:#1b2a45; --accent-ink:#0c1117;
+  --ok:#3fc58c; --ok-soft:#12291f; --bad:#ff7079; --bad-soft:#331a1d; --warn:#f0a440;
+  --sky:#18212c; --sky-ink:#8c9bad; --label-bg:rgba(16,22,30,.9); --label-ink:#e4ebf3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1117; --panel:#131a23; --ink:#e4ebf3; --muted:#91a0b2; --line:#243040; --chip:#1a2430;
+  --accent:#78a2f2; --accent-soft:#1b2a45; --accent-ink:#0c1117;
+  --ok:#3fc58c; --ok-soft:#12291f; --bad:#ff7079; --bad-soft:#331a1d; --warn:#f0a440;
+  --sky:#18212c; --sky-ink:#8c9bad; --label-bg:rgba(16,22,30,.9); --label-ink:#e4ebf3; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.app{max-width:1560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 36px;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:30px;letter-spacing:.01em;margin:0;line-height:1}
+.brand span{color:var(--muted);font-size:13px}
+.tabs{display:flex;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{font:600 15px var(--f-display);letter-spacing:.06em;text-transform:uppercase;border:0;background:none;color:var(--muted);padding:6px 16px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.tools{display:flex;gap:8px;align-items:center}
+.btn{font:700 13px var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible,.tabs button:focus-visible,.chipbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toggle{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+.sim{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+@media (max-width:980px){.sim{grid-template-columns:minmax(0,1fr)}}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.viewbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line)}
+.viewbar .sp{flex:1}
+.viewbar b{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vbtn{font:700 13px var(--f-body);min-width:34px;height:32px;padding:0 10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;cursor:pointer}
+.vbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tablebar{border-top:1px solid var(--line);padding:6px 10px 2px;display:flex;flex-direction:column;gap:2px}
+.tablebar b{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#tray{max-height:120px}
+.parts{display:flex;flex-direction:column;gap:12px}
+.parts .pfig{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--sky)}
+.parts .pfig svg{display:block;width:100%;min-width:720px;height:auto}
+.ptitle{fill:var(--muted);font:600 15px var(--f-display);letter-spacing:.08em;text-transform:uppercase}
+.cl-line{stroke:var(--ink);stroke-width:1.3;opacity:.55}
+.cl-dot{fill:var(--ink)}
+.cl-badge{fill:var(--panel);stroke:var(--ink);stroke-width:1.6}
+.cl-num{fill:var(--ink);font:700 14px var(--f-mono)}
+.callout{cursor:pointer}
+.callout.on .cl-badge{fill:var(--accent);stroke:var(--accent)} .callout.on .cl-num{fill:var(--accent-ink)} .callout.on .cl-line{stroke:var(--accent);opacity:1;stroke-width:2.2}
+.plist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:980px){.plist{grid-template-columns:minmax(0,1fr)}}
+.pgroup h4{margin:0 0 6px;font:600 15px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pgroup ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.pgroup li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;padding:8px;border-radius:8px;cursor:pointer}
+.pgroup li:hover,.pgroup li.on{background:var(--accent-soft)}
+.pgroup li:focus-visible{outline:2px solid var(--accent)}
+.pn{display:inline-flex;width:26px;height:26px;border-radius:50%;border:1.6px solid var(--ink);align-items:center;justify-content:center;font:700 13px var(--f-mono)}
+.pgroup li.on .pn{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pgroup li b{display:block;font-size:15px}
+.pgroup li b em{font-style:normal;font:700 12px var(--f-mono);color:var(--accent);margin-left:4px}
+.pgroup li div span{display:block;font-size:14px;color:var(--ink)}
+.pgroup li small{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.monitor{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 14px;border-top:1px solid var(--line);font-size:14px}
+.mon{display:flex;gap:6px;align-items:baseline}
+.mon b{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mon span{font-weight:700}
+.mon span.red{color:var(--bad)} .mon span.green{color:var(--ok)} .mon span.blue{color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.eyebrow{font:500 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.step-title{font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1.05;margin:0;text-wrap:balance}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 6px;border-radius:7px;background:var(--accent);color:var(--accent-ink);font:700 15px var(--f-mono);vertical-align:3px;margin-left:6px}
+.kv{display:grid;grid-template-columns:86px minmax(0,1fr);gap:6px 10px;font-size:14px}
+.kv dt{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-top:3px}
+.kv dd{margin:0}
+.move{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-weight:700}
+.mnem{font:600 17px var(--f-display);letter-spacing:.02em;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.mnem small{display:block;font:500 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mnem em{font-style:normal;color:var(--accent)}
+.feedback{border-radius:8px;padding:10px 12px;font-size:14px;min-height:44px;background:var(--chip)}
+.feedback.ok{background:var(--ok-soft);color:var(--ok)} .feedback.bad{background:var(--bad-soft);color:var(--bad)}
+.feedback strong{color:inherit}
+.prog{height:6px;background:var(--chip);border-radius:3px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.steplist{display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.steplist h4{margin:0;font:600 14px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.steplist ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px}
+.steplist li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:6px;padding:3px 6px;border-radius:6px;color:var(--muted)}
+.steplist li .n{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;padding-top:1px}
+.steplist li.done{color:var(--ink)} .steplist li.done .n{color:var(--ok)}
+.steplist li.cur{background:var(--accent-soft);color:var(--ink);font-weight:700}
+.steplist li.hiddenStep span{filter:blur(4px)}
+details summary{cursor:pointer;font-weight:700;font-size:14px}
+.summary{display:flex;flex-direction:column;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--chip);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font:700 26px var(--f-display);font-variant-numeric:tabular-nums}
+.stat small{font:500 10.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.intro{font-size:13.5px;color:var(--muted)}
+.intro b{color:var(--ink)}
+/* Recall */
+.recall{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:980px){.recall{grid-template-columns:minmax(0,1fr)}}
+.handle123{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.handle123{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.h123{background:var(--chip);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.h123 b{font:700 34px var(--f-display);line-height:1;color:var(--accent)}
+.h123 span{font-weight:700;font-size:14px}
+.h123 small{color:var(--muted);font-size:12.5px}
+.phasecards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.phasecards,.handle123{grid-template-columns:minmax(0,1fr)}}
+.pc{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.pc .eyebrow{justify-content:flex-start}
+.pc p{margin:0;font:600 17px var(--f-display);letter-spacing:.02em;line-height:1.25}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{font:700 13px var(--f-body);border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:6px 11px;border-radius:999px;cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pool{display:flex;flex-wrap:wrap;gap:6px}
+.pool button{font:400 13.5px var(--f-body);text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 10px;border-radius:8px;cursor:pointer;max-width:100%}
+.pool button:hover{border-color:var(--accent)}
+.pool button.wrong{animation:shake .35s;border-color:var(--bad);background:var(--bad-soft)}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.seq{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px;font-size:13.5px;counter-reset:s}
+.seq li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:6px;padding:4px 8px;border-radius:6px;background:var(--ok-soft)}
+.seq li .n{font:500 12px var(--f-mono);color:var(--ok)}
+.flash{border:1px solid var(--line);border-radius:12px;min-height:170px;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer;background:var(--panel)}
+.flash .q{font:600 22px var(--f-display);line-height:1.15;text-wrap:balance}
+.flash .a{font-size:16px;font-weight:700;color:var(--accent)}
+.flash small{color:var(--muted);font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+footer{font-size:12.5px;color:var(--muted);max-width:80ch}
+footer a{color:var(--accent)}
+/* SVG classes */
+.sky{fill:var(--sky)} .skytxt{fill:var(--sky-ink);font:600 13px var(--f-display);letter-spacing:.1em;text-transform:uppercase}
+.tray{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.traytxt{fill:var(--muted);font:500 11px var(--f-mono);letter-spacing:.08em}
+.trayname{fill:var(--ink);font:700 15px var(--f-body)}
+.used{fill:var(--muted);font:400 11.5px var(--f-body);font-style:italic}
+.chipsvg{fill:var(--chip);stroke:var(--line);stroke-width:1.5}
+.chiptxt{fill:var(--ink);font:700 14px var(--f-body)}
+.lbl-bg{fill:var(--label-bg);stroke:var(--line);stroke-width:1.2}
+.lbl{fill:var(--label-ink);font:700 17px var(--f-body)}
+.lbl-line{stroke:var(--label-ink);stroke-width:1.5;opacity:.6}
+.lbl,.lbl-bg,.lbl-line,.tissuetxt,.lumentxt,.skytxt{pointer-events:none}
+#dyn > *{pointer-events:none}
+#dyn [data-part],#dyn [data-drag]{pointer-events:visiblePainted}
+.cue-glow{fill:var(--cue)}
+.cue-ring{fill:none;stroke:var(--cue);stroke-width:6}
+.cue-ring-under{fill:none;stroke:#1b1406;stroke-width:10;opacity:.35}
+.cue-dot{fill:var(--cue)}
+.cue-tag{fill:var(--cue);stroke:#1b1406;stroke-opacity:.3}
+.cue-tagtxt{fill:#1b1406;font:800 14px var(--f-body);letter-spacing:.04em}
+.cue-arrow{stroke:var(--cue);stroke-width:9;stroke-linecap:round}
+.cue-arrow-under{stroke:#1b1406;stroke-width:14;stroke-linecap:round;opacity:.3}
+.fx-banner{fill:#17845a}
+.fx-text{fill:#ffffff;font:700 15px var(--f-body)}
+.fx-arrow{stroke:#2fd18a;stroke-width:8;stroke-linecap:round}
+.fx-head{fill:#2fd18a;stroke:#0b4a2f;stroke-opacity:.4;stroke-width:1.5}
+.qbox{background:var(--chip);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.qbox small{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.qbox .q{font:600 22px var(--f-display);line-height:1.15}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:600 15px var(--f-body);text-align:left;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:12px 14px;border-radius:10px;cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.wrongpick{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:default}
+.qc-panel{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.qc-title{fill:var(--muted);font:700 11px var(--f-mono);letter-spacing:.08em}
+.qc-lbl{fill:var(--ink);font:700 11px var(--f-body)}
+.qc-cap{fill:var(--chip)}
+.qc-captxt{fill:var(--ink);font:700 11.5px var(--f-body)}
+.cue-head{fill:var(--cue);stroke:#1b1406;stroke-opacity:.35;stroke-width:1.5}
+.slot{fill:transparent;stroke:transparent}
+#tray [data-part]{cursor:pointer}
+#tray [data-part]:hover .slot{fill:var(--chip);stroke:var(--line)}
+.wire-o{stroke:#2f373f;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire-i{stroke:#a5afba;stroke-width:1.1;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.hit14,.hit18,.hit22{stroke:transparent;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hit14{stroke-width:14}.hit18{stroke-width:20}.hit22{stroke-width:24}
+.tissuetxt{fill:#6e5233;font:600 16px var(--f-display);letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.lumentxt{fill:#ffd9d9;font:600 17px var(--f-display);letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+[data-part],[data-drag]{cursor:pointer}
+[data-drag]{cursor:grab}
+.dragging [data-drag]{cursor:grabbing}
+@media (prefers-reduced-motion: reduce){.pool button.wrong{animation:none}}
+</style>
+
+<div class="app">
+  <header>
+    <div class="brand"><h1>Perclose ProGlide Trainer</h1><span>Suture-mediated femoral closure, one move at a time</span></div>
+    <nav class="tabs" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-practice" data-mode="practice" aria-selected="true">Practice</button>
+      <button role="tab" id="tab-recall" data-mode="recall" aria-selected="false">Recall</button>
+    </nav>
+    <div class="tools">
+      <label class="toggle" for="lbls"><input type="checkbox" id="lbls" checked> Part labels</label>
+      <button class="btn" id="restart">Restart</button>
+    </div>
+  </header>
+
+  <section class="sim" id="simView">
+    <div class="stage">
+      <div class="viewbar"><b>View</b><button class="vbtn" id="zOut" aria-label="Zoom out">−</button><button class="vbtn" id="zIn" aria-label="Zoom in">+</button><button class="vbtn" id="zAuto" aria-pressed="true">Follow the step</button><button class="vbtn" id="zAll" aria-pressed="false">Whole device</button><span class="sp"></span><b id="zRead">2.0×</b></div>
+      <svg id="scene" viewBox="0 0 1100 700" aria-label="Sagittal cutaway of the groin with the closure device at 45 degrees in the common femoral artery">
+        <defs>
+          <linearGradient id="fat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5e2ae"/><stop offset=".5" stop-color="#efd498"/><stop offset="1" stop-color="#e6c27e"/></linearGradient>
+          <pattern id="lobules" width="46" height="34" patternUnits="userSpaceOnUse"><path d="M0 17 L10 4 L28 2 L42 12 L40 28 L22 33 L6 30 Z" fill="#fbecc2" opacity=".55" stroke="#e2c58e" stroke-width="1"/><path d="M28 2 L46 0 M40 28 L46 34 M0 17 L-4 22" stroke="#e2c58e" stroke-width="1"/></pattern>
+          <linearGradient id="dermis" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d99678"/><stop offset=".45" stop-color="#e6ad90"/><stop offset="1" stop-color="#efcda5"/></linearGradient>
+          <linearGradient id="lumen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8c1a22"/><stop offset=".18" stop-color="#b12a33"/><stop offset=".55" stop-color="#c3343d"/><stop offset="1" stop-color="#861820"/></linearGradient>
+          <pattern id="mfib" width="14" height="13" patternUnits="userSpaceOnUse"><path d="M0 3 Q7 1 14 3 M0 7 Q7 5 14 7 M0 11 Q7 9 14 11" stroke="#b44a48" stroke-width=".9" fill="none" opacity=".6"/></pattern>
+          <linearGradient id="mediaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d47671"/><stop offset="1" stop-color="#c25d59"/></linearGradient>
+          <pattern id="media" width="2600" height="13" patternUnits="userSpaceOnUse" x="-1000"><rect width="2600" height="13" fill="url(#mediaG)"/><rect width="2600" height="13" fill="url(#mfib)"/></pattern>
+          <radialGradient id="bone" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="#f6efdc"/><stop offset="1" stop-color="#e3d3ae"/></radialGradient>
+          <pattern id="trab" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M0 11 Q6 2 11 11 T22 11 M11 0 Q2 6 11 11 T11 22" stroke="#cdbb92" stroke-width="1" fill="none"/></pattern>
+          <filter id="shadow" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="#1b2633" flood-opacity=".28"/></filter>
+          <linearGradient id="gHandle" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd6de"/><stop offset=".18" stop-color="#f3f6f9"/><stop offset=".42" stop-color="#ffffff"/><stop offset=".7" stop-color="#e2e7ed"/><stop offset="1" stop-color="#a9b3bf"/></linearGradient>
+          <linearGradient id="gNose" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3ce"/><stop offset=".4" stop-color="#f4f7fa"/><stop offset="1" stop-color="#9ea9b6"/></linearGradient>
+          <linearGradient id="gGuide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7e8996"/><stop offset=".28" stop-color="#e1e7ed"/><stop offset=".45" stop-color="#ffffff"/><stop offset=".7" stop-color="#c5ced8"/><stop offset="1" stop-color="#6c7785"/></linearGradient>
+          <linearGradient id="gFoot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6c7f94"/><stop offset=".4" stop-color="#9fb0c2"/><stop offset="1" stop-color="#2f3e50"/></linearGradient>
+          <linearGradient id="gRod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#aab4bf"/><stop offset=".4" stop-color="#f4f6f8"/><stop offset="1" stop-color="#97a2ae"/></linearGradient>
+          <linearGradient id="gCollar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8d98a5"/><stop offset=".45" stop-color="#e3e8ed"/><stop offset="1" stop-color="#6d7885"/></linearGradient>
+          <linearGradient id="gPlunger" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d6b7c"/><stop offset=".35" stop-color="#8795a6"/><stop offset="1" stop-color="#2f3a46"/></linearGradient>
+          <linearGradient id="gLever" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a525b"/><stop offset=".35" stop-color="#2a2f35"/><stop offset="1" stop-color="#121417"/></linearGradient>
+          <linearGradient id="gHub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e9b5c"/><stop offset=".4" stop-color="#5cc78a"/><stop offset="1" stop-color="#1f6d40"/></linearGradient>
+          <linearGradient id="gGlove" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6f88cc"/><stop offset=".45" stop-color="#a9bcec"/><stop offset="1" stop-color="#6a82c4"/></linearGradient>
+          <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f5296"/><stop offset=".3" stop-color="#4f93dc"/><stop offset=".55" stop-color="#3a7dcb"/><stop offset="1" stop-color="#1c4884"/></linearGradient>
+          <linearGradient id="gPlRod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3037"/><stop offset=".4" stop-color="#5d666f"/><stop offset="1" stop-color="#14171a"/></linearGradient>
+          <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef1f4"/><stop offset=".5" stop-color="#a8b2bd"/><stop offset="1" stop-color="#6d7885"/></linearGradient>
+        </defs>
+        <rect class="sky" x="0" y="0" width="1100" height="700"/>
+        <g id="world"><g id="anat"></g><g id="dyn"></g></g>
+        <text class="skytxt" x="1082" y="672" text-anchor="end">Caudal ←  · head →</text>
+        <text class="skytxt" x="1082" y="690" text-anchor="end" style="font-size:11px;letter-spacing:.06em">Sagittal cutaway · device at 45° · lever up</text>
+        <g id="fixed"></g>
+      </svg>
+      <div class="tablebar"><b>Back table</b><svg id="tray" viewBox="0 0 1100 92" aria-label="Back table instruments"></svg></div>
+      <div class="monitor" id="monitor" hidden></div>
+    </div>
+
+    <aside class="card" id="panel"></aside>
+  </section>
+
+  <section class="card parts" id="partsView">
+    <div class="eyebrow"><span>Device anatomy</span><span>22 parts · tap a number</span></div>
+    <h2 class="step-title" style="font-size:28px">Know every part before you deploy</h2>
+    <div class="pfig"><svg id="partsSvg" viewBox="0 0 1100 470" aria-label="Labelled diagram of the closure device, suture, snare knot pusher and suture trimmer"></svg></div>
+    <div class="plist" id="partsList"></div>
+  </section>
+
+  <section class="recall" id="recallView" hidden>
+    <div class="card">
+      <div class="eyebrow"><span>Memory scaffold</span><span id="recallCount">5 phases · 25 moves</span></div>
+      <h2 class="step-title" style="font-size:26px">The handle counts for you: 1 · 2 · 3 · 4</h2>
+      <div class="handle123">
+        <div class="h123"><b>1</b><span>Lift & swing the lever back</span><small>Foot opens inside the artery</small></div>
+        <div class="h123"><b>2</b><span>Push the plunger</span><small>Needles fire at 45°</small></div>
+        <div class="h123"><b>3</b><span>Pull the plunger back</span><small>Suture comes out; then QuickCut</small></div>
+        <div class="h123"><b>4</b><span>Return the lever</span><small>Foot closes before withdrawal</small></div>
+      </div>
+      <div class="phasecards" id="phaseCards"></div>
+      <div class="mnem"><small>Suture rule</small><em>Blue rides</em> (rail, carries the knot pusher) · <b>white locks</b> (non-rail, pull to lock)</div>
+    </div>
+    <div class="card" id="drills"></div>
+  </section>
+
+  <footer><b>Beta version: errors are possible.</b> Educational aid only. Steps follow the manufacturer’s published single-device deployment summary and the FDA-filed Instructions for Use. The device is a teaching illustration of the real part layout, not the manufacturer’s artwork, and is not to scale. Always follow the current Instructions for Use and your institution's training. Source: <a href="https://www.cardiovascular.abbott/us/en/hcp/products/peripheral-intervention/vessel-closure/perclose-proglide-suture-mediated-closure-system/single-device-deployment.html" target="_blank" rel="noopener">Abbott — Perclose ProGlide single-device deployment</a>.</footer>
+</div>
+
+<script>
+(function(){
+const k = Math.SQRT1_2;
+const A = {x:760, y:466};          // arteriotomy centre line on the outer anterior wall
+const SKIN_Y = 372;
+const SKIN_S = (SKIN_Y-466)/k;     // axis coordinate of the skin (~ -133)
+const GUIDE = 290;                 // handle nose -> foot (rigid guide)
+const EXIT = 70;                   // foot -> guidewire exit port (on the flexible sheath)
+const SHEATH = 330;                // foot -> sheath tip
+const PSH = 330;                   // procedural sheath length (tip -> hub)
+const BEND0 = 60, RB = 60;         // where the track curves into the lumen
+const HOLE1=742, HOLE2=800;
+const WTOP=-420;                   // free end of the wire once it is in the artery
+const RAIL=14;                     // blue rail / pusher run beside the wire
+const SKPL=360, TRIML=380;         // tool lengths (long enough to stay above the skin)
+const ROMAN=['I','II','III','IV','V'];
+const P = (s, off=0) => ({x: A.x + s*k + off*k, y: A.y + s*k - off*k});
+const BC = {x:P(BEND0).x + RB*k, y:P(BEND0).y - RB*k};
+const ARC = RB*Math.PI/4;
+function track(s, off=0){
+  let p;
+  if(s<=BEND0) p=P(s);
+  else { const u=s-BEND0;
+    if(u<=ARC){ const th=Math.PI/4-u/RB; p={x:BC.x-RB*Math.sin(th), y:BC.y+RB*Math.cos(th)}; }
+    else p={x:BC.x+(u-ARC), y:BC.y+RB}; }
+  return {x:p.x+off*k, y:p.y-off*k};
+}
+const S_END = BEND0+ARC+(1400-BC.x);
+const pt = p => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+const lerp = (a,b,t)=>a+(b-a)*t;
+const lp = (a,b,t)=>({x:lerp(a.x,b.x,t), y:lerp(a.y,b.y,t)});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function trackPath(s0,s1,off=0,step=5){
+  let d='', first=true;
+  if(s1<=BEND0) return `M${pt(track(s0,off))} L${pt(track(s1,off))}`;
+  if(s0<BEND0){ d=`M${pt(track(s0,off))} L${pt(track(BEND0,off))}`; s0=BEND0; first=false; }
+  for(let s=s0; s<=s1+0.01; s+=step){ d+=(first?'M':' L')+pt(track(Math.min(s,s1),off)); first=false; }
+  return d;
+}
+
+const PHASES=[
+  {name:'Access check & exchange', mn:'<em>Angio</em> via stopcock · Flush · Wire in · Sheath out + <em>finger compression</em>'},
+  {name:'Device insertion', mn:'Load · Advance (wire exits port) · Port to skin · Wire out · <em>Flow</em>'},
+  {name:'Suture deployment', mn:'Lift <em>1</em> (swing back) · Lean 45° · Push <em>2</em> · Pull <em>3</em> · Cut · Return <em>4</em>'},
+  {name:'Suture management', mn:'Port to skin · Limbs out · Wire back · Device out · <em>Pusher on blue</em> · Push knot · Pull wire · <em>Lock white</em>'},
+  {name:'Trim', mn:'Knob loads · Slide down · <em>Red cuts</em>'}
+];
+
+// ---------- steps ----------
+const STEPS=[
+ {id:'angio',ph:0,t:'Femoral angiogram: site suitable',kind:'click',part:'angio',fx:'Contrast injected through the sheath side arm',
+  move:'Click the stopcock on the sheath side arm to inject contrast.',
+  see:'Puncture in the common femoral artery over the femoral head, above the bifurcation and below the inferior epigastric, without heavy calcification: site suitable.',
+  why:'Suture closure needs an anterior-wall puncture in a suitable common femoral segment.',
+  apply(){S.angio=true; tg.contrast=1; busy(1800); later(1500,()=>{tg.contrast=0;});}},
+ {id:'flush',ph:0,t:'Flush the marker lumen',kind:'click',part:'syringe',fx:'Saline flushed through the marker lumen',
+  move:'Click the saline syringe: it attaches to the marker lumen at the front of the body.',
+  see:'Saline runs through the marker lumen and drips out of the marker port on the distal guide.',
+  why:'If saline does not come through, the lumen is blocked: do not use the device.',
+  apply(){S.flushed=true; tg.syr=1; busy(2200); later(2000,()=>{tg.syr=0;});}},
+ {id:'wireIn',ph:0,t:'Insert the guidewire through the sheath',kind:'click',part:'wire',fx:'Wire advanced through the sheath into the artery',
+  move:'Click the guidewire on the back table.',
+  see:'A ≤0.038″ wire passes through the hub and sheath into the artery.',
+  why:'Wire access is kept for the whole exchange.',
+  apply(){S.wire='sheath'; an.wadv=0; tg.wadv=1; busy(1800);}},
+ {id:'sheathOut',ph:0,t:'Remove the sheath over the wire',kind:'drag',obj:'sheath',min:-170,max:110,goal:v=>v<=60,dir:-1,fx:'Sheath out · finger compression on',
+  move:'Drag the sheath hub back a few centimetres; it then slides out over the wire.',
+  see:'Sheath out over the wire; finger compression starts above the puncture.',
+  why:'Keep wire position and compress the site until the device fills the tract.',
+  nudge:'Pull the hub back a little further.',
+  done(){S.sheath='gone'; tg.shFade=1; S.pressure=true; busy(1200);}},
+ {id:'load',ph:1,t:'Back-load the device onto the wire',kind:'click',part:'tip',fx:'Wire end threaded into the device tip',
+  move:'Click the device’s sheath tip to thread the free end of the wire into it.',
+  see:'The device lines up on the wire; the wire end sits inside the tip.',
+  why:'The device tracks over the wire, rapid-exchange style.',
+  apply(){S.wire='device'; S.wTop=WTOP; tg.off=0; busy(1300);}},
+ {id:'advPort',ph:1,t:'Advance over the wire to the skin',kind:'drag',obj:'device',min:WTOP-SHEATH,max:-210,goal:v=>v>=-216,snap:-212,dir:1,fx:'Device advanced; wire came out of the exit port',
+  move:'Drag the device down the wire. Watch the wire come out of the exit port; stop when the port is just above the skin.',
+  see:'Wire exits the guidewire exit port; port just above the skin line; finger compression released as the device fills the tract.',
+  why:'The wire must come out before the exit port crosses the skin.',
+  nudge:'Keep advancing until the exit port is just above the skin.',
+  done(){S.pressure=false;}},
+ {id:'wireOut',ph:1,t:'Remove the guidewire',kind:'click',part:'wire',
+  move:'Click the guidewire where it comes out of the exit port.',
+  see:'Wire withdrawn through the exit port.',
+  why:'The foot cannot be deployed with the wire in place.',
+  apply(){S.wire='removed'; S.wTop=WTOP;}},
+ {id:'flow',ph:1,t:'Advance until pulsatile flow',kind:'drag',obj:'device',min:-212,max:60,goal:v=>v>=44,dir:1,
+  move:'Drag the device in until brisk, pulsatile blood marks from the marker lumen.',
+  see:'Brisk pulsatile marking: the marker port on the distal guide is inside the artery.',
+  why:'Only deploy the foot once marking is brisk. In a vein, blood may only fill the marker lumen.',
+  nudge:'No marking yet. Advance further.'},
+ {id:'lever1',ph:2,t:'Handle step 1: lift the lever and swing it back',num:'1',kind:'click',part:'lever',fx:'Lever 1 swung back: foot opens',
+  move:'With the lever and logo at 12 o’clock, click the lever: it lifts and swings all the way back.',
+  see:'The foot swings open inside the lumen, parallel to the vessel.',
+  why:'The open foot carries the suture cuffs and gives tactile confirmation of position.',
+  apply(){tg.foot=1; busy(1700);}},
+ {id:'seat',ph:2,t:'Retract to seat the foot at 45°',kind:'drag',obj:'device',min:30,max:60,goal:v=>v<=32,snap:30,dir:-1,
+  move:'Drag the device back gently until the foot seats against the wall.',
+  see:'Tactile stop; marking stops or slows to a slight drip.',
+  why:'Even, gentle tension on the foot at about 45° places both needles correctly.',
+  nudge:'Keep gentle retraction until the foot meets the wall.'},
+ {id:'plunger2',ph:2,t:'Handle step 2: depress the plunger',num:'2',kind:'click',part:'plunger',fx:'Step 2 · plunger depressed: needles fire',
+  move:'Keep the lever swung back and click the plunger to push it all the way in.',
+  see:'Collar meets the handle; the needles cross the wall and engage the cuffs in the foot.',
+  why:'Push once only, with gentle, increasing pressure. Stabilise the device with your free hand.',
+  apply(){tg.pl=2; tg.needle=1; busy(800);}},
+ {id:'plunger3',ph:2,t:'Handle step 3: pull the plunger out',num:'3',kind:'click',part:'plunger',fx:'Step 3 · plunger and needles out; suture on the anterior needle',
+  move:'Using your thumb as a fulcrum on the handle, click the plunger to pull it back (#3) and completely remove the plunger and needles from the body.',
+  see:'One suture limb is on the anterior needle; the posterior needle is free of suture. Pulling back until the suture is taut confirms all of it is out of the body.',
+  why:'No suture on the anterior needle? Do not redeploy: reinsert the wire and change the device.',
+  apply(){tg.pl=280; tg.needle=0; S.sutured=true; busy(1600);}},
+ {id:'quickcut',ph:2,t:'Cut the suture with the QuickCut',kind:'click',part:'quickcut',fx:'Suture on the anterior needle cut with the QuickCut',
+  move:'Click the QuickCut (front of the body, below the lever): the suture on the anterior needle is cut there.',
+  see:'The suture attached to the anterior needle is placed in the QuickCut and cut distal to the link; the plunger and needles are set aside.',
+  why:'Frees the suture from the needle so the limbs can be managed.',
+  apply(){S.cut=true; an.qc=0; tg.qc=1; busy(3600); later(3000,()=>{tg.plFade=1;});}},
+ {id:'lever4',ph:2,t:'Handle step 4: return the lever to close the foot',num:'4',kind:'click',part:'lever',fx:'Lever 4 returned: foot closes',
+  move:'Relax the device and click the lever: it swings forward to its original position.',
+  see:'The foot folds back in line with the guide.',
+  why:'Never withdraw the device with the foot open.',
+  apply(){tg.foot=0; busy(1700);}},
+ {id:'retract',ph:3,t:'Retract until the exit port is at skin',kind:'drag',obj:'device',min:-206,max:30,goal:v=>v<=-200,snap:-206,dir:-1,
+  move:'Drag the device back until the guidewire exit port reaches the skin.',
+  see:'The guide leaves the tract and releases the knot; the sheath tip stays in the artery.',
+  why:'Exposes the suture limbs while keeping the sheath in place for wire re-entry.',
+  nudge:'Retract further, to the skin landmark.'},
+ {id:'limbs',ph:3,t:'Remove the suture limbs',kind:'click',part:'limbs',
+  move:'Click the suture loop at the distal guide bend to pull both limbs out.',
+  see:'Blue limb (longer) = rail. White limb (shorter) = non-rail.',
+  why:'Rotate the device slightly if needed to see both limbs at the guide bend.',
+  apply(){S.limbs='free';}},
+ {id:'wireBack',ph:3,t:'Insert the guidewire into the exit port',kind:'click',part:'wire',
+  move:'Click the guidewire on the back table.',
+  see:'The wire enters the exit port and leaves the sheath tip in the artery.',
+  why:'Keeps access until hemostasis is confirmed.',
+  apply(){S.wire='device'; S.wTop=S.pos+EXIT-280;}},
+ {id:'devOut',ph:3,t:'Remove the device, tension on the blue rail',kind:'drag',obj:'device',min:-500,max:-206,goal:v=>v<=-262,dir:-1,
+  move:'Drag the device back a few centimetres; it then slides off over the wire while the blue rail stays taut.',
+  see:'Device off the wire; wire and both limbs stay in the tract.',
+  why:'Slow, steady tension on the rail (wrapped on the left index finger) keeps the knot ready.',
+  nudge:'Pull the device back a little further.',
+  done(){S.devRemoved=true; tg.fade=1; S.wire='vessel'; busy(1300);}},
+ {id:'skpLoad',ph:3,t:'Load the snare knot pusher on the blue rail',kind:'click',part:'skp',
+  move:'Click the snare knot pusher: its snare pulls about 2 cm of the blue rail (not the wire) through the tip.',
+  see:'The pusher rides on the blue rail above the knot.',
+  why:'Only the rail limb is loaded; the knot slides along it.',
+  apply(){S.skp=-250;}},
+ {id:'knot',ph:3,t:'Advance the knot to the artery',kind:'drag',obj:'skp',min:-250,max:-4,goal:v=>v>=-10,snap:-4,dir:1,
+  move:'Drag the pusher down the tract with slow, consistent tension on the rail.',
+  see:'The knot reaches the arterial surface; oozing slows.',
+  why:'Keep the suture coaxial with the tract while advancing.',
+  nudge:'Keep pushing until the knot reaches the vessel.'},
+ {id:'wireOut2',ph:3,t:'Assess hemostasis, then remove the wire',kind:'click',part:'wire',
+  move:'Click the guidewire to remove it while keeping tension on the rail.',
+  see:'Wire out; knot stays seated.',
+  why:'The wire stays in until hemostasis looks secure.',
+  apply(){S.wire='removed';}},
+ {id:'lock',ph:3,t:'Lock the knot: pull the white non-rail',kind:'click',part:'white',
+  move:'Click the white limb to pull it, coaxial with the tract.',
+  see:'Knot locks and the tissue is apposed; the pusher comes off.',
+  why:'Pulling the non-rail limb locks the sliding knot.',
+  apply(){S.locked=true; S.skp=null; busy(500);}},
+ {id:'trimLoad',ph:4,t:'Load the suture trimmer',kind:'click',part:'trimmer',
+  move:'Click the suture trimmer: pull back the thumb knob to open the suture gate and load both limbs.',
+  see:'Both taut limbs are captured in the suture gate.',
+  why:'The trimmer cuts both limbs together, below the skin.',
+  apply(){S.trim=-250;}},
+ {id:'trimAdv',ph:4,t:'Advance the trimmer to the artery',kind:'drag',obj:'trim',min:-250,max:-8,goal:v=>v>=-14,snap:-8,dir:1,
+  move:'Drag the trimmer down both limbs to the arterial surface.',
+  see:'The trimmer tip sits on the knot.',
+  why:'Cutting at the knot leaves the tails below the skin.',
+  nudge:'Advance until the trimmer reaches the knot.'},
+ {id:'cut',ph:4,t:'Pull back the red lever to cut',kind:'click',part:'trimlever',
+  move:'Click the red trimming lever.',
+  see:'Both limbs are cut at the knot.',
+  why:'Right index finger pulls the red lever back.',
+  apply(){S.trimmed=true; S.trim=null;}}
+];
+const IDX={}; STEPS.forEach((s,i)=>IDX[s.id]=i);
+const done_=id=>S.step>IDX[id];
+const at=id=>S.step===IDX[id];
+
+const PARTS={
+  angio:'Sheath stopcock: contrast is injected here for the femoral angiogram.',
+  syringe:'Saline syringe: flushes the marker lumen during device prep.',
+  body:'Body.',
+  pressure:'Manual pressure: applied above the puncture once the sheath is out.',
+  sheath:'Procedural sheath: removed over the wire with pressure held.',
+  tip:'Device sheath tip: the wire is back-loaded into it.',
+  device:'Device: drag to advance or withdraw it along the tract.',
+  lever:'Lever: lift to open the foot (1), push down to close it (4).',
+  plunger:'Plunger: push to fire the needles (2), pull back to bring the suture out (3).',
+  quickcut:'QuickCut (front of the body, below the lever): cuts the suture from the anterior needle.',
+  wire:'Guidewire.',
+  limbs:'Suture limbs: pulled out at the distal guide bend after the device is retracted.',
+  skp:'Snare knot pusher: rides the blue rail to push the knot down.',
+  trimmer:'Suture trimmer: used once the knot is locked.',
+  trim:'Suture trimmer.',
+  trimlever:'Red trimming lever: cuts once the trimmer is at the knot.',
+  white:'White non-rail limb: pulled to lock the knot.',
+  blue:'Blue rail limb: keep tension on it; the knot pusher rides on it.',
+  cough:'Cough test: the final hemostasis check.'
+};
+
+// ---------- state ----------
+let S, an, tg, drops=[], timers=[];
+let MODE='practice';
+let HIST=[];
+function reset(){
+  timers.forEach(clearTimeout); timers=[];
+  S={step:0,pos:WTOP-SHEATH,wTop:WTOP,wire:'table',flushed:false,angio:false,pressure:false,sheath:'in',shS:110,
+     sutured:false,cut:false,limbs:'none',devRemoved:false,
+     skp:null,trim:null,locked:false,trimmed:false,cough:false,errors:0,hints:0,misses:0,
+     t0:null,tEnd:null,busyUntil:0,msg:null,hintShown:false};
+  an={foot:0,needle:0,pl:52,syr:0,off:360,fade:0,plFade:0,shFade:0,gap:30,ooze:0,contrast:0,wadv:0,qc:0,z:1.2,cx:640,cy:330};
+  HIST=[];
+  tg={...an};
+  drops=[];
+  if(typeof drag!=='undefined') drag=null;
+  renderPanel();
+}
+function busy(ms){S.busyUntil=performance.now()+ms;}
+function later(ms,fn){timers.push(setTimeout(fn,ms));}
+
+// ---------- geometry helpers ----------
+const LEVA=180;  // lever 1 lifts and swings all the way back; 4 returns it
+function devO(){return P(S.pos-GUIDE, an.off);}
+function L(lx,ly){const O=devO(); return {x:O.x+(lx-ly)*k, y:O.y+(lx+ly)*k};}
+function leverEnd(){const th=-LEVA*an.foot*Math.PI/180; const x=58,y=-2;
+  return L(-118 + x*Math.cos(th)-y*Math.sin(th), -16 + x*Math.sin(th)+y*Math.cos(th));}
+// Handle drawn in its own frame (+x toward the tip). Layout follows the manufacturer's labelled overview:
+// plunger (2,3) > collar > handle wings on both sides > body (logo) > lever (1) over the front of the body
+// with the QuickCut just below its front end > marker lumen tube at the nose.
+function handleSVG(o){
+  const pl=o.pl, A_=o.ia?(x=>` data-part="${x}"`):(()=>''), cB=-252;
+  // the plunger rod has a fixed length: once pulled back past it, the plunger is out of the handle.
+  // The needles are long (they ran the length of the body and guide), so they stay long once out.
+  const RODLEN=76, NL=150, rodL=Math.min(pl+16,RODLEN), RF=cB-pl+rodL, out=pl+16>RODLEN+2, NT=RF+(out?NL:0);
+  let h='';
+  // QuickCut sequence: bring the plunger round to the side so the suture crosses the QuickCut, cut, set aside
+  const QC={x:-56,y:6}, C={x:cB,y:-1};
+  let tip={x:NT,y:-2}, ptf='';
+  if(o.qc>=0){
+    const e0=clamp(o.qc/0.42,0,1), e=e0*e0*(3-2*e0), away=clamp((o.qc-0.64)/0.36,0,1);
+    const T={x:-150,y:84}, th=Math.atan2(QC.y-T.y, QC.x-T.x)*180/Math.PI;
+    tip={x:lerp(NT,T.x,e)-70*away, y:lerp(-2,T.y,e)+60*away};
+    ptf=` transform="translate(${tip.x.toFixed(1)} ${tip.y.toFixed(1)}) rotate(${(th*e).toFixed(1)}) translate(${(-NT).toFixed(1)} 2)"`;
+  }
+  const taut=clamp((pl-235)/40,0,1), sag=(12*(1-taut)).toFixed(1);
+  if(o.strand) h+=`<path d="M${C.x} ${C.y} Q ${((C.x+NT)/2).toFixed(1)} ${sag} ${NT.toFixed(1)} -2" stroke="#163f8f" stroke-width="3.6" fill="none"/><path d="M${C.x} ${C.y} Q ${((C.x+NT)/2).toFixed(1)} ${sag} ${NT.toFixed(1)} -2" stroke="#2a63cf" stroke-width="2.2" fill="none"/>`;
+  if(o.plOp>0.02){
+    const cx=cB-pl;
+    const needle=(y,len)=>`<line x1="${RF}" y1="${y}" x2="${RF+len}" y2="${y}" stroke="#4d5763" stroke-width="2.6" stroke-linecap="round"/><line x1="${RF}" y1="${y}" x2="${RF+len}" y2="${y}" stroke="#e4e9ef" stroke-width="1.1" stroke-linecap="round"/>`;
+    h+=`<g opacity="${o.plOp.toFixed(2)}"${A_('plunger')}><g${ptf}>`+
+      `<rect x="${cx}" y="-4.5" width="${rodL}" height="9" fill="url(#gPlRod)" stroke="#16191d" stroke-width="1"/>`+
+      (out? needle(-2,NL)+needle(2.5,NL-6)+`<circle cx="${RF+NL}" cy="-2" r="2.4" fill="none" stroke="#9aa6b3" stroke-width="1.4"/>`:'')+
+      (pl>34?`<rect x="${cx+4}" y="-5.5" width="14" height="11" rx="1.5" fill="#eef1f4"/><text x="${cx+11}" y="3.4" text-anchor="middle" fill="#16191d" style="font:800 9px var(--f-mono)">3</text>`+
+             `<rect x="${cx+21}" y="-5.5" width="14" height="11" rx="1.5" fill="#eef1f4"/><text x="${cx+28}" y="3.4" text-anchor="middle" fill="#16191d" style="font:800 9px var(--f-mono)">2</text>`:'')+
+      `<path d="M${cx} -4.5 L ${cx-5} -7 L ${cx-11} -21 Q ${cx-13} -26 ${cx-18} -24 L ${cx-18} 24 Q ${cx-13} 26 ${cx-11} 21 L ${cx-5} 7 L ${cx} 4.5 Z" fill="url(#gPlRod)" stroke="#16191d" stroke-width="1.2"/>`+
+      `<rect x="${cx-24}" y="-28" width="${rodL+(out?NL:0)+42}" height="56" fill="transparent"/></g></g>`;
+  }
+  // collar
+  h+=`<rect x="${cB}" y="-8" width="17" height="16" rx="2" fill="url(#gPlRod)" stroke="#16191d" stroke-width="1"/>`+
+     `<path d="M${cB+4} -8 L ${cB+7} -14 L ${cB+11} -8 Z M${cB+4} 8 L ${cB+7} 14 L ${cB+11} 8 Z" fill="#2b3138" stroke="#16191d" stroke-width="1"/>`;
+  // handle wings (both sides) + body
+  const wing=sg=>`<path d="M-236 ${-13*sg} L -220 ${-13*sg} C -213 ${-27*sg} -206 ${-41*sg} -195 ${-54*sg} Q -188 ${-60*sg} -190 ${-51*sg} C -194 ${-38*sg} -198 ${-25*sg} -200 ${-13*sg} Z" fill="url(#gBody)" stroke="#183b67" stroke-width="1.2"/>`;
+  h+=`<g filter="url(#shadow)">${wing(1)}${wing(-1)}`+
+     `<path d="M-236 -11 Q -236 -16 -230 -16 L -80 -16 C -58 -16 -44 -12 -28 -8 L 0 -6 L 0 6 L -28 8 C -44 12 -58 16 -80 16 L -230 16 Q -236 16 -236 11 Z" fill="url(#gBody)" stroke="#183b67" stroke-width="1.3"/>`+
+     `<path d="M-228 -10 L -70 -10" stroke="#ffffff" stroke-width="1.6" opacity=".3"/>`+
+     `<rect x="-216" y="-15.5" width="8" height="31" fill="#e8edf2" opacity=".9"/>`+
+     `<rect x="-180" y="-4" width="44" height="10" rx="5" fill="#e4eaf1" opacity=".92"/><text x="-158" y="3.6" text-anchor="middle" fill="#25507f" style="font:800 6.5px var(--f-mono);letter-spacing:.14em">LOGO</text></g>`;
+  // marker lumen tube at the nose (+ syringe during the flush)
+  h+=`<path d="M-40 7 C -38 14 -34 20 -28 26" stroke="#8a96a4" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="M-40 7 C -38 14 -34 20 -28 26" stroke="#eef2f6" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="-28" cy="26" r="2" fill="#26313d"/>`;
+  if(o.syr>0.02){
+    const fill=60*(1-o.syr);
+    h+=`<g opacity="${o.syr.toFixed(2)}" transform="translate(-27 27) rotate(56)">`+
+       `<rect x="0" y="-3" width="12" height="6" fill="#dfe8f2" stroke="#7d8a98"/><rect x="12" y="-11" width="86" height="22" rx="3" fill="#f5f9ff" stroke="#7d8a98" stroke-width="1.4"/>`+
+       `<rect x="${14+fill}" y="-9" width="${Math.max(0,82-fill)}" height="18" fill="#cfe7ff" opacity=".85"/>`+
+       [0,1,2,3,4].map(i=>`<line x1="${24+i*14}" y1="-11" x2="${24+i*14}" y2="-5" stroke="#7d8a98"/>`).join('')+
+       `<rect x="98" y="-4" width="40" height="8" fill="#dfe4ea" stroke="#7d8a98"/><rect x="138" y="-12" width="6" height="24" rx="2" fill="#c3cbd4" stroke="#7d8a98"/></g>`;
+  }
+  // suture being cut: device -> QuickCut -> anterior needle, with some slack, cut at the QuickCut
+  if(o.qc>=0){
+    const e0=clamp(o.qc/0.42,0,1), e=e0*e0*(3-2*e0), cut=o.qc>=0.6, away=clamp((o.qc-0.64)/0.36,0,1);
+    const Bm=lp(lp(C,tip,0.5),QC,e);
+    // slack suture: each segment droops a little (it does not need to stay taut while cutting)
+    const seg=(a,b,op)=>{ const mx=(a.x+b.x)/2, my=(a.y+b.y)/2, len=Math.hypot(b.x-a.x,b.y-a.y), sg=Math.min(22,len*0.14);
+      const d=`M${a.x.toFixed(1)} ${a.y.toFixed(1)} Q ${mx.toFixed(1)} ${(my+sg).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+      return `<path d="${d}" stroke="#163f8f" stroke-width="3.8" fill="none" stroke-linecap="round" opacity="${op}"/><path d="${d}" stroke="#2a63cf" stroke-width="2.3" fill="none" stroke-linecap="round" opacity="${op}"/>`; };
+    if(!cut){ h+=seg(C,Bm,1)+seg(Bm,tip,1); }
+    else {
+      h+=seg(C,QC,(1-away*0.6).toFixed(2));
+      const q2={x:QC.x-70*away-4, y:QC.y+60*away+4};
+      h+=seg(q2,tip,Math.max(0,1-away*1.1).toFixed(2));
+    }
+    if(o.qc>0.5 && o.qc<0.78){ const a=1-Math.abs(o.qc-0.62)/0.16; h+=`<g transform="translate(${QC.x} ${QC.y})" opacity="${clamp(a,0,1).toFixed(2)}"><path d="M0 -12 L 3 -3 L 12 0 L 3 3 L 0 12 L -3 3 L -12 0 L -3 -3 Z" fill="#ffd34d" stroke="#b37a00" stroke-width="1"/></g>`; }
+  }
+  // QuickCut: just below the front of the lever
+  h+=`<g${A_('quickcut')}><rect x="-66" y="1" width="20" height="8" rx="2" fill="#16191d"/><path d="M-62 7.5 L -52 2.5 L -49 7.5 Z" fill="url(#gSteel)"/><rect x="-74" y="-3" width="36" height="20" fill="transparent"/></g>`;
+  // lever: pivots at its rear end, front end (1) lifts
+  h+=`<circle cx="-118" cy="-16" r="3" fill="#2b3138"/>`;
+  h+=`<g${A_('lever')} transform="translate(-118 -16) rotate(${(-LEVA*o.lev).toFixed(1)})">`+
+     `<path d="M0 3 L 0 -6 L 58 -6 Q 66 -6 66 1 L 66 8 Q 66 13 60 13 L 18 13 Q 8 13 0 3 Z" fill="url(#gLever)" stroke="#0c0e10" stroke-width="1.2"/>`+
+     `<path d="M8 -3 L 58 -3" stroke="#5b636d" stroke-width="1" opacity=".7"/>`+
+     `<text x="56" y="8" text-anchor="middle" fill="#ffffff" style="font:800 8px var(--f-mono)">1</text>`+
+     `<text x="12" y="3.5" text-anchor="middle" fill="#c7ced6" style="font:800 6px var(--f-mono)">4</text>`+
+     `<rect x="-4" y="-14" width="78" height="30" fill="transparent"/></g>`;
+  return h;
+}
+function flowing(){return !S.devRemoved && an.off<4 && (S.pos-14) > 23;}
+function knotS(){ if(S.skp!==null) return S.skp; if(S.locked||S.trimmed) return -4; return -250; }
+function railOff(s){ return RAIL*clamp(-s/90,0,1); }
+function knotP(){ const s=knotS(); return P(s, railOff(s)); }
+const SC = p => ({x:(p.x-an.cx)*an.z+550, y:(p.y-an.cy)*an.z+350}); // world -> screen
+const SLOT=275;
+const TRAY = (slot,x,y)=>({x:slot*SLOT+x+(SLOT-157)/2, y, tray:true});
+// the length of wire already out of the exit port follows the device: tail = port - wire end
+function wireTail(){
+  const ps=S.pos+EXIT, off=an.off, len=Math.max(0, ps-S.wTop), pts=[];
+  for(let u=0; u<=len; u+=6){ pts.push(P(ps-u, off+34*(1-Math.exp(-u/45)))); }
+  if(len>0) pts.push(P(ps-len, off+34*(1-Math.exp(-len/45))));
+  return {port:track(ps,off), len, pts, end:pts.length?pts[pts.length-1]:track(ps,off)};
+}
+
+// ---------- static anatomy ----------
+function buildAnatomy(){
+  const X0=-1000, W=2600;
+  let a='';
+  a+=`<rect x="${X0}" y="${SKIN_Y}" width="${W}" height="1200" fill="url(#fat)"/>`;
+  a+=`<rect x="${X0}" y="${SKIN_Y+16}" width="${W}" height="${459-SKIN_Y-16}" fill="url(#lobules)"/>`;
+  a+=`<rect x="${X0}" y="590" width="${W}" height="120" fill="url(#lobules)"/>`;
+  a+=`<path d="M${X0} 414 C -400 410 -100 418 300 412 S 900 408 1300 414 S 1500 411 ${X0+W} 413" fill="none" stroke="#e9d2a9" stroke-width="3"/>`;
+  a+=`<path d="M${X0} 448 C -300 444 200 452 600 447 S 1100 444 ${X0+W} 449" fill="none" stroke="#e5c99c" stroke-width="2.5"/>`;
+  a+=`<rect x="${X0}" y="${SKIN_Y-6}" width="${W}" height="20" fill="url(#dermis)"/>`;
+  a+=`<rect x="${X0}" y="${SKIN_Y-6}" width="${W}" height="4" fill="#b8705a"/>`;
+  a+=`<rect x="${X0}" y="${SKIN_Y-2}" width="${W}" height="2" fill="#d08a6c" opacity=".7"/>`;
+  a+=`<rect x="${X0}" y="459" width="${W}" height="7" fill="#e8bba8"/>`;
+  a+=`<rect x="${X0}" y="466" width="${W}" height="13" fill="url(#media)"/>`;
+  a+=`<rect x="${X0}" y="479" width="${W}" height="3" fill="#f2c9bf"/>`;
+  a+=`<rect x="${X0}" y="482" width="${W}" height="86" fill="url(#lumen)"/>`;
+  a+=`<rect x="${X0}" y="568" width="${W}" height="3" fill="#f2c9bf"/>`;
+  a+=`<rect x="${X0}" y="571" width="${W}" height="13" fill="url(#media)"/>`;
+  a+=`<rect x="${X0}" y="584" width="${W}" height="7" fill="#e8bba8"/>`;
+  a+=`<circle cx="760" cy="1090" r="420" fill="url(#bone)" stroke="#e6d8b9" stroke-width="10"/>`;
+  a+=`<circle cx="760" cy="1090" r="405" fill="url(#trab)" opacity=".5"/>`;
+  document.getElementById('anat').innerHTML=a;
+}
+
+// ---------- drawing helpers ----------
+function label(text, a, dx, dy){
+  const s=SC(a); if(s.x<-10||s.x>1110||s.y<-10||s.y>705) return '';
+  const w=text.length*9.3+24, x=s.x+dx*1.25, y=s.y+dy*1.25;
+  const lx = clamp(x - w/2, 4, 1096-w), ly=clamp(y,14,686);
+  return `<line class="lbl-line" x1="${s.x.toFixed(1)}" y1="${s.y.toFixed(1)}" x2="${x.toFixed(1)}" y2="${ly.toFixed(1)}"/>`+
+    `<rect class="lbl-bg" x="${lx.toFixed(1)}" y="${(ly-15).toFixed(1)}" width="${w.toFixed(1)}" height="30" rx="15"/>`+
+    `<text class="lbl" x="${(lx+w/2).toFixed(1)}" y="${(ly+6).toFixed(1)}" text-anchor="middle">${text}</text>`;
+}
+function cueRing(a, now, word){
+  const p=(Math.sin(now/260)+1)/2, x=a.x.toFixed(1), y=a.y.toFixed(1);
+  return `<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(34+12*p).toFixed(1)}" class="cue-glow" opacity="${(0.18+0.22*(1-p)).toFixed(2)}"/>`+
+    `<circle cx="${x}" cy="${y}" r="${(22+8*p).toFixed(1)}" class="cue-ring-under"/>`+
+    `<circle cx="${x}" cy="${y}" r="${(22+8*p).toFixed(1)}" class="cue-ring"/>`+
+    `<circle cx="${x}" cy="${y}" r="5" class="cue-dot"/>`+
+    (word?`<g transform="translate(${x} ${(a.y-46-8*p).toFixed(1)})"><rect x="-38" y="-14" width="76" height="26" rx="13" class="cue-tag"/><text y="5" text-anchor="middle" class="cue-tagtxt">${word}</text></g>`:'')+`</g>`;
+}
+
+function draw(now){
+  const off=an.off, pos=S.pos, labels=[], anchors={};
+  let g='';
+  for(let i=0;i<22;i++){
+    const x=((now*0.10*(0.8+(i%5)*0.08) + i*97) % 1700) - 300, y=490+((i*37)%72);
+    g+=`<ellipse cx="${x.toFixed(1)}" cy="${y}" rx="5.5" ry="2.6" fill="#d9434c" opacity=".55"/>`;
+  }
+  const gw=an.gap*0.72;
+  g+=`<path d="M${(752-gw/2).toFixed(1)} 459 L ${(752+gw/2).toFixed(1)} 459 L ${(775+gw/2).toFixed(1)} 482 L ${(775-gw/2).toFixed(1)} 482 Z" fill="#6a0f15"/>`;
+  if(S.devRemoved || (S.sheath==='gone' && off>10 && !done_('advPort'))){
+    const E=P(SKIN_S);
+    g+=`<line x1="${E.x.toFixed(1)}" y1="${E.y.toFixed(1)}" x2="${A.x}" y2="${A.y}" stroke="#c99a6a" stroke-width="5" stroke-dasharray="2 5" opacity=".6"/>`;
+  }
+  if(an.ooze>0.02){
+    const E=P(SKIN_S);
+    g+=`<ellipse cx="${E.x-6}" cy="${E.y-1}" rx="${(8+18*an.ooze).toFixed(1)}" ry="${(3+4*an.ooze).toFixed(1)}" fill="#a3141c" opacity="${(0.4+0.5*an.ooze).toFixed(2)}"/>`;
+  }
+
+  // ---- guidewire (under the device) ----
+  let tailSVG='';
+  if(S.wire==='sheath' || S.wire==='vessel'){
+    const LEN=S_END-S.wTop;
+    const tipS = S.wire==='sheath' ? lerp(S.shS-PSH-30, S_END, an.wadv) : S_END;
+    const d=trackPath(tipS-LEN, tipS);
+    g+=`<path d="${d}" class="wire-o"/><path d="${d}" class="wire-i"/><path d="${d}" class="hit18" data-part="wire"/>`;
+    anchors.wire = P(Math.max(tipS-LEN, S.wTop)+60);
+    if(S.wire==='sheath' && an.wadv<0.98) labels.push(['Guidewire entering the sheath', track(tipS), 140, 40]);
+  } else if(S.wire==='device'){
+    const T=wireTail();
+    const top=Math.max(S.wTop, S.pos+EXIT);
+    const d=trackPath(top, S_END, an.off);
+    g+=`<path d="${d}" class="wire-o"/><path d="${d}" class="wire-i"/>`;
+    if(T.len>4){
+      const td='M'+T.pts.map(pt).join(' L ');
+      tailSVG=`<path d="${td}" class="wire-o"/><path d="${td}" class="wire-i"/><path d="${td}" class="hit18" data-part="wire"/>`;
+      anchors.wire = T.pts[Math.floor(T.pts.length*0.7)];
+      labels.push(['Wire out of the exit port', T.pts[Math.floor(T.pts.length*0.5)], 150, -30]);
+    } else if(an.off<5) labels.push(['Wire inside the device', track(Math.min(S.wTop+40, S.pos+SHEATH-20)), 150, 40]);
+  }
+
+  // ---- procedural sheath ----
+  if(an.shFade<0.98){
+    const sop=(1-an.shFade).toFixed(2), tip=S.shS, hubS=tip-PSH;
+    const sd=trackPath(hubS, tip, 0, 5);
+    const H=P(hubS);
+    g+=`<g opacity="${sop}" data-drag="sheath">`+
+       `<path d="${sd}" stroke="#58707f" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>`+
+       `<path d="${sd}" stroke="#c9dbe6" stroke-width="8.4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>`+
+       `<path d="${sd}" stroke="#ffffff" stroke-width="2" fill="none" opacity=".6"/>`+
+       `<g transform="translate(${H.x.toFixed(1)} ${H.y.toFixed(1)}) rotate(45)">`+
+       `<path d="M0 -6 L -14 -12 L -46 -12 L -46 12 L -14 12 L 0 6 Z" fill="url(#gHub)" stroke="#1f5a37" stroke-width="1.3"/>`+
+       `<rect x="-60" y="-14" width="15" height="28" rx="4" fill="url(#gRod)" stroke="#5f6b79" stroke-width="1.2"/>`+
+       `<path d="M-30 12 C -30 34 -44 46 -62 58" stroke="#c9d6df" stroke-width="5.5" fill="none"/><path d="M-30 12 C -30 34 -44 46 -62 58" stroke="#7d8d99" stroke-width="1" fill="none"/>`+
+       `<g transform="translate(-66 61)" data-part="angio"><rect x="-10" y="-6" width="20" height="12" rx="3" fill="#2f86d8" stroke="#1c4f80"/><rect x="-3" y="-14" width="6" height="28" rx="2" fill="#e6ecf2" stroke="#7d8d99"/><circle r="20" fill="transparent"/>`+(an.contrast>0.02?`<g opacity="${an.contrast.toFixed(2)}" transform="rotate(90)"><rect x="12" y="-8" width="60" height="16" rx="3" fill="#f5f9ff" stroke="#7d8a98"/><rect x="${14+40*(1-an.contrast)}" y="-6" width="${Math.max(0,56-40*(1-an.contrast))}" height="12" fill="#e9edf2"/><rect x="72" y="-3" width="26" height="6" fill="#dfe4ea" stroke="#7d8a98"/><rect x="0" y="-3" width="12" height="6" fill="#dfe8f2" stroke="#7d8a98"/></g>`:'')+`</g>`+
+       `<rect x="-64" y="-20" width="70" height="40" fill="transparent"/></g>`+
+       `<path d="${sd}" class="hit22"/></g>`;
+    anchors.sheath=P(hubS-20);
+    anchors.angio={x:H.x-127*k, y:H.y-5*k};
+    if(!S.angio) labels.push(['Stopcock (contrast)', anchors.angio, -140, 30]);
+    labels.push(['Procedural sheath (6F)', P(hubS+70), -150, 20]);
+    labels.push(['Hub · hemostasis valve', P(hubS-30), 110, -30]);
+  }
+
+  // contrast opacifies the lumen during the angiogram
+  if(an.contrast>0.02) g+=`<rect x="-1000" y="482" width="2600" height="86" fill="#f1f4f7" opacity="${(0.7*an.contrast).toFixed(2)}"/>`;
+  // ---- manual pressure ----
+  if(S.pressure){
+    g+=`<ellipse cx="772" cy="${SKIN_Y-3}" rx="44" ry="10" fill="#a8b8e8" opacity=".35" stroke="#3f5aa8" stroke-dasharray="5 4" stroke-width="2"/>`;
+    labels.push(['Finger compression', {x:772,y:SKIN_Y-8}, 110, -50]);
+  }
+
+  // ---- suture ----
+  const K = knotP();
+  const blueEnd = P(-560, 110), whiteEnd = P(-500, -90);
+  const loop = `<path d="M${HOLE1} 482 Q ${(HOLE1+HOLE2)/2} 489 ${HOLE2} 482" stroke="#1f57c3" stroke-width="2.2" fill="none"/>`;
+  if(S.sutured && !S.trimmed){
+    g+=loop;
+    if(S.limbs!=='free'){
+      const N0 = L(GUIDE-70, 0);
+      g+=`<path d="M${HOLE1} 470 L ${pt(N0)}" stroke="#f4f6f8" stroke-width="2.4" fill="none"/>`;
+      g+=`<path d="M${HOLE2} 470 L ${pt(N0)}" stroke="#1f57c3" stroke-width="2.4" fill="none"/>`;
+    } else {
+      const cB = P(-330, 50), cW = P(-320, -40);
+      let bluePath = `M${HOLE2} 468 L ${pt(K)} Q ${pt(cB)} ${pt(blueEnd)}`;
+      let whitePath = `M${HOLE1} 468 L ${pt(K)} Q ${pt(cW)} ${pt(whiteEnd)}`;
+      if(S.skp!==null){ const a2=P(S.skp-SKPL,RAIL); bluePath=`M${HOLE2} 468 L ${pt(K)} L ${pt(a2)} Q ${pt(P(S.skp-SKPL-50,RAIL+6))} ${pt(P(S.skp-SKPL-110,RAIL+50))}`; }
+      if(S.trim!==null){ const a1=P(S.trim,0), aT=P(S.trim-TRIML,0);
+        bluePath=`M${HOLE2} 468 L ${pt(a1)} L ${pt(P(S.trim-TRIML,3))} Q ${pt(P(S.trim-TRIML-50,8))} ${pt(P(S.trim-TRIML-110,55))}`;
+        whitePath=`M${HOLE1} 468 L ${pt(a1)} L ${pt(P(S.trim-TRIML,-3))} Q ${pt(P(S.trim-TRIML-50,-8))} ${pt(P(S.trim-TRIML-100,-55))}`; }
+      g+=`<path d="${whitePath}" stroke="#6b7785" stroke-width="4.2" fill="none" stroke-linecap="round"/>`;
+      g+=`<path d="${whitePath}" stroke="#f7f8fa" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+      g+=`<path d="${bluePath}" stroke="#163f8f" stroke-width="3.6" fill="none" stroke-linecap="round"/>`;
+      g+=`<path d="${bluePath}" stroke="#2a63cf" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+      g+=`<path d="${bluePath}" class="hit14" data-part="blue"/>`;
+      g+=`<path d="${whitePath}" class="hit18" data-part="white"/>`;
+      g+=`<g transform="translate(${K.x.toFixed(1)} ${K.y.toFixed(1)}) rotate(45)"><ellipse rx="${S.locked?5:6.5}" ry="${S.locked?3.6:4.4}" fill="#dbe4f0" stroke="#1f57c3" stroke-width="1.8"/></g>`;
+      anchors.white = lp(K, whiteEnd, 0.55);
+      anchors.blue = lp(K, blueEnd, 0.5);
+      if(S.trim===null){
+        labels.push(['Blue rail (longer)', lp(K,blueEnd,0.8), 70, -16]);
+        labels.push(['White non-rail (shorter)', lp(K,whiteEnd,0.8), -70, -40]);
+      }
+      labels.push([S.locked?'Knot (locked)':'Pre-tied sliding knot', K, 110, 22]);
+    }
+  }
+  if(S.trimmed){
+    g+=loop;
+    const Kt=P(-4);
+    g+=`<path d="M${HOLE1} 468 L ${pt(Kt)} M${HOLE2} 468 L ${pt(Kt)}" stroke="#1f57c3" stroke-width="2.2"/>`;
+    g+=`<g transform="translate(${Kt.x.toFixed(1)} ${Kt.y.toFixed(1)}) rotate(45)"><ellipse rx="5" ry="3.6" fill="#dbe4f0" stroke="#1f57c3" stroke-width="1.8"/></g>`;
+    g+=`<path d="M${pt(Kt)} l -6 -10 M${pt(Kt)} l -10 -6" stroke="#1f57c3" stroke-width="2"/>`;
+  }
+
+  // ---- device ----
+  if(an.fade<0.99){
+    const op=(1-an.fade).toFixed(2);
+    const F=L(GUIDE,0);
+    let dv=`<g opacity="${op}" data-drag="device">`;
+    const sd=trackPath(pos+4, pos+SHEATH, off, 5);
+    dv+=`<path d="${sd}" stroke="#6f8193" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    dv+=`<path d="${sd}" stroke="#cfdbe6" stroke-width="7.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    dv+=`<path d="${sd}" stroke="#f6fafd" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`;
+    dv+=`<path d="${sd}" class="hit22"/>`;
+    const tipP=track(pos+SHEATH,off);
+    dv+=`<circle cx="${tipP.x.toFixed(1)}" cy="${tipP.y.toFixed(1)}" r="3.3" fill="#9fb0c2"/>`;
+    if(S.wire!=='device' && !done_('load')){
+      dv+=`<circle cx="${tipP.x.toFixed(1)}" cy="${tipP.y.toFixed(1)}" r="22" fill="transparent" data-part="tip"/>`;
+      anchors.tip=tipP;
+      if(at('load')) labels.push(['Device sheath tip', tipP, 110, 30]);
+    }
+    const gp=track(pos+EXIT, off), gpn=track(pos+EXIT+2, off);
+    const ga=Math.atan2(gpn.y-gp.y,gpn.x-gp.x)*180/Math.PI;
+    dv+=`<g transform="translate(${gp.x.toFixed(1)} ${gp.y.toFixed(1)}) rotate(${ga.toFixed(1)})"><ellipse cx="0" cy="-1.6" rx="5.5" ry="2.4" fill="#26313d"/></g>`;
+
+    const O=devO(), pl=an.pl;
+    let h=`<g transform="translate(${O.x.toFixed(1)} ${O.y.toFixed(1)}) rotate(45)">`;
+    h+=`<rect x="-4" y="-6.5" width="${GUIDE-6}" height="13" rx="3" fill="url(#gGuide)" stroke="#5f6b79" stroke-width="1.1"/><rect x="-4" y="-12" width="${GUIDE-6}" height="24" fill="transparent"/>`;
+    h+=`<path d="M${GUIDE-12} -6.5 L ${GUIDE-2} -4.4 L ${GUIDE-2} 4.4 L ${GUIDE-12} 6.5 Z" fill="url(#gGuide)" stroke="#5f6b79" stroke-width="1"/>`;
+    for(let x=40;x<GUIDE-90;x+=40) h+=`<line x1="${x}" y1="-6.3" x2="${x}" y2="6.3" stroke="#9aa6b3" stroke-width="1" opacity=".55"/>`;
+    h+=`<rect x="${GUIDE-76}" y="-6.5" width="12" height="2.6" rx="1.3" fill="#2b3642"/><rect x="${GUIDE-76}" y="3.9" width="12" height="2.6" rx="1.3" fill="#2b3642"/>`;
+    h+=`<circle cx="${GUIDE-16}" cy="3" r="2.2" fill="#2b3642"/>`;
+    if(S.cut && S.limbs!=='free' && done_('retract')){
+      h+=`<path d="M${GUIDE-50} 6 C ${GUIDE-56} 22 ${GUIDE-34} 24 ${GUIDE-36} 6" stroke="#2a63cf" stroke-width="2.4" fill="none"/>`+
+         `<path d="M${GUIDE-44} 6 C ${GUIDE-48} 18 ${GUIDE-30} 19 ${GUIDE-30} 6" stroke="#6b7785" stroke-width="3.6" fill="none"/><path d="M${GUIDE-44} 6 C ${GUIDE-48} 18 ${GUIDE-30} 19 ${GUIDE-30} 6" stroke="#f7f8fa" stroke-width="2" fill="none"/>`+
+         `<circle cx="${GUIDE-42}" cy="14" r="22" fill="transparent" data-part="limbs"/>`;
+    }
+    const Lf=26+48*an.foot, ang=-45*an.foot;
+    h+=`<g transform="translate(${GUIDE} 0) rotate(${ang.toFixed(1)})"><rect x="${(-Lf/2).toFixed(1)}" y="-4.2" width="${Lf.toFixed(1)}" height="8.4" rx="4.2" fill="url(#gFoot)" stroke="#1f2c3a" stroke-width="1"/>`+
+       (an.foot>0.5?`<circle cx="${(-Lf/2+6).toFixed(1)}" cy="0" r="2.6" fill="#d5dee8" stroke="#5f6b79" stroke-width=".8"/><circle cx="${(Lf/2-6).toFixed(1)}" cy="0" r="2.6" fill="#d5dee8" stroke="#5f6b79" stroke-width=".8"/>`:'')+`</g>`;
+    h+=handleSVG({pl, lev:an.foot, plOp:1-an.plFade, syr:an.syr, strand:S.sutured&&!S.cut, qc:(S.cut&&an.qc<0.985)?an.qc:-1, ia:true});
+    h+=`</g>`;
+    dv+=h;
+    if(an.needle>0.02){
+      const N1=L(GUIDE-70,-5), N2=L(GUIDE-70,5);
+      [[N1,{x:F.x+33,y:F.y}],[N2,{x:F.x-33,y:F.y}]].forEach(([N0,e])=>{
+        const E=lp(N0,e,an.needle);
+        dv+=`<line x1="${N0.x.toFixed(1)}" y1="${N0.y.toFixed(1)}" x2="${E.x.toFixed(1)}" y2="${E.y.toFixed(1)}" stroke="#4d5763" stroke-width="3.4" stroke-linecap="round"/>`;
+        dv+=`<line x1="${N0.x.toFixed(1)}" y1="${N0.y.toFixed(1)}" x2="${E.x.toFixed(1)}" y2="${E.y.toFixed(1)}" stroke="#e4e9ef" stroke-width="1.6" stroke-linecap="round"/>`;
+      });
+    }
+    dv+=`</g>`;
+    g+=dv;
+    anchors.device=L(-140,8);
+    anchors.lever=leverEnd();
+    anchors.plunger=L(-252-pl-12,0);
+    anchors.quickcut=L(-56,5);
+    anchors.limbs=L(GUIDE-42,16);
+    anchors.mlumen=L(-28,26);
+    anchors.mport=L(GUIDE-16,3);
+    if(an.fade<0.5 && off>60){
+      if(an.syr>0.3){ labels.push(['Syringe on marker lumen', anchors.mlumen, -150, 40]); labels.push(['Marker port (saline out)', anchors.mport, 130, 40]); }
+      else if(at('flush')) labels.push(['Marker lumen', anchors.mlumen, -110, 50]);
+    } else if(an.fade<0.5){
+      labels.push([an.foot>0.5?'Lever swung back (1)':'Lever  1 lift · 4 return', anchors.lever, 90, -40]);
+      if(an.plFade<0.5 && !S.cut) labels.push(['Plunger  2 push · 3 pull', anchors.plunger, -70, -40]);
+      labels.push(['Collar', L(-244,-10), 70, -20]);
+      labels.push(['Handle', L(-196,-52), 30, -70]);
+      labels.push(['Body', L(-120,14), -90, 40]);
+      labels.push(['QuickCut (below lever)', anchors.quickcut, -90, 70]);
+      labels.push(['Logo · faces 12 o’clock', L(-158,1), -170, -10]);
+      labels.push(['Marker lumen', anchors.mlumen, 70, 50]);
+      labels.push(['Guidewire exit port (on sheath)', gp, (pos<-100?190:140), (pos<-100?-70:-34)]);
+      if(off<5 && pos>-120){
+        labels.push(['Marker port (posterior)', anchors.mport, -170, -4]);
+        labels.push([an.foot>0.5?'Foot (open)':'Foot (closed)', F, -60, (640-F.y)*an.z]);
+      } else if(off<5){
+        labels.push(['Proximal guide · depth markers', L(120,0), -150, 40]);
+      }
+      if(an.needle>0.5) labels.push(['Needles (anterior carries suture)', lp(L(GUIDE-70,0),F,0.55), -230, -36]);
+      if(S.cut && S.limbs!=='free' && done_('retract')) labels.push(['Suture at distal guide bend', anchors.limbs, -170, 40]);
+      { const pq=an.pl, rf=-252-pq+Math.min(pq+16,76); if(pq>100 && an.plFade<0.5 && !S.cut){ labels.push(['Anterior needle · suture attached', L(rf+110,-2), -40, -60]); labels.push(['Posterior needle · free', L(rf+90,3), -120, 40]); } }
+      if(S.cut && an.qc>0.02 && an.qc<0.98) labels.push([an.qc<0.45?'Suture placed in the QuickCut':(an.qc<0.75?'Cut':'Plunger and needles set aside'), anchors.quickcut, 170, 60]);
+    }
+  }
+  g+=tailSVG;
+
+  // ---- snare knot pusher (rides the blue rail only, beside the wire) ----
+  if(S.skp!==null){
+    const T=K, U=P(S.skp-SKPL,RAIL), G0=P(S.skp-SKPL+70,RAIL);
+    const ang=Math.atan2(T.y-U.y,T.x-U.x)*180/Math.PI;
+    g+=`<g data-drag="skp">`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" stroke="#6f7c8b" stroke-width="7.4" stroke-linecap="round"/>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" stroke="#eef2f6" stroke-width="5" stroke-linecap="round"/>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${G0.x.toFixed(1)}" y2="${G0.y.toFixed(1)}" stroke="#7b8796" stroke-width="15" stroke-linecap="round"/>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${G0.x.toFixed(1)}" y2="${G0.y.toFixed(1)}" stroke="#e3e8ee" stroke-width="12" stroke-linecap="round"/>`+
+       `<g transform="translate(${T.x.toFixed(1)} ${T.y.toFixed(1)}) rotate(${ang.toFixed(1)})"><path d="M-10 -4.5 L 0 -2.4 L 0 2.4 L -10 4.5 Z" fill="#c6d0da" stroke="#6f7c8b"/>`+
+       (S.skp<-150?`<path d="M0 -1.4 C 9 -7 17 -5 17 0 C 17 5 9 7 0 1.4" fill="none" stroke="#7b8796" stroke-width="1.1"/>`:'')+`</g>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" class="hit22"/></g>`;
+    labels.push(['Snare knot pusher (on blue rail)', lp(U,G0,0.5), 150, -20]);
+    if(S.skp<-150) labels.push(['Snare (loads ~2 cm of rail)', T, 160, -6]);
+  }
+  // ---- suture trimmer (controls stay above the skin) ----
+  if(S.trim!==null){
+    const T=P(S.trim,0), U=P(S.trim-TRIML,0);
+    const RL=P(S.trim-TRIML+100,0), RL2={x:RL.x-22*k, y:RL.y+22*k}, RL3={x:RL.x-18*k-6*k, y:RL.y+18*k-6*k};
+    const TK=P(S.trim-TRIML+46,8);
+    g+=`<g data-drag="trim">`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" stroke="#7b8796" stroke-width="11" stroke-linecap="round"/>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" stroke="#eef2f6" stroke-width="8.4" stroke-linecap="round"/>`+
+       `<g transform="translate(${T.x.toFixed(1)} ${T.y.toFixed(1)}) rotate(45)"><path d="M-6 -5 L 4 -2.5 L 4 2.5 L -6 5 Z" fill="url(#gSteel)" stroke="#6f7c8b"/><rect x="-24" y="-2.5" width="14" height="5" rx="2" fill="#2b3642"/></g>`+
+       `<g transform="translate(${TK.x.toFixed(1)} ${TK.y.toFixed(1)}) rotate(45)"><rect x="-11" y="-5" width="22" height="10" rx="4" fill="url(#gLever)" stroke="#4f5f72"/></g>`+
+       `<line x1="${U.x.toFixed(1)}" y1="${U.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" class="hit22"/></g>`+
+       `<g data-part="trimlever"><g transform="translate(${RL.x.toFixed(1)} ${RL.y.toFixed(1)}) rotate(45)"><path d="M-6 5 L 0 26 Q 1 29 5 29 L 12 29 L 8 5 Z" fill="#d42a2f" stroke="#8b1418" stroke-width="1.2"/><rect x="-10" y="2" width="28" height="32" fill="transparent"/></g></g>`;
+    anchors.trimlever={x:RL.x+(4-18)*k, y:RL.y+(4+18)*k};
+    labels.push(['Suture trimmer', P(S.trim-TRIML+170,0), 150, -26]);
+    labels.push(['Red trimming lever', anchors.trimlever, -130, 24]);
+    labels.push(['Thumb knob', TK, 70, -34]);
+    if(S.trim<-150) labels.push(['Suture gate', P(S.trim-17,0), 140, 14]);
+  }
+
+  drops.forEach(d=>{ g+=`<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="${d.r}" fill="${d.c}" opacity="${Math.max(0,d.life).toFixed(2)}"/>`; });
+  if(S.cough){
+    const E=P(SKIN_S);
+    g+=`<g><circle cx="${E.x}" cy="${E.y-26}" r="13" fill="#17845a"/><path d="M${E.x-6} ${E.y-26} l4 4 l8 -9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>`;
+  }
+  document.getElementById('dyn').innerHTML=g;
+  document.getElementById('world').setAttribute('transform',`translate(550 350) scale(${an.z.toFixed(4)}) translate(${(-an.cx).toFixed(1)} ${(-an.cy).toFixed(1)})`);
+
+  // ---- back table (separate strip) ----
+  let tr='';
+  const slot=(i,inner,name,part,used)=>{
+    tr+=`<g transform="translate(${i*SLOT} 0)">`;
+    if(used) tr+=`<text class="used" x="${SLOT/2}" y="44" text-anchor="middle">${used}</text>`;
+    else tr+=`<g data-part="${part}"><rect x="4" y="2" width="${SLOT-8}" height="86" rx="10" class="slot"/><g transform="translate(${(SLOT-157)/2} 0)">${inner}</g><text class="trayname" x="${SLOT/2}" y="78" text-anchor="middle">${name}</text></g>`;
+    tr+=`</g>`;
+  };
+  slot(0,`<rect x="30" y="31" width="12" height="6" fill="#dfe8f2" stroke="#7d8a98"/><rect x="42" y="24" width="64" height="20" rx="3" fill="#f5f9ff" stroke="#7d8a98" stroke-width="1.4"/><rect x="44" y="26" width="56" height="16" fill="#cfe7ff" opacity=".85"/><rect x="106" y="30" width="20" height="8" fill="#dfe4ea" stroke="#7d8a98"/><rect x="126" y="23" width="6" height="22" rx="2" fill="#c3cbd4" stroke="#7d8a98"/>`,'Saline syringe','syringe', S.flushed?'Syringe used':'');
+  const wireOnTable = S.wire==='table' || (S.wire==='removed' && !done_('wireBack'));
+  slot(1,`<circle cx="56" cy="34" r="17" fill="none" stroke="#3b444e" stroke-width="2.6"/><circle cx="56" cy="34" r="12" fill="none" stroke="#3b444e" stroke-width="2.6"/><path d="M73 34 C 92 34 106 28 128 32" stroke="#3b444e" stroke-width="2.6" fill="none"/>`,'Guidewire ≤0.038″','wire', wireOnTable?'':(S.wire==='removed'?'Wire out':'Wire in use'));
+  slot(2,`<rect x="30" y="31" width="96" height="6" rx="3" fill="url(#gRod)" stroke="#6f7c8b"/><rect x="24" y="27" width="34" height="14" rx="5" fill="url(#gHandle)" stroke="#7b8796"/><path d="M126 34 C 134 28 140 30 140 34 C 140 38 134 40 126 34" fill="none" stroke="#7b8796"/>`,'Snare knot pusher','skp', S.locked?'Pusher used':(S.skp!==null?'On the rail':''));
+  slot(3,`<rect x="22" y="26" width="112" height="11" rx="4" fill="url(#gHandle)" stroke="#7b8796"/><rect x="34" y="18" width="16" height="9" rx="3" fill="url(#gLever)" stroke="#4f5f72"/><path d="M74 37 L 78 52 L 86 52 L 84 37 Z" fill="#d42a2f" stroke="#8b1418"/><path d="M134 26 L 142 30 L 142 33 L 134 37Z" fill="url(#gSteel)" stroke="#6f7c8b"/>`,'Suture trimmer','trimmer', S.trimmed?'Trimmer used':(S.trim!==null?'On the limbs':''));
+  anchors.syringe=TRAY(0,80,34);
+  anchors.skp=TRAY(2,80,34); anchors.trimmer=TRAY(3,78,32);
+  if(wireOnTable) anchors.wire=TRAY(1,70,34);
+
+  // ---- fixed overlay: cues, captions, labels, angiogram inset ----
+  let t='';
+  [['Skin',SKIN_Y+11,'tissuetxt'],['Subcutaneous fat',SKIN_Y+44,'tissuetxt'],['Femoral sheath',455,'tissuetxt'],['Common femoral artery  →',534,'lumentxt']].forEach(c=>{
+    const y=SC({x:0,y:c[1]}).y; if(y>56 && y<690) t+=`<text class="${c[2]}" x="16" y="${y.toFixed(1)}">${c[0]}</text>`; });
+  if(document.getElementById('lbls').checked){
+    labels.push(['Arteriotomy', {x:768,y:462}, 170, -40]);
+    labels.forEach(l=>{ t+=label(l[0], l[1], l[2], l[3]); });
+  }
+  if(S.angio && S.step<=IDX.wireIn) t+=angioInset();
+  const cur=STEPS[S.step];
+  if(S.fx && now<S.fx.until) t+=fxLayer(now);
+  if(MODE==='practice' && cur && performance.now()>S.busyUntil){
+    if(cur.kind==='click'){
+      const a0=anchors[cur.part];
+      if(a0){ if(a0.tray) tr+=cueRing(a0, now, ''); else t+=cueRing(SC(a0), now, 'Click'); }
+    } else {
+      const p=(Math.sin(now/260)+1)/2, sh=(p*16)*cur.dir;
+      const vis=q=>q.x>110&&q.x<990&&q.y>110&&q.y<600; const base = cur.obj==='device'? ([L(-60,-70),L(80,-60),L(GUIDE-150,-60),L(GUIDE-60,-60),track(S.pos+EXIT+40,an.off+50)].map(SC).find(vis)||SC(L(-60,-70))) : cur.obj==='sheath'? SC(P(S.shS-PSH-10,70)) : SC(P((cur.obj==='skp'?S.skp:S.trim)-160,60));
+      const bx=clamp(base.x,80,1020), by=clamp(base.y,80,620);
+      const p0={x:bx+sh*k, y:by+sh*k}, p1={x:p0.x+110*k*cur.dir, y:p0.y+110*k*cur.dir};
+      const ang=Math.atan2(p1.y-p0.y,p1.x-p0.x)*180/Math.PI;
+      t+=`<g pointer-events="none"><line x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" class="cue-arrow-under"/>`+
+         `<line x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" class="cue-arrow"/>`+
+         `<path class="cue-head" d="M-2 -14 L22 0 L-2 14Z" transform="translate(${p1.x.toFixed(1)} ${p1.y.toFixed(1)}) rotate(${ang.toFixed(1)})"/>`+
+         `<g transform="translate(${((p0.x+p1.x)/2+38).toFixed(1)} ${((p0.y+p1.y)/2-26).toFixed(1)})"><rect x="-36" y="-14" width="72" height="26" rx="13" class="cue-tag"/><text y="5" text-anchor="middle" class="cue-tagtxt">Drag</text></g></g>`;
+    }
+  }
+  document.getElementById('fixed').innerHTML=t;
+  document.getElementById('tray').innerHTML=tr;
+  lastAnchors=anchors;
+}
+let lastAnchors={};
+
+function arrowSVG(p0,p1,cls){
+  const ang=Math.atan2(p1.y-p0.y,p1.x-p0.x)*180/Math.PI;
+  return `<line x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" class="cue-arrow-under"/>`+
+         `<line x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" class="${cls||'fx-arrow'}"/>`+
+         `<path class="${cls?'cue-head':'fx-head'}" d="M-2 -12 L20 0 L-2 12Z" transform="translate(${p1.x.toFixed(1)} ${p1.y.toFixed(1)}) rotate(${ang.toFixed(1)})"/>`;
+}
+// shows what just moved: a banner plus an arrow on the moving part
+function fxLayer(now){
+  const f=S.fx, a=clamp((f.until-now)/400,0,1);
+  let s=`<g pointer-events="none" opacity="${a.toFixed(2)}">`;
+  const w=f.text.length*8.6+44;
+  s+=`<g transform="translate(550 34)"><rect x="${-w/2}" y="-17" width="${w}" height="34" rx="17" class="fx-banner"/><text y="6" text-anchor="middle" class="fx-text">✓ ${f.text}</text></g>`;
+  let m=null;
+  if(f.id==='lever1') m=[L(-56,-44),L(-180,-44)];
+  else if(f.id==='lever4') m=[L(-180,-44),L(-56,-44)];
+  else if(f.id==='plunger2') m=[L(-350,-40),L(-290,-40)];
+  else if(f.id==='plunger3') m=[L(-330,-40),L(-410,-40)];
+  else if(f.id==='flush') m=[L(90,175),L(40,100)];
+  else if(f.id==='wireIn') m=[P(S.shS-PSH-60,40),P(S.shS-PSH+40,40)];
+  else if(f.id==='angio' && S.sheath!=='gone') { const H=P(S.shS-PSH); m=[{x:H.x-180*k,y:H.y+60*k},{x:H.x-130*k,y:H.y+10*k}]; }
+  if(m){ const p0=SC(m[0]), p1=SC(m[1]); s+=arrowSVG(p0,p1);
+    const num={lever1:'1',plunger2:'2',plunger3:'3',lever4:'4'}[f.id];
+    if(num) s+=`<g transform="translate(${((p0.x+p1.x)/2-34).toFixed(1)} ${((p0.y+p1.y)/2-30).toFixed(1)})"><circle r="20" fill="#17845a" stroke="#ffffff" stroke-width="3"/><text y="8" text-anchor="middle" fill="#ffffff" style="font:800 22px var(--f-mono)">${num}</text></g>`; }
+  return s+`</g>`;
+}
+// magnified view of the QuickCut: suture from the needle (on the pulled-back plunger) is drawn taut into the slot and cut
+function qcInset(q){
+  const w=330, h=230, x=1100-w*1.22-14, y=58;
+  const t=clamp(q/0.45,0,1), cut=q>0.6, away=clamp((q-0.66)/0.3,0,1);
+  const slot={x:190,y:142};
+  let s=`<g transform="translate(${x} ${y}) scale(1.22)" pointer-events="none"><rect width="${w}" height="${h}" rx="12" class="qc-panel"/>`+
+    `<text x="14" y="22" class="qc-title">QUICKCUT · CLOSE-UP</text>`;
+  // body (front portion) and lever edge
+  s+=`<rect x="40" y="90" width="270" height="52" rx="10" fill="url(#gBody)" stroke="#183b67"/><rect x="150" y="78" width="150" height="16" rx="6" fill="url(#gLever)"/>`+
+     `<text x="292" y="90" text-anchor="end" fill="#ffffff" style="font:800 10px var(--f-mono)">LEVER</text>`;
+  // QuickCut slot + blade
+  s+=`<rect x="${slot.x-22}" y="${slot.y-10}" width="44" height="20" rx="4" fill="#16191d"/><path d="M${slot.x-12} ${slot.y+8} L ${slot.x+8} ${slot.y-4} L ${slot.x+14} ${slot.y+8} Z" fill="url(#gSteel)" stroke="#5f6b79"/>`+
+     `<text x="${slot.x}" y="${slot.y+30}" text-anchor="middle" class="qc-lbl">QuickCut</text>`;
+  // needle + link on the pulled-back plunger (left), suture continues into the device (right)
+  const N={x:46-60*away, y:52};
+  const mid={x:lerp(165,slot.x,t), y:lerp(52,slot.y,t)};
+  s+=`<g opacity="${(1-away*0.9).toFixed(2)}"><line x1="${(N.x-34).toFixed(1)}" y1="${N.y}" x2="${N.x.toFixed(1)}" y2="${N.y}" stroke="#4d5763" stroke-width="5" stroke-linecap="round"/><line x1="${(N.x-34).toFixed(1)}" y1="${N.y}" x2="${N.x.toFixed(1)}" y2="${N.y}" stroke="#e4e9ef" stroke-width="2.4" stroke-linecap="round"/>`+
+     `<circle cx="${(N.x+5).toFixed(1)}" cy="${N.y}" r="5" fill="none" stroke="#9aa6b3" stroke-width="2.4"/>`+
+     `<text x="${Math.max(N.x-14,66).toFixed(1)}" y="${N.y-12}" text-anchor="middle" class="qc-lbl">anterior needle + link</text></g>`;
+  if(!cut){
+    s+=`<path d="M${(N.x+10).toFixed(1)} ${N.y} L ${mid.x.toFixed(1)} ${mid.y.toFixed(1)} L 318 ${lerp(52,72,t).toFixed(1)}" stroke="#163f8f" stroke-width="5" fill="none" stroke-linejoin="round"/><path d="M${(N.x+10).toFixed(1)} ${N.y} L ${mid.x.toFixed(1)} ${mid.y.toFixed(1)} L 318 ${lerp(52,72,t).toFixed(1)}" stroke="#2a63cf" stroke-width="3" fill="none" stroke-linejoin="round"/>`;
+  } else {
+    s+=`<path d="M${(N.x+10).toFixed(1)} ${N.y} L ${(slot.x-8-40*away).toFixed(1)} ${(slot.y-4-30*away).toFixed(1)}" stroke="#2a63cf" stroke-width="3" fill="none" opacity="${(1-away*0.9).toFixed(2)}"/>`+
+       `<path d="M${slot.x+6} ${slot.y-2} L 318 72" stroke="#163f8f" stroke-width="5" fill="none"/><path d="M${slot.x+6} ${slot.y-2} L 318 72" stroke="#2a63cf" stroke-width="3" fill="none"/>`;
+  }
+  if(q>0.5 && q<0.8){ const a=1-Math.abs(q-0.62)/0.18; s+=`<g transform="translate(${slot.x} ${slot.y})" opacity="${clamp(a,0,1).toFixed(2)}"><path d="M0 -18 L 5 -5 L 18 0 L 5 5 L 0 18 L -5 5 L -18 0 L -5 -5 Z" fill="#ffd34d" stroke="#b37a00"/></g>`; }
+  s+=`<text x="318" y="66" text-anchor="end" class="qc-lbl">to device</text>`;
+  const cap = q<=0 ? 'Place the suture in the QuickCut'
+            : q<0.45 ? '1 · Suture placed in the QuickCut'
+            : q<0.66 ? '2 · Cut, distal to the link'
+            : '3 · Plunger with needle set aside';
+  s+=`<rect x="10" y="${h-34}" width="${w-20}" height="26" rx="8" class="qc-cap"/><text x="${w/2}" y="${h-16}" text-anchor="middle" class="qc-captxt">${cap}</text></g>`;
+  return s;
+}
+function angioInset(){
+  const w=310, h=250, x=1100-w-14, y=14;
+  let s=`<g transform="translate(${x} ${y})"><rect width="${w}" height="${h}" rx="10" fill="#0d1014" stroke="#2c333c"/>`+
+    `<text x="12" y="20" fill="#cfd6de" style="font:700 12px var(--f-mono);letter-spacing:.06em">FEMORAL ANGIOGRAM · IPSILATERAL OBLIQUE</text>`+
+    `<circle cx="120" cy="150" r="52" fill="#3a3f45" opacity=".9"/><circle cx="120" cy="150" r="52" fill="none" stroke="#5b636c" stroke-width="3"/>`+
+    `<path d="M150 30 C 140 70 128 110 122 150 C 118 178 112 196 100 214" stroke="#e9edf1" stroke-width="12" fill="none" stroke-linecap="round"/>`+
+    `<path d="M144 62 C 160 58 176 50 186 38" stroke="#d3d9df" stroke-width="4" fill="none"/>`+
+    `<path d="M100 214 C 96 226 94 236 92 246" stroke="#e9edf1" stroke-width="9" fill="none"/>`+
+    `<path d="M104 206 C 118 218 132 230 140 246" stroke="#d3d9df" stroke-width="7" fill="none"/>`+
+    `<path d="M70 92 L 126 150" stroke="#2a2f35" stroke-width="7" stroke-linecap="round"/><path d="M70 92 L 126 150" stroke="#8b939c" stroke-width="2" stroke-linecap="round"/>`+
+    `<circle cx="126" cy="150" r="5" fill="none" stroke="#7ee08f" stroke-width="2"/>`+
+    `<text x="188" y="36" fill="#9aa4ae" style="font:500 10px var(--f-mono)">inf. epigastric</text>`+
+    `<text x="150" y="232" fill="#9aa4ae" style="font:500 10px var(--f-mono)">bifurcation</text>`+
+    `<text x="22" y="86" fill="#9aa4ae" style="font:500 10px var(--f-mono)">sheath</text>`;
+  const checks=['CFA puncture','Over femoral head','Above bifurcation','Below inf. epigastric','No heavy calcium'];
+  checks.forEach((c,i)=>{ s+=`<text x="${w-128}" y="${84+i*22}" fill="#7ee08f" style="font:700 12px var(--f-body)">✓ <tspan fill="#e4e9ee">${c}</tspan></text>`; });
+  s+=`<rect x="${w-132}" y="${84+checks.length*22-6}" width="120" height="28" rx="14" fill="#17845a"/><text x="${w-72}" y="${84+checks.length*22+13}" text-anchor="middle" fill="#fff" style="font:700 13px var(--f-body)">Site suitable</text></g>`;
+  return s;
+}
+
+// ---------- camera ----------
+let VIEW={auto:true, all:false, user:1};
+function focusPts(){
+  const pos=S.pos, off=an.off, id=(performance.now()<S.busyUntil && S.lastId)? S.lastId : (STEPS[S.step]||{}).id;
+  const Art={x:768,y:470}, E=P(SKIN_S), F=L(GUIDE,0), MP=L(-28,26), EP=track(pos+EXIT,off),
+        LEV=leverEnd(), PL=L(-252-an.pl-24,0), QC=L(-56,5), TIP=track(pos+SHEATH,off), K=P(knotS());
+  const H1={x:HOLE1,y:470}, H2={x:HOLE2,y:470};
+  switch(id){
+    case 'angio': { const H=P(S.shS-PSH); return [E, Art, H, {x:H.x-150*k,y:H.y+50*k}]; }
+    case 'flush': return [MP, L(90,170), L(GUIDE,0), L(-270,0)];
+    case 'wireIn': return [P(S.shS-PSH-80), Art, E, {x:1000,y:520}];
+    case 'sheathOut': return [P(-170-PSH+40), Art, E];
+    case 'pressure': return [E, {x:772,y:SKIN_Y-160}, Art];
+    case 'load': return [TIP, P(S.wTop-40), E, {x:772,y:SKIN_Y-130}];
+    case 'advPort': { return [EP, E, TIP, P(S.wTop-60)]; }
+    case 'wireOut': { const T=wireTail(); return [EP, T.end, E]; }
+    case 'flow': return [MP, F, Art];
+    case 'lever1': return [LEV, L(-200,0), F];
+    case 'seat': return [F, Art, L(GUIDE-90,0)];
+    case 'plunger2': case 'plunger3': return [PL, F];
+    case 'quickcut': return [QC, PL, L(-150,90), L(-150,0)];
+    case 'lever4': return [LEV, L(-200,0), F];
+    case 'retract': return [E, F, Art, P(SKIN_S-40)];
+    case 'limbs': return [L(GUIDE-42,20), H1, H2, E];
+    case 'wireBack': { const T=wireTail(); return [EP, T.end, TIP]; }
+    case 'devOut': return (S.devRemoved && an.fade>0.9)?[E,Art]:[L(-60,0), E, Art, P(S.wTop)];
+    case 'skpLoad': return [P(-250-SKPL,RAIL), P(-560,110), Art];
+    case 'knot': return [P(S.skp-SKPL,RAIL), Art];
+    case 'wireOut2': return [P(-340), Art];
+    case 'lock': return [P(-500,-90), K, Art];
+    case 'trimLoad': return [P(-250-TRIML), Art];
+    case 'trimAdv': return [P(S.trim-TRIML), Art];
+    case 'cut': return [lastAnchors.trimlever||P(-300), K, P(SKIN_S)];
+    default: return [E, Art, H1, H2];
+  }
+}
+function camera(){
+  if(drag && drag.obj) return;
+  let pts;
+  if(VIEW.all || !VIEW.auto){
+    pts=[{x:768,y:470},P(SKIN_S)];
+    if(an.fade<0.9) pts.push(L(-252-an.pl-24,0), track(S.pos+SHEATH,an.off));
+    if(S.sheath!=='gone') pts.push(P(S.shS-PSH-60));
+    if(S.skp!==null) pts.push(P(S.skp-SKPL,RAIL));
+    if(S.trim!==null) pts.push(P(S.trim-TRIML,0));
+  } else pts=focusPts();
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  pts.forEach(p=>{x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y);});
+  const pad=VIEW.all?60:110;
+  let z=Math.min(1100/(x1-x0+2*pad), 700/(y1-y0+2*pad));
+  z=clamp(z*(VIEW.all?1:VIEW.user), 0.4, 3.2);
+  if(!VIEW.auto && !VIEW.all) z=clamp(0.9*VIEW.user,0.4,3.2);
+  tg.z=z; tg.cx=(x0+x1)/2; tg.cy=(y0+y1)/2;
+  const r=document.getElementById('zRead'); const txt=an.z.toFixed(1)+'×'; if(r && r.textContent!==txt) r.textContent=txt;
+}
+function syncView(){
+  document.getElementById('zAuto').setAttribute('aria-pressed',String(VIEW.auto&&!VIEW.all));
+  document.getElementById('zAll').setAttribute('aria-pressed',String(VIEW.all));
+}
+document.getElementById('zIn').onclick=()=>{VIEW.user=clamp(VIEW.user*1.25,0.5,2.5); VIEW.all=false; syncView();};
+document.getElementById('zOut').onclick=()=>{VIEW.user=clamp(VIEW.user/1.25,0.5,2.5); syncView();};
+document.getElementById('zAuto').onclick=()=>{VIEW.auto=true; VIEW.all=false; VIEW.user=1; syncView();};
+document.getElementById('zAll').onclick=()=>{VIEW.all=!VIEW.all; syncView();};
+
+// ---------- monitor ----------
+function monitor(){
+  const m=[];
+  let marker='Dry', mc='';
+  if(an.syr>0.4) {marker='Saline flush'; mc='blue';}
+  else if(S.devRemoved || !done_('load')) {marker='—';}
+  else if(flowing()) {marker='Pulsatile blood'; mc='red';}
+  else if(an.foot>0.5 && S.pos<=32) {marker='Stopped: foot seated'; mc='green';}
+  m.push(['Marker',marker,mc]);
+  m.push(['Foot', S.devRemoved?'—':(an.foot>0.5?'Open':'Closed'), an.foot>0.5?'blue':'']);
+  m.push(['Angle','45° · lever 12 o’clock','']);
+  m.push(['Needles', an.needle>0.5?'Deployed':(S.sutured?'Removed':'Sheathed'), an.needle>0.5?'blue':'']);
+  let su='—';
+  if(S.trimmed) su='Trimmed'; else if(S.locked) su='Knot locked'; else if(S.skp!==null) su='Knot advancing'; else if(S.limbs==='free') su='Limbs out'; else if(S.cut) su='Cut free'; else if(S.sutured) su='On anterior needle';
+  m.push(['Suture',su,S.locked?'green':'']);
+  let site, sc='';
+  if(S.sheath!=='gone') site=S.wire==='sheath'?'Sheath + wire':'Sheath in';
+  else if(!S.pressure && !done_('advPort')) {site='Wire only · apply pressure'; sc='red';}
+  else if(!done_('advPort')) {site='Wire only · pressure held'; sc='blue';}
+  else if(!S.devRemoved) site='Device in';
+  else if(S.locked) {site='Dry'; sc='green';} else if(an.ooze>0.35) {site='Oozing'; sc='red';} else site='Minimal ooze';
+  m.push(['Site',site,sc]);
+  const html=m.map(x=>`<div class="mon"><b>${x[0]}</b><span class="${x[2]}">${x[1]}</span></div>`).join('');
+  const el=document.getElementById('monitor'); if(el._h!==html){el.innerHTML=html; el._h=html;}
+}
+
+// ---------- loop ----------
+let lastT=performance.now(), beatT=0;
+function frame(now){
+  const dt=Math.min(50, now-lastT); lastT=now;
+  camera();
+  for(const key in tg){ if(key==='qc'){ an.qc = tg.qc>an.qc ? Math.min(tg.qc, an.qc+dt/3400) : tg.qc; continue; } const r=(key==='z'||key==='cx'||key==='cy')?0.012:key==='foot'?0.003:(key==='fade'||key==='shFade')?0.0035:(key==='pl'||key==='needle'||key==='wadv')?0.0045:0.008; an[key]+= (tg[key]-an[key])*Math.min(1, dt*r); }
+  if(S.sheath==='gone' && S.shS>-185) S.shS=Math.max(-185, S.shS-dt*0.5);
+  if(S.devRemoved && S.pos>-520) S.pos=Math.max(-520, S.pos-dt*0.5);
+  if(S.devRemoved && !S.locked){ const prog=(knotS()+250)/246; tg.ooze=clamp(1-prog*0.85,0,1); tg.gap=30*(1-prog*0.85); }
+  else if(S.locked){ tg.ooze=0; tg.gap=0; } else { tg.ooze=0; tg.gap=30; }
+  if(an.syr>0.6 && lastAnchors.mport && Math.random()<dt/90){
+    const p=lastAnchors.mport; drops.push({x:p.x+(Math.random()*3-1.5), y:p.y+3, vy:0.4, r:2.6, c:'#8cc8ff', life:1});
+  }
+  if(flowing() && lastAnchors.mlumen){
+    beatT+=dt; if(beatT>820){beatT=0;}
+    if(beatT<200 && Math.random()<dt/40){ const p=lastAnchors.mlumen; drops.push({x:p.x+(Math.random()*3-1.5), y:p.y+3, vy:0.7, r:3, c:'#a3141c', life:1}); }
+  }
+  if(an.ooze>0.3 && Math.random()<dt/600*an.ooze){ const E=P(SKIN_S); drops.push({x:E.x-14+Math.random()*10,y:E.y+2,vy:0.15,r:2.4,c:'#a3141c',life:.9}); }
+  drops.forEach(d=>{ d.vy+=0.012*dt; d.y+=d.vy*dt*0.06; d.life-=dt/900; });
+  drops=drops.filter(d=>d.life>0);
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+// ---------- interaction ----------
+const svg=document.getElementById('scene');
+function svgPt(e){ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+var drag=null;
+document.getElementById('tray').addEventListener('pointerdown',e=>{ const el=e.target.closest('[data-part]'); if(el){ e.preventDefault(); handlePart(el.dataset.part); } });
+svg.addEventListener('pointerdown',e=>{
+  const el=e.target.closest('[data-part],[data-drag]'); if(!el) return;
+  e.preventDefault();
+  const p=svgPt(e);
+  if(el.dataset.drag){
+    const obj=el.dataset.drag;
+    drag={obj,x0:p.x,y0:p.y,v0:getVal(obj),moved:false,flagged:false};
+    document.body.classList.add('dragging');
+  } else drag={part:el.dataset.part, x0:p.x, y0:p.y, moved:false};
+});
+window.addEventListener('pointermove',e=>{
+  if(!drag || !drag.obj) return;
+  const p=svgPt(e);
+  const cur=STEPS[S.step];
+  const gain=Math.max(1/an.z, cur&&cur.kind==='drag'?(cur.max-cur.min)/320:0);
+  const ds=((p.x-drag.x0)+(p.y-drag.y0))*k*gain;
+  if(Math.abs(ds)>4) drag.moved=true;
+  if(!drag.moved) return;
+  if(!cur || performance.now()<S.busyUntil) return;
+  if(cur.kind==='drag' && cur.obj===drag.obj){
+    setVal(drag.obj, clamp(drag.v0+ds, cur.min, cur.max));
+    startClock();
+  } else if(!drag.flagged){ drag.flagged=true; wrong(drag.obj); }
+});
+function endDrag(){
+  if(!drag) return;
+  const d=drag; drag=null; document.body.classList.remove('dragging');
+  if(d.part){ handlePart(d.part); return; }
+  if(!d.moved){ handlePart(d.obj); return; }
+  const cur=STEPS[S.step];
+  if(cur && cur.kind==='drag' && cur.obj===d.obj){
+    const v=getVal(d.obj);
+    if(cur.goal(v)){ if(cur.snap!==undefined) setVal(d.obj,cur.snap); complete(cur); }
+    else setMsg('info', cur.nudge);
+  }
+}
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+function setVal(obj,v){ if(obj==='device') S.pos=v; else if(obj==='skp') S.skp=v; else if(obj==='sheath') S.shS=v; else S.trim=v; }
+function getVal(obj){ return obj==='device'?S.pos: obj==='skp'?S.skp: obj==='sheath'?S.shS : S.trim; }
+function startClock(){ if(S.t0===null) S.t0=Date.now(); }
+
+function handlePart(p){
+  const cur=STEPS[S.step];
+  if(!cur) return;
+  if(performance.now()<S.busyUntil){ setMsg('info','Let the movement finish, then continue.'); return; }
+  startClock();
+  if(cur.kind==='click' && cur.part===p){ complete(cur); return; }
+  if(cur.kind==='drag' && cur.obj===p){ setMsg('info', 'Press and drag it: '+cur.move.charAt(0).toLowerCase()+cur.move.slice(1)); return; }
+  wrong(p);
+}
+function wrong(p){
+  const cur=STEPS[S.step];
+  S.errors++; S.misses++;
+  const what=PARTS[p]||'';
+  setMsg('bad', `<strong>Not that one.</strong> ${what} <br>Now: ${cur.move}`);
+  renderPanel();
+}
+function complete(cur){
+  HIST.push({S:JSON.parse(JSON.stringify(S)), tg:{...tg}});
+  S.lastId=cur.id;
+  S.fx={id:cur.id, text:cur.fx||cur.t, until:performance.now()+2400};
+  if(cur.apply) cur.apply();
+  if(cur.done) cur.done();
+  const n=S.step+1;
+  S.step++; S.misses=0; S.hintShown=false;
+  setMsg('ok', `<strong>Step ${n} done.</strong> ${cur.see}`, true);
+  if(S.step>=STEPS.length){ S.tEnd=Date.now(); saveBest(); }
+  renderPanel();
+}
+function back(){
+  if(!HIST.length) return;
+  const h=HIST.pop();
+  timers.forEach(clearTimeout); timers=[];
+  S=h.S; S.busyUntil=0; S.fx=null; drag=null;
+  tg={...h.tg}; Object.keys(tg).forEach(key=>{ if(key!=='z'&&key!=='cx'&&key!=='cy') an[key]=tg[key]; });
+  an.syr=tg.syr=0; an.contrast=tg.contrast=0;
+  drops=[];
+  S.msg={type:'info', html:`<strong>Back to step ${S.step+1}.</strong> ${STEPS[S.step].move}`};
+  renderPanel();
+}
+function setMsg(type,html,quiet){ S.msg={type,html}; if(!quiet) renderPanel(); }
+
+// ---------- device anatomy reference ----------
+const PARTLIST=[
+ {n:1,g:'dev',name:'Plunger',num:'2 · 3',fn:'Push (2) to fire both needles; pull it back and out (3), bringing the suture out attached to the needle, then cut it with the QuickCut.',steps:'11–12'},
+ {n:2,g:'dev',name:'Collar',fn:'Behind the handle; the plunger is pushed in once, fully, against it.',steps:'11'},
+ {n:3,g:'dev',name:'Handle',fn:'Finger wings on both sides at the back of the body, for holding and stabilising the device.',steps:'All'},
+ {n:4,g:'dev',name:'Body',fn:'Main housing between the handle and the proximal guide.',steps:'All'},
+ {n:5,g:'dev',name:'Logo',fn:'Marks the suture deployment position. Keep it, with the lever, at 12 o’clock.',steps:'9–11'},
+ {n:6,g:'dev',name:'Lever',num:'1 · 4',fn:'Over the front of the body. Lift it and swing it all the way back (1) to open the foot; return it (4) to close the foot.',steps:'9, 14'},
+ {n:7,g:'dev',name:'QuickCut',fn:'At the front of the body, just below the lever. Cuts the suture from the anterior needle, distal to the link.',steps:'13'},
+ {n:8,g:'dev',name:'Marker lumen',fn:'Tube at the front of the body, just right of the QuickCut. Saline is flushed through it; pulsatile blood marks from it once the marker port is in the artery.',steps:'2, 8, 10'},
+ {n:9,g:'dev',name:'Proximal guide',fn:'Rigid shaft leaving the body; houses the needles.',steps:'8–15'},
+ {n:10,g:'dev',name:'Depth reference markers',fn:'Bands on the guide for judging insertion depth.',steps:'8–15'},
+ {n:11,g:'dev',name:'Distal guide',fn:'Distal end of the guide where the foot sits; the suture limbs are retrieved at its bend.',steps:'15–16'},
+ {n:12,g:'dev',name:'Foot (with cuffs)',fn:'Opens inside the artery and seats against the anterior wall; holds the suture cuffs.',steps:'9–10, 14'},
+ {n:13,g:'dev',name:'Marker port',fn:'On the posterior side of the distal guide. Inside the lumen = blood marking.',steps:'2, 8, 10'},
+ {n:14,g:'dev',name:'Guide wire exit port',fn:'Side port on the sheath. Skin-level landmark for wire removal and re-insertion.',steps:'6–7, 15, 17'},
+ {n:15,g:'dev',name:'Sheath',fn:'Flexible distal tube that tracks over the guidewire into the artery.',steps:'5–8, 15–18'},
+ {n:16,g:'sut',name:'Suture and pre-tied knot',fn:'USP 3-0 monofilament polypropylene with a pre-tied sliding knot, released as the guide is retracted.',steps:'12–22'},
+ {n:17,g:'sut',name:'Blue rail limb',fn:'The longer limb. The knot slides down it; keep it under tension.',steps:'16–21'},
+ {n:18,g:'sut',name:'White non-rail limb',fn:'The shorter, white(-tipped) limb. Pull it, coaxial with the tract, to lock the knot.',steps:'22'},
+ {n:19,g:'tool',name:'Snare knot pusher',fn:'Snare at the tip pulls ~2 cm of the rail through; pushes the knot to the arterial surface.',steps:'19–20'},
+ {n:20,g:'tool',name:'Thumb knob',fn:'On the suture trimmer. Pull back to open the suture gate and load the limbs.',steps:'23'},
+ {n:21,g:'tool',name:'Suture gate',fn:'Distal trimmer opening that captures both taut limbs.',steps:'23–24'},
+ {n:22,g:'tool',name:'Red trimming lever',fn:'Pull back with the right index finger to cut both limbs at the knot.',steps:'25'}
+];
+function buildParts(){
+  const X=380, Y=160; // nose of the body at (X,Y); +x toward the tip
+  let d='';
+  // sheath with guide wire exit port
+  d+=`<path d="M${X+284} ${Y} L ${X+580} ${Y} Q ${X+630} ${Y} ${X+656} ${Y+22}" stroke="#6f8193" stroke-width="10" fill="none" stroke-linecap="round"/>`+
+     `<path d="M${X+284} ${Y} L ${X+580} ${Y} Q ${X+630} ${Y} ${X+656} ${Y+22}" stroke="#cfdbe6" stroke-width="7.6" fill="none" stroke-linecap="round"/>`+
+     `<path d="M${X+284} ${Y-1.5} L ${X+580} ${Y-1.5}" stroke="#f6fafd" stroke-width="2.2" opacity=".85"/>`;
+  d+=`<ellipse cx="${X+360}" cy="${Y-1.6}" rx="5.5" ry="2.4" fill="#26313d"/>`;
+  d+=`<g transform="translate(${X} ${Y})">`;
+  // proximal guide with depth reference markers, distal guide, marker port, foot
+  d+=`<rect x="-4" y="-6.5" width="290" height="13" rx="3" fill="url(#gGuide)" stroke="#5f6b79" stroke-width="1.1"/>`;
+  for(let x=120;x<210;x+=22) d+=`<line x1="${x}" y1="-6.3" x2="${x}" y2="6.3" stroke="#3a4552" stroke-width="2" opacity=".75"/>`;
+  d+=`<rect x="214" y="-6.5" width="12" height="2.6" rx="1.3" fill="#2b3642"/><rect x="214" y="3.9" width="12" height="2.6" rx="1.3" fill="#2b3642"/><circle cx="274" cy="3" r="2.4" fill="#2b3642"/>`;
+  d+=`<rect x="253" y="9" width="74" height="8.4" rx="4.2" fill="url(#gFoot)" stroke="#1f2c3a" stroke-width="1"/><circle cx="259" cy="13.2" r="2.6" fill="#d5dee8"/><circle cx="321" cy="13.2" r="2.6" fill="#d5dee8"/>`;
+  d+=`<path d="M286 6 L 290 9" stroke="#5f6b79" stroke-width="2"/>`;
+  d+=handleSVG({pl:60, lev:0, plOp:1, syr:0, strand:false, qc:-1, ia:false});
+  d+=`</g>`;
+  const TY=330;
+  // suture with knot
+  d+=`<path d="M70 ${TY+40} C 140 ${TY+10} 200 ${TY+10} 250 ${TY+40}" stroke="#163f8f" stroke-width="3.6" fill="none"/><path d="M70 ${TY+40} C 140 ${TY+10} 200 ${TY+10} 250 ${TY+40}" stroke="#2a63cf" stroke-width="2.2" fill="none"/>`;
+  d+=`<path d="M250 ${TY+40} C 280 ${TY+60} 300 ${TY+70} 330 ${TY+66}" stroke="#6b7785" stroke-width="4" fill="none"/><path d="M250 ${TY+40} C 280 ${TY+60} 300 ${TY+70} 330 ${TY+66}" stroke="#f7f8fa" stroke-width="2.4" fill="none"/>`;
+  d+=`<ellipse cx="250" cy="${TY+40}" rx="7" ry="4.6" fill="#dbe4f0" stroke="#1f57c3" stroke-width="1.8"/>`;
+  // snare knot pusher
+  d+=`<g transform="translate(560 ${TY+30})"><rect x="-176" y="-3.5" width="168" height="7" rx="3" fill="url(#gRod)" stroke="#6f7c8b"/><path d="M-10 -4.5 L 0 -2.4 L 0 2.4 L -10 4.5 Z" fill="#c6d0da" stroke="#6f7c8b"/><path d="M0 -1.4 C 9 -7 17 -5 17 0 C 17 5 9 7 0 1.4" fill="none" stroke="#7b8796" stroke-width="1.2"/><rect x="-182" y="-8" width="54" height="16" rx="5" fill="url(#gHandle)" stroke="#7b8796"/>`+[0,1,2,3,4,5,6].map(i=>`<line x1="${-176+i*7}" y1="-7" x2="${-176+i*7}" y2="7" stroke="#a9b3bf"/>`).join('')+`</g>`;
+  // suture trimmer
+  d+=`<g transform="translate(1010 ${TY+30})"><rect x="-200" y="-6" width="194" height="12" rx="4" fill="url(#gHandle)" stroke="#7b8796"/><path d="M-6 -6 L 4 -2.5 L 4 2.5 L -6 6 Z" fill="url(#gSteel)" stroke="#6f7c8b"/><rect x="-24" y="-2.5" width="14" height="5" rx="2" fill="#2b3642"/><rect x="-180" y="-16" width="22" height="11" rx="4" fill="url(#gLever)" stroke="#4f5f72"/><path d="M-130 6 L -124 27 Q -123 30 -119 30 L -112 30 L -116 6 Z" fill="#d42a2f" stroke="#8b1418"/></g>`;
+  d+=`<text class="ptitle" x="40" y="${TY-34}">Suture</text><text class="ptitle" x="380" y="${TY-34}">Snare knot pusher</text><text class="ptitle" x="806" y="${TY-34}">Suture trimmer</text>`;
+  d+=`<text class="ptitle" x="40" y="34">Device · plunger out, foot shown open</text>`;
+  d+=`<line x1="20" y1="${TY-62}" x2="1080" y2="${TY-62}" stroke="var(--line)"/>`;
+  // callouts: [n, anchor x, y, label x, y]
+  const Q=(n,ax,ay,lx,ly)=>[n,X+ax,Y+ay,X+lx,Y+ly];
+  const C=[
+    Q(1,-296,0,-318,-78),Q(2,-244,-9,-262,-92),Q(3,-195,-54,-176,-112),Q(4,-120,14,-132,80),
+    Q(5,-158,1,-206,80),Q(6,-80,-20,-96,-104),Q(7,-56,5,-70,82),Q(8,-28,26,0,82),
+    Q(9,70,0,60,-58),Q(10,152,-5,150,-58),Q(11,252,-5,240,-58),Q(12,312,13,334,82),
+    Q(13,274,3,270,82),Q(14,360,-3,380,-58),Q(15,520,0,520,-52),
+    [16,250,TY+40,250,TY+90],[17,150,TY+17,150,TY-12],[18,305,TY+64,330,TY+100],
+    [19,520,TY+30,520,TY+80],[20,841,TY+19,830,TY-12],[21,993,TY+30,1000,TY+82],[22,889,TY+54,890,TY+92]
+  ];
+  C.forEach(([n,ax,ay,lx,ly])=>{
+    d+=`<g class="callout" data-n="${n}"><line x1="${ax}" y1="${ay}" x2="${lx}" y2="${ly}" class="cl-line"/><circle cx="${ax}" cy="${ay}" r="3" class="cl-dot"/><circle cx="${lx}" cy="${ly}" r="14" class="cl-badge"/><text x="${lx}" y="${ly+5}" text-anchor="middle" class="cl-num">${n}</text></g>`;
+  });
+  document.getElementById('partsSvg').innerHTML=d;
+  const grp={dev:'Device',sut:'Suture',tool:'Tools'};
+  document.getElementById('partsList').innerHTML=['dev','sut','tool'].map(gk=>
+    `<div class="pgroup"><h4>${grp[gk]}</h4><ol>`+PARTLIST.filter(p=>p.g===gk).map(p=>
+      `<li data-n="${p.n}" tabindex="0"><span class="pn">${p.n}</span><div><b>${p.name}${p.num?` <em>${p.num}</em>`:''}</b><span>${p.fn}</span><small>Steps ${p.steps}</small></div></li>`).join('')+`</ol></div>`).join('');
+  const hi=n=>{ document.querySelectorAll('#partsSvg .callout').forEach(c=>c.classList.toggle('on',c.dataset.n===n));
+                document.querySelectorAll('#partsList li').forEach(c=>c.classList.toggle('on',c.dataset.n===n)); };
+  document.querySelectorAll('#partsList li').forEach(li=>{ li.addEventListener('mouseenter',()=>hi(li.dataset.n)); li.addEventListener('focus',()=>hi(li.dataset.n)); li.addEventListener('click',()=>hi(li.dataset.n)); });
+  document.querySelectorAll('#partsSvg .callout').forEach(c=>c.addEventListener('click',()=>{ hi(c.dataset.n); const li=document.querySelector(`#partsList li[data-n="${c.dataset.n}"]`); if(li) li.scrollIntoView({block:'nearest',behavior:'smooth'}); }));
+}
+
+// ---------- best score ----------
+function saveBest(){
+  if(MODE!=='practice') return;
+  try{
+    const secs=Math.round((S.tEnd-S.t0)/1000);
+    const prev=JSON.parse(localStorage.getItem('pg-best')||'null');
+    const cur={errors:S.errors,hints:S.hints,secs};
+    if(!prev || cur.errors<prev.errors || (cur.errors===prev.errors && cur.secs<prev.secs)) localStorage.setItem('pg-best',JSON.stringify(cur));
+  }catch(e){}
+}
+function getBest(){ try{return JSON.parse(localStorage.getItem('pg-best')||'null');}catch(e){return null;} }
+
+// ---------- panel ----------
+function stepList(){
+  return `<div class="steplist">`+PHASES.map((ph,pi)=>{
+    const items=STEPS.map((s,i)=>({s,i})).filter(o=>o.s.ph===pi).map(({s,i})=>{
+      const cls = i<S.step?'done': i===S.step?'cur':'';
+      return `<li class="${cls}"><span class="n">${i<S.step?'✓':String(i+1).padStart(2,'0')}</span><span>${s.t}${s.num?` <b>(${s.num})</b>`:''}</span></li>`;
+    }).join('');
+    return `<div><h4>${ROMAN[pi]} · ${ph.name}</h4><ol>${items}</ol></div>`;
+  }).join('')+`</div>`;
+}
+function renderPanel(){
+  const el=document.getElementById('panel');
+  const cur=STEPS[S.step];
+  const pct=Math.round(S.step/STEPS.length*100);
+  const fb=S.msg?`<div class="feedback ${S.msg.type==='ok'?'ok':S.msg.type==='bad'?'bad':''}" role="status">${S.msg.html}</div>`:`<div class="feedback" role="status">Follow the orange ring or arrow in the scene.</div>`;
+  const nav=`<div class="row"><button class="btn" id="backBtn" ${HIST.length?'':'disabled'}>← Step back</button><button class="btn" id="restart2">Restart</button></div>`;
+  let h='';
+  if(!cur){
+    const secs=S.t0?Math.round(((S.tEnd||Date.now())-S.t0)/1000):0;
+    h=`<div class="eyebrow"><span>Closure complete</span><span>${STEPS.length} / ${STEPS.length}</span></div>
+      <h2 class="step-title">Hemostasis achieved</h2>
+      <div class="summary"><div class="stats">
+        <div class="stat"><small>Wrong moves</small><b>${S.errors}</b></div>
+        <div class="stat"><small>Steps</small><b>${STEPS.length}</b></div>
+        <div class="stat"><small>Time</small><b>${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}</b></div></div>
+        <div class="row"><button class="btn primary" id="again">Run it again</button><button class="btn" id="toRecall">Test yourself in Recall</button></div>
+      </div>${nav}${fb}${stepList()}`;
+  } else {
+    h=`<div class="eyebrow"><span>${ROMAN[cur.ph]} · ${PHASES[cur.ph].name}</span><span>Step ${S.step+1} / ${STEPS.length}</span></div>
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      <h2 class="step-title">${cur.t}${cur.num?`<span class="badge">${cur.num}</span>`:''}</h2>
+      <div class="move">${cur.move}</div>
+      <dl class="kv"><dt>You’ll see</dt><dd>${cur.see}</dd><dt>Why</dt><dd>${cur.why}</dd></dl>
+      <div class="mnem"><small>Phase ${ROMAN[cur.ph]} memory line</small>${PHASES[cur.ph].mn}</div>
+      ${fb}${nav}
+      <details><summary>All ${STEPS.length} steps</summary>${stepList()}</details>`;
+  }
+  el.innerHTML=h;
+  const a=document.getElementById('again'); if(a) a.onclick=()=>reset();
+  const r=document.getElementById('toRecall'); if(r) r.onclick=()=>setMode('recall');
+  const b=document.getElementById('backBtn'); if(b) b.onclick=()=>back();
+  const r2=document.getElementById('restart2'); if(r2) r2.onclick=()=>reset();
+}
+
+// ---------- modes ----------
+function setMode(m, fromHash){
+  if(m!=='recall') m='practice';
+  MODE=m;
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected', String(b.dataset.mode===m)));
+  document.getElementById('simView').hidden = m==='recall';
+  document.getElementById('partsView').hidden = m==='recall';
+  document.getElementById('recallView').hidden = m!=='recall';
+  if(m==='recall') renderRecall(); else renderPanel();
+  if(!fromHash && location.hash!=='#'+m) history.replaceState(null,'','#'+m);
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+document.getElementById('restart').addEventListener('click',()=>{ if(MODE==='recall') { R=null; renderRecall(); } else reset(); });
+window.addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(['practice','recall','learn'].includes(h)) setMode(h,true); });
+
+// ---------- recall ----------
+const CARDS=[
+ ['What must the femoral angiogram show before closure?','Common femoral puncture over the femoral head, above the bifurcation and below the inferior epigastric, without heavy calcification.'],
+ ['Where is contrast injected for the angiogram?','Through the stopcock on the procedural sheath side arm.'],
+ ['Where does the flush syringe attach?','The marker lumen at the front of the body; saline should come out of the marker port on the distal guide.'],
+ ['When does finger compression start?','As the procedural sheath comes out over the wire; it continues until the device fills the tract.'],
+ ['What happens to the wire as the device is advanced?','It enters the device tip and comes out of the guidewire exit port.'],
+ ['What tells you the device is inside the artery?','Pulsatile blood from the marker lumen.'],
+ ['When do you remove the guidewire on the way in?','When the guidewire exit port is just above the skin.'],
+ ['What does lever position 1 do?','Lifting the lever and swinging it all the way back opens the foot.'],
+ ['What is step 2 on the handle?','Depress the plunger to deploy the needles.'],
+ ['What is step 3 on the handle?','Pull the plunger back and out of the handle; the suture comes out attached to the anterior needle and is cut with the QuickCut.'],
+ ['Which needle carries the suture?','The anterior needle. The posterior needle is free of suture.'],
+ ['How do you know all the suture is out of the body?','Pull back on the removed plunger until the suture is taut.'],
+ ['Where should the lever and logo face during deployment?','Up, at 12 o’clock.'],
+ ['What angle do you hold while firing the needles?','About 45°, with gentle retraction keeping the foot on the wall.'],
+ ['What may happen to marker flow when the foot is apposed?','It may stop.'],
+ ['What cuts the suture free from the anterior needle?','The QuickCut, at the front of the body just below the lever.'],
+ ['What is lever position 4?','Returning the lever to its original position closes the foot before withdrawing.'],
+ ['How far do you retract before freeing the limbs?','Until the guidewire exit port is at skin level.'],
+ ['Which limb is the rail?','Blue is the rail; white is the non-rail.'],
+ ['Why reinsert the wire through the exit port?','To keep access until hemostasis is confirmed.'],
+ ['What rides on the blue rail?','The snare knot pusher, on the rail only, not over the wire.'],
+ ['How do you advance the knot?','Slow, consistent tension on the rail while pushing the knot down to the vessel.'],
+ ['When does the wire come out for good?','After hemostasis is assessed, with tension kept on the rail.'],
+ ['How do you lock the knot?','Pull the white non-rail limb.'],
+ ['How do you load the suture trimmer?','Pull back the thumb knob (right thumb) to open the suture gate and load both limbs.'],
+ ['How do you cut the suture?','Advance the trimmer to the vessel, then pull back the red lever (right index finger).'],
+ ['Maximum guidewire diameter?','0.038″ (0.97 mm).']
+];
+let R=null;
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function newOrder(ph){
+  const idx=STEPS.map((s,i)=>i).filter(i=>ph==='all'||STEPS[i].ph===ph);
+  return {want:idx, pool:shuffle(idx), got:[], miss:0, ph};
+}
+function newQuiz(){
+  const i=Math.floor(Math.random()*(STEPS.length));
+  const correct=i===STEPS.length-1? null : i+1;
+  if(correct===null) return newQuiz();
+  const near=STEPS.map((s,j)=>j).filter(j=>j!==i && j!==correct && Math.abs(j-correct)<=6);
+  const opts=shuffle([correct, ...shuffle(near).slice(0,3)]);
+  return {i, correct, opts, picked:null};
+}
+function renderRecall(){
+  document.getElementById('phaseCards').innerHTML=PHASES.map((p,i)=>`<div class="pc"><div class="eyebrow"><span>${ROMAN[i]} · ${p.name}</span></div><p>${p.mn}</p></div>`).join('');
+  if(!R){ R={tab:'next', q:newQuiz(), score:0, asked:0, order:newOrder('all'), cards:shuffle(CARDS.map((c,i)=>i)), known:0, flip:false}; }
+  const el=document.getElementById('drills');
+  let h=`<div class="row" role="tablist"><button class="chipbtn" aria-pressed="${R.tab==='next'}" data-rt="next">What comes next?</button><button class="chipbtn" aria-pressed="${R.tab==='order'}" data-rt="order">Put the steps in order</button><button class="chipbtn" aria-pressed="${R.tab==='cards'}" data-rt="cards">Cue cards</button></div>`;
+  if(R.tab==='next'){
+    const q=R.q, prev=STEPS[q.i];
+    h+=`<div class="eyebrow"><span>Choose the next step</span><span>${R.score} / ${R.asked} correct</span></div>
+      <div class="qbox"><small>You have just done step ${q.i+1}</small><div class="q">${prev.t}${prev.num?` <span class="badge">${prev.num}</span>`:''}</div><small>${ROMAN[prev.ph]} · ${PHASES[prev.ph].name}</small></div>
+      <div class="opts">${q.opts.map(j=>{ let cls=''; if(q.picked!==null){ if(j===q.correct) cls='right'; else if(j===q.picked) cls='wrongpick'; }
+        return `<button class="opt ${cls}" data-opt="${j}" ${q.picked!==null?'disabled':''}>${STEPS[j].t}</button>`; }).join('')}</div>`;
+    if(q.picked!==null){
+      const c=STEPS[q.correct];
+      h+=`<div class="feedback ${q.picked===q.correct?'ok':'bad'}"><strong>${q.picked===q.correct?'Correct.':'Not quite.'}</strong> Next is step ${q.correct+1}: <b>${c.t}</b>. ${c.move}</div>
+        <div class="row"><button class="btn primary" id="nextQ">Next question</button></div>`;
+    }
+  } else if(R.tab==='order'){
+    const O=R.order, done=O.got.length===O.want.length;
+    h+=`<div class="seg"><span class="intro" style="align-self:center">Scope:</span>`+['all',0,1,2,3,4].map(p=>`<button class="chipbtn" data-ph="${p}" aria-pressed="${O.ph===p}">${p==='all'?'All '+STEPS.length:ROMAN[p]}</button>`).join('')+`</div>`;
+    h+=`<div class="eyebrow"><span>${done?'Sequence complete':'Tap the next step'}</span><span>${O.got.length}/${O.want.length} · ${O.miss} miss${O.miss===1?'':'es'}</span></div>`;
+    if(O.got.length) h+=`<ol class="seq">${O.got.map(i=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><span>${STEPS[i].t}</span></li>`).join('')}</ol>`;
+    if(!done) h+=`<div class="pool">${O.pool.filter(i=>!O.got.includes(i)).map(i=>`<button data-pick="${i}">${STEPS[i].t}</button>`).join('')}</div>`;
+    else h+=`<div class="feedback ${O.miss===0?'ok':''}">${O.miss===0?'<strong>Perfect order.</strong>':`<strong>Done with ${O.miss} miss${O.miss===1?'':'es'}.</strong> Run it again until it’s clean.`}</div><div class="row"><button class="btn primary" id="reOrder">Shuffle again</button></div>`;
+  } else {
+    const left=R.cards.length;
+    if(left){
+      const c=CARDS[R.cards[0]];
+      h+=`<div class="eyebrow"><span>Tap the card to reveal</span><span>${left} left · ${R.known} known</span></div>
+        <div class="flash" id="flash" tabindex="0" role="button"><small>Question</small><div class="q">${c[0]}</div>${R.flip?`<small>Answer</small><div class="a">${c[1]}</div>`:''}</div>
+        <div class="row"><button class="btn" id="again2" ${R.flip?'':'disabled'}>Again</button><button class="btn primary" id="got" ${R.flip?'':'disabled'}>Got it</button></div>`;
+    } else h+=`<div class="feedback ok"><strong>All ${CARDS.length} cards cleared.</strong></div><div class="row"><button class="btn primary" id="reCards">Restart the deck</button></div>`;
+  }
+  el.innerHTML=h;
+  el.querySelectorAll('[data-rt]').forEach(b=>b.onclick=()=>{R.tab=b.dataset.rt; renderRecall();});
+  el.querySelectorAll('[data-opt]').forEach(b=>b.onclick=()=>{ const q=R.q; if(q.picked!==null) return; q.picked=+b.dataset.opt; R.asked++; if(q.picked===q.correct) R.score++; renderRecall(); });
+  const nq=document.getElementById('nextQ'); if(nq) nq.onclick=()=>{ R.q=newQuiz(); renderRecall(); };
+  el.querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{const p=b.dataset.ph==='all'?'all':+b.dataset.ph; R.order=newOrder(p); renderRecall();});
+  el.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{
+    const O=R.order, i=+b.dataset.pick, next=O.want[O.got.length];
+    if(i===next){ O.got.push(i); renderRecall(); }
+    else { O.miss++; b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); const ey=el.querySelector('.eyebrow span:last-child'); if(ey) ey.textContent=`${O.got.length}/${O.want.length} · ${O.miss} miss${O.miss===1?'':'es'}`; }
+  });
+  const ro=document.getElementById('reOrder'); if(ro) ro.onclick=()=>{ R.order=newOrder(R.order.ph); renderRecall(); };
+  const fl=document.getElementById('flash'); if(fl){ const f=()=>{R.flip=true; renderRecall();}; fl.onclick=f; fl.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault(); f();}}; }
+  const ag=document.getElementById('again2'); if(ag) ag.onclick=()=>{ const c=R.cards.shift(); R.cards.splice(Math.min(3,R.cards.length),0,c); R.flip=false; renderRecall(); };
+  const go=document.getElementById('got'); if(go) go.onclick=()=>{ R.cards.shift(); R.known++; R.flip=false; renderRecall(); };
+  const rc=document.getElementById('reCards'); if(rc) rc.onclick=()=>{ R.cards=shuffle(CARDS.map((c,i)=>i)); R.known=0; R.flip=false; renderRecall(); };
+}
+
+// ---------- boot ----------
+buildAnatomy();
+buildParts();
+reset();
+setMode(location.hash.slice(1)==='recall'?'recall':'practice', true);
+requestAnimationFrame(frame);
+window.__pg={S:()=>S, STEPS, handlePart, setVal, complete, setMode, back};
+})();
+</script>
+
+</body></html>
